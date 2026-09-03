@@ -180,14 +180,14 @@
 
 \newtheoremstyle{htplain}%
   {10pt}{10pt}%             上下间距
-  {\kaishu}%                正文字体：中文楷体，为国内教材排定理内容的通例
+  {\songti}%               正文字体：宋体，与正文同源（2026-09-04 定）
   {}%                       首行缩进
   {\sffamily\bfseries\color{htRule}}%  标题字体
   {.}%                      标题后标点
   {0.6em}%                  标题与正文间距
   {}
 \newtheoremstyle{htdef}%
-  {10pt}{10pt}{\kaishu}{}{\sffamily\bfseries\color{htRule}}{.}{0.6em}{}
+  {10pt}{10pt}{\songti}{}{\sffamily\bfseries\color{htRule}}{.}{0.6em}{}
 \newtheoremstyle{htremark}%
   {8pt}{8pt}{\small}{}{\sffamily\bfseries\color{htGray}}{.}{0.6em}{}
 
@@ -269,6 +269,32 @@
   title={\sffamily\bfseries #1},
   fonttitle=\normalsize, coltitle=white,
 }
+
+%% 概念定位框：核心概念引入前置于其上，四格固定，每格至多两句。
+%%   \begin{concept}{度量}
+%%     \cwhy{...}  为什么需要——必须指向正文中已出现的具体障碍
+%%     \crel{...}  与什么相关——是谁的特例，或是哪几者的共同抽象
+%%     \cwhere{...}位于何处——在基础数学的哪一块，谁在用
+%%     \cdo{...}   能做什么——具体的定理名或计算，不写「打下基础」
+%%   \end{concept}
+%% 纪律：四格中任一格写不出具体内容，说明该概念不值得单独立框，
+%%       降级为正文中的一句引入语。此框是筛子，不是装饰。
+\newtcolorbox{concept}[1]{%
+  enhanced, breakable,
+  colback=white, colframe=htAccent, boxrule=0.6pt, arc=2pt,
+  left=9pt, right=9pt, top=6pt, bottom=6pt,
+  title={\sffamily\bfseries 概念定位：#1},
+  fonttitle=\small, coltitle=white, colbacktitle=htAccent,
+  before skip=8pt, after skip=8pt,
+}
+\newcommand{\ht@cslot}[2]{%
+  \par\smallskip\noindent
+  \makebox[5.2em][l]{\small\sffamily\bfseries\color{htAccent}#1}%
+  \parbox[t]{\dimexpr\linewidth-5.2em\relax}{\small #2}\par}
+\newcommand{\cwhy}[1]{\ht@cslot{为何需要}{#1}}
+\newcommand{\crel}[1]{\ht@cslot{与谁相关}{#1}}
+\newcommand{\cwhere}[1]{\ht@cslot{位于何处}{#1}}
+\newcommand{\cdo}[1]{\ht@cslot{能做什么}{#1}}
 
 %% 草稿期待办标记：draft 选项下显示，正式编译时静默
 \ifht@draft
