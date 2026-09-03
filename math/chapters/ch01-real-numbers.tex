@@ -1,23 +1,45 @@
 %%% ==========================================================================
-%%%  第一章：实数系与确界原理
-%%%  本章同时用作模板样章，演示讲义可用的全部排版构件。
+%%%  第一章：实数系
+%%%  设计说明见 math/notes/ch01-real-numbers.md。
+%%%  TODO：第 2、4、7 章建立后，把正文中「第 N 章」的字样改回\cref{ch:...}。
+%%%  本章的核心是：确界原理 = 阿基米德性 + Cauchy 完备性。
+%%%  左端是序陈述，右端拆成一条序陈述与一条度量陈述；能推广到一般空间的
+%%%  只有后者。删改本章 1.6、1.8 两节前请先读该笔记的「埋线清单」。
 %%% ==========================================================================
-\chapter{实数系与确界原理}
+\chapter{实数系}
 \label{ch:reals}
 
-\begin{keypoint}
+\begin{keypoint}[本章要点]
   \begin{itemize}
-    \item 有理数域对四则运算封闭，但存在「空隙」，不足以支撑极限理论。
-    \item 实数系由有序域公理加上确界公理刻画，确界公理即实数的完备性。
-    \item 确界原理是后续单调有界定理、闭区间套定理等一切收敛性结论的根基。
+    \item 分析学的每一个概念都含有极限过程，而极限是存在性断言。
+          有理数系中存在「本该收敛却无处可去」的数列，因此不足以承载分析学。
+    \item 「数系没有空隙」有几种不同的精确表述，它们彼此等价，
+          可任选其一作为公理。实数系即序完备的有序域，在同构意义下唯一。
+    \item 这些表述所依赖的结构并不相同：确界原理依赖序，
+          Cauchy 完备性只依赖距离。这一差别决定了它们各自能推广到多远。
+    \item 后续各章推广到一般空间的是 Cauchy 完备性，不是确界原理。
+          本章末的\cref{tab:structure-dependence}是这一分辨的总结。
   \end{itemize}
 \end{keypoint}
 
-\section{有理数的不足}
-\label{sec:rational-gap}
+\section{为什么从实数讲起}
+\label{sec:why-reals}
 
-数学分析的全部内容都建立在实数系之上。要说明为何需要实数而非有理数，
-先看一个古典结论。
+数学分析研究的对象是极限。连续、导数、积分、级数，这些概念的定义中都含有
+一个极限过程。因此在建立分析学之前，必须先确认所用的数系能够承载极限。
+
+考察下面的数列。逐位写出满足 \(x^{2} = 2\) 的正数的十进制近似值，得到
+\begin{equation}
+  \label{eq:sqrt2-decimal}
+  a_{1} = 1, \quad a_{2} = 1.4, \quad a_{3} = 1.41, \quad
+  a_{4} = 1.414, \quad a_{5} = 1.4142, \quad \dots
+\end{equation}
+每一项都是有理数；数列单调递增，且以 \(2\) 为上界；各项彼此越来越接近，
+当 \(m, n \ge N\) 时 \(\abs{a_{m} - a_{n}} \le 10^{-N+1}\)，
+这个上界可以任意小。就数列自身而言，它没有任何异常。
+
+但它在 \(\Q\) 中不收敛。设其极限为有理数 \(a\)，由极限的四则运算法则
+应有 \(a^{2} = 2\)，而下述古典结论表明这样的有理数不存在。
 
 \begin{proposition}
   \label{prop:sqrt2-irrational}
@@ -31,126 +53,691 @@
   于是 \(q\) 亦为偶数。这与 \(\gcd(p,q) = 1\) 矛盾。
 \end{proof}
 
-\Cref{prop:sqrt2-irrational} 表明，有理数集 \(\Q\) 在数轴上留有「空隙」。
-集合 \(\setst{x \in \Q}{x > 0,\ x^{2} < 2}\) 在 \(\Q\) 内有上界却没有最小上界，
-而分析学中的极限、连续、导数、积分等概念无一不依赖于这种最小上界的存在性。
+问题不在数列，而在 \(\Q\)。\cref{eq:sqrt2-decimal} 的各项在 \(\Q\) 中
+不断挤紧，它们所指向的那个位置上却没有数。若在这样的数系上建立分析学，
+则无论一个数列的各项挤得多紧，都不能断言它有极限；而分析学的几乎每一条定理
+都要用到这类断言。单调有界必收敛、闭区间上的连续函数取到最大值、
+Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 
-\section{确界与确界原理}
-\label{sec:supremum}
+于是首要的任务是把「数系没有空隙」这句话说精确。本章做三件事：
+
+\begin{enumerate}[label=(\arabic*)]
+  \item 给出「没有空隙」的精确表述。这样的表述不止一种，
+        \cref{sec:order-complete} 与 \cref{sec:cauchy} 共给出四种。
+  \item 证明这些表述彼此等价。因而可以任选其一作为公理，其余作为定理，
+        选择哪一条是体例问题，不是数学问题。
+  \item 分辨每种表述各自依赖数系的哪一部分结构。这一条决定了它们各自
+        能走多远：有的只适用于 \(\R\)，有的可以原样推广到函数空间。
+\end{enumerate}
+
+第三件事是本章与传统写法差别最大的地方，也是全书的一条主线。
+\Cref{tab:where-used} 先列出本章各条结论在后续何处被用到，
+以便读者在读证明时知道它们的去向。
+
+\begin{table}[htbp]
+  \centering
+  \caption{本章各条结论在后续章节中的用途。极限理论中几乎每一条存在性定理，
+    追溯到底都落在本章的某一条完备性表述上。}
+  \label{tab:where-used}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    本章结论 & 首次使用 & 用途 \\
+    \midrule
+    确界原理     & 第 4 章 & 证明紧集上的连续函数取到最值 \\
+    单调有界定理 & 第 3 章 & 判别正项级数收敛 \\
+    闭区间套定理 & 第 4 章 & 证明 Heine--Borel 定理 \\
+    Cauchy 完备性 & 第 2 章 & 度量空间的完备性；压缩映射原理 \\
+    阿基米德性   & 第 8 章 & 多项式逼近中区间的等分 \\
+    \(\R\) 不可数 & 第 7 章 & Riemann 可积的判别准则 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{remark}[读法建议]
+  本章的内容比后续各章更偏基础，初次阅读时不必全部吃透。
+  \Cref{thm:order-complete-equiv} 的证明与\cref{ex:non-archimedean}可以暂时略过，
+  只需记住结论：完备性有几种等价说法，其中确界原理在 \(\R\) 上最便于使用。
+  读完第 2 章的度量空间之后再回看\cref{sec:cauchy}，
+  那里的分辨会比现在清楚得多。
+\end{remark}
+
+\section{有理数系的缺陷}
+\label{sec:rational-gap}
+
+\Cref{prop:sqrt2-irrational} 通常被用来说明有理数系的不足，但它所提供的信息
+相当有限，仅断言某个特定的数不属于 \(\Q\)。真正的缺陷更为根本，
+并且可以不涉及平方根而陈述。
+
+\begin{proposition}
+  \label{prop:q-cut-fails}
+  取
+  \begin{equation}
+    \label{eq:AB-cut}
+    A = \setst{x \in \Q}{x > 0,\ x^{2} < 2}, \qquad
+    B = \setst{x \in \Q}{x > 0,\ x^{2} > 2}.
+  \end{equation}
+  则 \(A, B\) 非空，且对一切 \(a \in A\)、\(b \in B\) 有 \(a < b\)；
+  但不存在 \(c \in \Q\) 使得对一切 \(a \in A\)、\(b \in B\) 都有 \(a \le c \le b\)。
+\end{proposition}
+
+\begin{proof}
+  \(1 \in A\)，\(2 \in B\)，故两者非空。若 \(a \in A\)、\(b \in B\)，则
+  \(b - a = (b^{2} - a^{2})/(b + a) > 0\)，故 \(a < b\)。
+
+  设有这样的 \(c \in \Q\)。由\cref{prop:sqrt2-irrational}，\(c^{2} \neq 2\)。令
+  \begin{equation}
+    \label{eq:xi-construction}
+    \xi = \frac{2c + 2}{c + 2},
+    \qquad\text{于是}\qquad
+    \xi - c = -\frac{c^{2} - 2}{c + 2},
+    \qquad
+    \xi^{2} - 2 = \frac{2(c^{2} - 2)}{(c + 2)^{2}}.
+  \end{equation}
+  由 \(1 \in A\) 与 \(a \le c\) 得 \(c \ge 1\)，故 \(c + 2 > 0\)，
+  从而 \(\xi \in \Q\) 且 \(\xi > 0\)。若 \(c^{2} < 2\)，由\cref{eq:xi-construction}
+  得 \(\xi > c\) 且 \(\xi^{2} < 2\)，即 \(\xi \in A\) 却大于 \(c\)，与 \(c\) 是 \(A\)
+  的上界矛盾。若 \(c^{2} > 2\)，同理得 \(\xi < c\) 且 \(\xi \in B\)，
+  与 \(c\) 是 \(B\) 的下界矛盾。
+\end{proof}
+
+\begin{remark}
+  比较上述两个命题。\Cref{prop:sqrt2-irrational} 断言 \(\Q\) 中缺少某一个元素；
+  \cref{prop:q-cut-fails} 断言 \(\Q\) 的某个分割不存在分点。后者才是完备性所要
+  弥补的缺陷：其陈述不涉及任何具体的数，只涉及序结构，因而可以原样移植到
+  任意全序集。\Cref{sec:order-complete} 即沿此线索展开。
+\end{remark}
+
+\section{有序域}
+\label{sec:ordered-field}
+
+\Cref{prop:q-cut-fails} 指出了 \(\Q\) 的缺陷，但要把「补上这个缺陷」说清楚，
+先得知道补的是什么之上的缺陷。\(\Q\) 与 \(\R\) 并非处处不同：四则运算的规则、
+不等式的运算、绝对值的性质，两者完全一致，差别只在一处。本节先把相同的那部分
+固定下来，下一节再单独处理那唯一的差别。
+
+\begin{concept}{有序域}
+  \cwhy{\(\Q\) 与 \(\R\) 的差别只在一条性质上。要把这条差别单独提出来，
+    先得给两者相同的那部分结构一个名字。}
+  \crel{域是加减乘除的抽象，全序是大小比较的抽象，有序域是两者相容的合成。
+    去掉序即得域，去掉运算而保留序即得全序集，后者正是\cref{sec:order-complete}的舞台。}
+  \cwhere{代数与序理论的交界。实闭域理论、实代数几何以及数理逻辑中关于
+    实闭域的判定问题，都建立在这一结构之上。}
+  \cdo{凡只用到四则运算与不等号的推理，一次证完即在 \(\Q\)、\(\R\)、
+    \(\R(t)\) 上同时成立。绝对值的三角不等式即是一例。}
+\end{concept}
+
+\begin{definition}[有序域]
+  \label{def:ordered-field}
+  设 \(K\) 是一个域，其上另给定一个全序 \(\le\)。若下述两条相容性条件成立：
+  \begin{enumerate}[label=(\roman*)]
+    \item 对一切 \(x, y, z \in K\)，\(x \le y \implies x + z \le y + z\)；
+    \item 对一切 \(x, y \in K\) 与 \(z \ge 0\)，\(x \le y \implies xz \le yz\)；
+  \end{enumerate}
+  则称 \((K, +, \cdot, \le)\) 为一个\term{有序域}{ordered field}。
+\end{definition}
+
+有理数域 \(\Q\) 与实数域 \(\R\) 都是有序域。有序域的元素可以谈正负、
+谈大小、谈绝对值，几乎全部初等不等式都只用到\cref{def:ordered-field}。
+
+下述性质看似显然，但并非每个有序域都具备。
+
+\begin{definition}[阿基米德性]
+  \label{def:archimedean}
+  有序域 \(K\) 称为\term{阿基米德的}{Archimedean}，若对任意 \(a, b \in K\)
+  且 \(a > 0\)，存在 \(n \in \N\) 使得 \(b < na\)。
+\end{definition}
+
+\begin{example}[一个非阿基米德的有序域]
+  \label{ex:non-archimedean}
+  设 \(\R(t)\) 为实系数有理函数域。对非零的 \(f \in \R(t)\)，
+  把 \(f\) 写成两个多项式之商，规定 \(f > 0\) 当且仅当分子与分母的
+  最高次项系数同号。验证这确实定义了一个全序并与域运算相容之后，
+  \(\R(t)\) 成为有序域。但对一切 \(n \in \N\) 都有 \(t > n\)：
+  因为 \(t - n\) 的最高次项系数为 \(1 > 0\)。于是取 \(a = 1\)、\(b = t\)，
+  \cref{def:archimedean} 的要求不成立。
+  \begin{solution}
+    需验证的是：所定义的正元集合 \(P\) 对加法与乘法封闭，且
+    \(K \setminus \set{0}\) 被 \(P\) 与 \(-P\) 剖分。乘法封闭性由
+    最高次项系数相乘即得。加法封闭性：先把两个分式的分母规范为
+    最高次项系数为正，则两个分子的最高次项系数均为正；通分后新分子
+    的最高次项系数，在两项次数相同时为二者之和、次数不同时为次数
+    较高者的系数，两种情形都为正。剖分性由「同号」的三分律直接得到。
+
+    这个例子说明：\(t\) 在 \(\R(t)\) 中扮演「无穷大」的角色，
+    而 \(1/t\) 则是一个正的无穷小。阿基米德性正是排除这两类元素的那一条。
+  \end{solution}
+\end{example}
+
+\begin{intuition}
+  阿基米德性的直观内容是：以任一固定的正量反复累加，总能超过预先给定的量。
+  \Cref{ex:non-archimedean} 表明，若不附加条件，有序域中可以存在无法这样超越的元素。
+  \Cref{thm:complete-implies-arch} 将说明，完备性自动排除了这种情形。
+\end{intuition}
+
+\section{序完备性的三副面孔}
+\label{sec:order-complete}
+
+\(\Q\) 与 \(\R\) 都是有序域，两者的差别不在\cref{def:ordered-field}之内。
+本节处理这个差别。
+
+先注意一件事。\cref{prop:q-cut-fails} 中被违反的那条性质，
+即「存在 \(c\) 使 \(a \le c \le b\)」，其陈述里只出现 \(\le\)。
+至于 \(A\) 与 \(B\) 本身借助平方给出，那只是为了举出一个具体的反例，
+与所违反的性质是什么无关。既然缺陷可以只用序陈述，修补它的条件也应当
+只用序陈述。因此以下的讨论在全序集上进行，而不限于有序域。
+这样安排可以分辨哪些结论与域运算无关，以便日后在没有运算的场合直接引用；
+第 2 章的度量空间正是这样的场合。
+
+\begin{concept}{上确界}
+  \cwhy{\cref{eq:sqrt2-decimal} 的数列在 \(\Q\) 中无处可去。要断言它有极限，
+    须先保证它所指向的那个位置上确有一个数。上确界就是把这个位置指出来的工具。}
+  \crel{三种刻画（上确界、下确界、戴德金分割）彼此等价，且只依赖序。
+    单调有界定理是它在数列上的形态；第 4 章的紧性是它在拓扑层面的接替者。}
+  \cwhere{序理论。完备格、完备 Boole 代数、以及任一偏序集的
+    Dedekind--MacNeille 完备化，用的都是同一条性质。}
+  \cdo{由它可证单调有界必收敛、闭区间套定理、Bolzano--Weierstrass 定理，
+    以及闭区间上连续函数取到最值。分析学中几乎全部存在性定理都溯源于此。}
+\end{concept}
 
 \begin{definition}[上界与上确界]
   \label{def:supremum}
-  设 \(S \subseteq \R\) 非空。若存在 \(M \in \R\) 使得对一切 \(x \in S\)
-  都有 \(x \le M\)，则称 \(M\) 为 \(S\) 的一个\term{上界}{upper bound}，
-  并称 \(S\) 有上界。若 \(S\) 的上界之中存在最小者 \(\beta\)，
-  则称 \(\beta\) 为 \(S\) 的\term{上确界}{supremum}，记作 \(\beta = \sup S\)。
+  设 \(X\) 是全序集，\(S \subseteq X\) 非空。若存在 \(M \in X\) 使得对一切
+  \(x \in S\) 都有 \(x \le M\)，则称 \(M\) 为 \(S\) 的一个\term{上界}{upper bound}，
+  并称 \(S\) 有上界。若 \(S\) 的上界之中存在最小者 \(\beta\)，则称 \(\beta\) 为
+  \(S\) 的\term{上确界}{supremum}，记作 \(\beta = \sup S\)。
+  \term{下界}{lower bound}与\term{下确界}{infimum} \(\inf S\) 对偶地定义。
 \end{definition}
 
 \begin{remark}
-  按 \cref{def:supremum}，\(\beta = \sup S\) 等价于下述两条同时成立：
+  \label{rem:sup-epsilon}
+  当 \(X = \R\) 时，\(\beta = \sup S\) 等价于下述两条同时成立：
   \begin{enumerate}[label=(\roman*)]
     \item 对一切 \(x \in S\)，有 \(x \le \beta\)；
     \item 对任意 \(\varepsilon > 0\)，存在 \(x_{0} \in S\) 使 \(x_{0} > \beta - \varepsilon\)。
   \end{enumerate}
   第二条是实际证明中最常用的刻画：它把「最小」这一比较性陈述，
-  转化为可以逐点检验的存在性陈述。
+  转化为可以逐点检验的存在性陈述。注意这条刻画用到了减法，
+  因而只在有序域中可说；\cref{def:supremum} 本身不需要运算。
 \end{remark}
 
-\begin{assumption}[确界公理]
-  \label{ax:completeness}
-  \(\R\) 中任一非空有上界的子集必有上确界。
-\end{assumption}
-
-\term{确界公理}{completeness axiom}是实数区别于有理数的唯一实质性质：
-\(\R\) 与 \(\Q\) 同为有序域，差别仅在于前者满足 \cref{ax:completeness}。
-由此可导出全部收敛性定理。
-
-\begin{theorem}[单调有界定理]
-  \label{thm:monotone-convergence}
-  设数列 \(\{a_{n}\}\) 单调递增且有上界，则 \(\{a_{n}\}\) 收敛，
-  且 \(\lim_{n \to \infty} a_{n} = \sup_{n} a_{n}\)。
+\begin{theorem}[序完备性的三种等价刻画]
+  \label{thm:order-complete-equiv}
+  设 \(X\) 为全序集。下述三条等价：
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{上确界性质}：\(X\) 的任一非空有上界的子集有上确界；
+    \item \emph{下确界性质}：\(X\) 的任一非空有下界的子集有下确界；
+    \item \emph{戴德金分割性质}：若 \(A, B \subseteq X\) 非空，且对一切
+          \(a \in A\)、\(b \in B\) 有 \(a \le b\)，则存在 \(c \in X\) 使得
+          对一切 \(a \in A\)、\(b \in B\) 有 \(a \le c \le b\)。
+  \end{enumerate}
+  满足其中任一条的全序集称为\term{序完备的}{order complete}。
 \end{theorem}
 
 \begin{proof}
-  记 \(S = \setst{a_{n}}{n \in \N}\)。由假设 \(S\) 非空且有上界，
-  据 \cref{ax:completeness}，\(\beta = \sup S\) 存在。
+  \((\mathrm{i}) \Rightarrow (\mathrm{ii})\)。设 \(A\) 非空且有下界。
+  令 \(B\) 为 \(A\) 的全体下界之集，则 \(B\) 非空，且 \(A\) 中任一元素都是 \(B\)
+  的上界，故 \(B\) 有上界。由 (i)，\(m = \sup B\) 存在。由于 \(A\) 的每个元素
+  都是 \(B\) 的上界而 \(m\) 是最小上界，故对一切 \(a \in A\) 有 \(m \le a\)，
+  即 \(m \in B\)。于是 \(m = \max B\)，按定义 \(m = \inf A\)。
 
-  任取 \(\varepsilon > 0\)。由上确界的第二条刻画，存在 \(N\) 使
-  \(a_{N} > \beta - \varepsilon\)。又 \(\{a_{n}\}\) 单调递增，
-  故当 \(n > N\) 时
-  \begin{equation}
-    \label{eq:monotone-squeeze}
-    \beta - \varepsilon < a_{N} \le a_{n} \le \beta < \beta + \varepsilon,
-  \end{equation}
-  即 \(\abs{a_{n} - \beta} < \varepsilon\)。由 \(\varepsilon\) 的任意性，
-  \(a_{n} \to \beta\)。
+  \((\mathrm{ii}) \Rightarrow (\mathrm{iii})\)。设 \(A, B\) 如 (iii) 所述。
+  \(A\) 中每个元素都是 \(B\) 的下界，故 \(B\) 有下界，由 (ii) 知
+  \(c = \inf B\) 存在。\(c\) 作为最大下界不小于 \(A\) 的任一元素，
+  故对一切 \(a \in A\) 有 \(a \le c\)；\(c\) 作为 \(B\) 的下界又满足
+  \(c \le b\) 对一切 \(b \in B\) 成立。
+
+  \((\mathrm{iii}) \Rightarrow (\mathrm{i})\)。设 \(A\) 非空且有上界，
+  令 \(B\) 为 \(A\) 的全体上界之集。则 \(B\) 非空，
+  且对一切 \(a \in A\) 与 \(b \in B\) 都有 \(a \le b\)。
+  由 (iii) 知存在 \(c\)，使 \(a \le c \le b\) 对一切这样的 \(a\) 与 \(b\) 成立。前半个不等式说明 \(c \in B\)，
+  后半个说明 \(c\) 是 \(B\) 的最小元，即 \(c = \sup A\)。
 \end{proof}
 
-\begin{example}
-  \label{ex:e-limit}
-  证明数列 \(a_{n} = \left(1 + \dfrac{1}{n}\right)^{n}\) 收敛。
-  \begin{solution}
-    由二项式定理，
-    \[
-      a_{n} = \sum_{k=0}^{n} \binom{n}{k} \frac{1}{n^{k}}
-            = \sum_{k=0}^{n} \frac{1}{k!}
-              \prod_{j=1}^{k-1}\left(1 - \frac{j}{n}\right).
-    \]
-    把 \(n\) 换成 \(n+1\)，右端每一项中的因子 \(1 - j/n\) 均增大，
-    且求和多出一项非负项，故 \(a_{n+1} > a_{n}\)，数列单调递增。
+\begin{remark}
+  \label{rem:which-axiom}
+  \Cref{thm:order-complete-equiv} 表明，以其中哪一条作为公理是可以选择的：
+  \textcite{garling2013} 取上确界性质，\textcite{zorich2015} 取分割性质，
+  两种处理给出同一个实数系。若只陈述确界公理并以之为唯一起点，
+  容易使读者误以为完备性必然以确界的形式出现。
+  以\cref{prop:q-cut-fails} 的记号重述：\(\Q\) 不满足 (iii)，
+  因而也不满足 (i) 与 (ii)。
+\end{remark}
 
-    又因 \(\prod_{j=1}^{k-1}(1 - j/n) \le 1\) 且 \(k! \ge 2^{k-1}\)，
-    \[
-      a_{n} \le \sum_{k=0}^{n} \frac{1}{k!}
-            \le 1 + \sum_{k=1}^{n} \frac{1}{2^{k-1}} < 3,
-    \]
-    数列有上界。由 \cref{thm:monotone-convergence} 即得收敛。
-    该极限记作 \(\eu\)。
-  \end{solution}
-\end{example}
+\section{实数系的定义与唯一性}
+\label{sec:def-reals}
 
-关于实数系的公理化构造与戴德金分割的等价性，可参见 \textcite{rudin1976} 第一章。
+至此两块材料都已备齐：\cref{sec:ordered-field}给出 \(\Q\) 与 \(\R\) 共有的
+代数与序结构，\cref{sec:order-complete}给出 \(\Q\) 所缺而 \(\R\) 所有的那一条。
+把两者合起来就得到实数系的定义。
+
+\begin{definition}[实数系]
+  \label{def:reals}
+  \term{实数系}{real number system} \(\R\) 是一个序完备的有序域。
+\end{definition}
+
+本定义综合了前两节的内容：域公理与序公理刻画 \(\Q\) 已具备的结构，
+序完备性刻画 \(\Q\) 所缺失的结构。定义本身既未断言这样的对象存在，
+也未断言它唯一。两者都成立，但其地位不同。
+
+\begin{theorem}[唯一性]
+  \label{thm:uniqueness}
+  设 \(\R\) 与 \(\R'\) 都是序完备的有序域，则存在唯一的双射
+  \(j \mapsdef \R \to \R'\) 使得对一切 \(x, y \in \R\) 有
+  \(j(x + y) = j(x) + j(y)\)、\(j(xy) = j(x)j(y)\)，且 \(x < y \implies j(x) < j(y)\)。
+\end{theorem}
+
+\begin{remark}
+  证明的思路是：两个域各自含有一份 \(\Q\) 的拷贝，先在有理数上把 \(j\) 定死，
+  再用二进制逼近 \(x_{n} = \floor{2^{n}x}/2^{n}\) 把 \(j\) 延拓到全体实数，
+  最后验证运算与序都被保持。技术细节冗长而无新意，本讲义置于附录 A，
+  完整叙述可参见\textcite{garling2013} 的 3.3 节。
+\end{remark}
+
+\begin{remark}[一段史实]
+  \label{rem:history}
+  柯西于 1821 年出版《分析教程》，其中首次给出了数学分析的严格叙述，
+  但他把实数的性质当作已知而未加追问。1858 年，戴德金在苏黎世高等工业学校
+  准备微分学讲义时，按他自己的说法，比以往任何时候都更强烈地感到算术缺乏
+  真正科学的基础，遂发现了用分割构造实数的方法；这一结果直到 1872 年才发表。
+  从柯西到戴德金相隔半个世纪，可见把「数系没有空隙」说精确并非易事。
+  本节的\cref{def:reals}把这半个世纪的结果压缩成了一行。
+  史料见\textcite{garling2013} 3.1 节。
+\end{remark}
+
+存在性只能靠构造。历史上有两种途径：戴德金取 \(\Q\) 的分割，
+康托尔用 \(\Q\) 中的 Cauchy 列。两者都放在附录 A。
+在此之前，我们照\textcite{amann2005} 的做法，把构造当作已知，
+转而从\cref{def:reals} 推出分析学所需的全部性质。
+
+\begin{intuition}
+  将构造与公理化分开处理是有意为之。分析学中几乎不需要用到实数由何种方式构造，
+  所需要的只是\cref{def:reals} 所列的几条性质。先确立性质、后讨论构造，
+  可以避免在与后文无关的技术细节上分散注意力。
+\end{intuition}
+
+\section{阿基米德性与有理数的稠密性}
+\label{sec:archimedean}
+
+\Cref{ex:non-archimedean} 表明阿基米德性并非有序域所固有。以下说明它是完备性的推论。
+
+\begin{theorem}
+  \label{thm:complete-implies-arch}
+  设 \(\R\) 如\cref{def:reals}。则
+  \begin{enumerate}[label=(\roman*)]
+    \item \(\inf \setst{1/n}{n \in \N} = 0\)；
+    \item \(\R\) 是阿基米德的；
+    \item 若 \(x < y\)，则存在 \(r \in \Q\) 使 \(x < r < y\)。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  (i) 记 \(J = \setst{1/n}{n \in \N}\)。\(0\) 是 \(J\) 的下界，
+  由\cref{thm:order-complete-equiv} 的 (ii)，\(l = \inf J\) 存在且 \(l \ge 0\)。
+  设 \(l > 0\)。则 \(2l > l\)，故 \(2l\) 不是 \(J\) 的下界，
+  于是存在 \(n\) 使 \(1/n < 2l\)，从而 \(1/(2n) < l\)。但 \(1/(2n) \in J\)，
+  与 \(l\) 是下界矛盾。故 \(l = 0\)。
+
+  (ii) 设 \(a > 0\)、\(b \in \R\)。若 \(b \le 0\) 取 \(n = 1\) 即可。
+  设 \(b > 0\)。由 (i)，\(a/b > 0\) 不是 \(J\) 的下界，
+  故存在 \(n\) 使 \(1/n < a/b\)，即 \(b < na\)。
+
+  (iii) 先设 \(0 \le x < y\)。由 (i) 存在 \(n \in \N\) 使 \(1/n < y - x\)。令
+  \[
+    A = \setst{k \in \Z}{k \ge 0,\ k \le nx} .
+  \]
+  由 (ii) 知 \(A\) 有限，又 \(0 \in A\) 故非空，
+  于是 \(A\) 有最大元 \(a\)，满足 \(a \le nx < a + 1\)。
+  取 \(r = (a+1)/n\)，则
+  \begin{equation}
+    \label{eq:density-estimate}
+    x < r = \frac{a}{n} + \frac{1}{n} \le x + \frac{1}{n} < x + (y - x) = y .
+  \end{equation}
+  若 \(x < 0 < y\) 取 \(r = 0\)；若 \(x < y \le 0\)，对 \(-y < -x\) 用已证情形再取相反数。
+\end{proof}
+
+\begin{remark}
+  \Cref{thm:complete-implies-arch} 的 (i) 说 \(\R\) 中没有正的无穷小，
+  (ii) 说明其中没有无穷大。对照\cref{ex:non-archimedean}，\(\R(t)\) 两者兼有，
+  故它虽为有序域，却不可能序完备。这提供了一个无须直接验证确界的判别方法。
+\end{remark}
+
+\section{距离、Cauchy 列与另一种完备性}
+\label{sec:cauchy}
+
+至此本章所讨论的都是序的性质。以下引入一个在陈述上与序无关的概念。
+
+\begin{concept}{距离}
+  \cwhy{确界原理只在有序的地方可说。要把收敛的概念带到函数、向量、矩阵上，
+    需要一个不依赖大小比较的替代品。}
+  \crel{距离由绝对值给出，而绝对值来自序；但一旦写成\cref{prop:d-is-metric}的
+    三条性质，它就可以脱离序独立存在。第 2 章把这三条取作度量空间的公理。}
+  \cwhere{分析学与拓扑学的接口。泛函分析、微分几何、概率论中的
+    Wasserstein 距离、数值分析中的误差估计，都以它为底座。}
+  \cdo{用同一套语言在 \(C[a,b]\) 上谈函数列收敛、在 \(\R^{n}\) 上谈向量列收敛。
+    第 2 章的压缩映射原理由此得出，它随后给出微分方程解的存在唯一性与反函数定理。}
+\end{concept}
+
+\begin{definition}[绝对值与距离]
+  \label{def:metric-on-R}
+  对 \(x \in \R\) 令 \(\abs{x} = \max\set{x, -x}\)，称为 \(x\) 的\term{绝对值}{absolute value}。
+  对 \(x, y \in \R\) 令
+  \begin{equation}
+    \label{eq:def-d}
+    d(x, y) = \abs{x - y},
+  \end{equation}
+  称为 \(x\) 与 \(y\) 之间的\term{距离}{distance}。
+\end{definition}
+
+\begin{proposition}
+  \label{prop:d-is-metric}
+  对一切 \(x, y, z \in \R\)：
+  \begin{enumerate}[label=(\roman*)]
+    \item \(d(x,y) \ge 0\)，且 \(d(x,y) = 0\) 当且仅当 \(x = y\)；
+    \item \(d(x,y) = d(y,x)\)；
+    \item \(d(x,z) \le d(x,y) + d(y,z)\)。
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  (i) 与 (ii) 由 \(\abs{\cdot}\) 的定义直接得到。(iii) 由三角不等式
+  \(\abs{u + v} \le \abs{u} + \abs{v}\)，取 \(u = x - y\)、\(v = y - z\) 即得。
+\end{proof}
+
+\begin{remark}
+  \label{rem:metric-forward}
+  \Cref{prop:d-is-metric} 的三条性质将在第 2 章被抽象为\term{度量}{metric}
+  的公理：任给一个集合与其上满足这三条的二元函数，就得到一个度量空间。
+  这三条性质中不出现序关系。下述概念同样如此。
+\end{remark}
+
+\begin{concept}{Cauchy 列}
+  \cwhy{判断收敛通常要先知道极限是什么，而\cref{eq:sqrt2-decimal} 恰恰是
+    不知道极限是什么的情形。Cauchy 条件把收敛判据改写成只涉及数列自身各项的形式。}
+  \crel{在 \(\R\) 上它与确界原理相差一条阿基米德性（\cref{thm:completeness-split}）。
+    但它的陈述只用到距离，因而可以推广，而确界原理不能。}
+  \cwhere{完备性概念的通用形态。完备度量空间、Banach 空间、Hilbert 空间
+    均以它为定义；一致空间中须把数列换成 Cauchy 滤子，但想法不变。}
+  \cdo{判别级数与函数列的收敛；构造完备化。\(L^{p}\) 空间与实数系本身
+    都是完备化的产物。}
+\end{concept}
+
+\begin{definition}[Cauchy 列]
+  \label{def:cauchy}
+  数列 \(\seq{a_{n}}\) 称为 \term{Cauchy 列}{Cauchy sequence}，若对任意
+  \(\varepsilon > 0\) 存在 \(N\)，使得当 \(m, n \ge N\) 时 \(d(a_{m}, a_{n}) < \varepsilon\)。
+  若 \(\R\) 中每个 Cauchy 列都收敛，则称 \(\R\) 是 \term{Cauchy 完备的}{Cauchy complete}。
+\end{definition}
+
+\begin{theorem}[完备性的分解]
+  \label{thm:completeness-split}
+  设 \(K\) 为有序域。则 \(K\) 序完备，当且仅当 \(K\) 既是阿基米德的、
+  又是 Cauchy 完备的。
+\end{theorem}
+
+\begin{proof}[证明思路]
+  必要性分两条。阿基米德性即\cref{thm:complete-implies-arch} 的 (ii)。
+  Cauchy 完备性由 Bolzano--Weierstrass 定理得到，
+  而后者是确界原理的推论，见\cref{exr:bw}。
+
+  充分性：设 \(K\) 阿基米德且 Cauchy 完备，\(S \subseteq K\) 非空有上界。
+  任取 \(s \in S\)，令 \(a_{0} = s - 1\)，再取 \(S\) 的一个上界 \(b_{0}\)。
+  于是 \(a_{0}\) 不是 \(S\) 的上界（因 \(a_{0} < s\)），而 \(b_{0}\) 是。
+  反复二等分 \([a_{n}, b_{n}]\)：若中点是 \(S\) 的上界则取左半，否则取右半。
+  这样始终保持不变量「\(a_{n}\) 不是上界而 \(b_{n}\) 是上界」，且两个数列满足
+  \(b_{n} - a_{n} = (b_{0} - a_{0})/2^{n}\)。阿基米德性保证该量可以任意小
+  （若无阿基米德性，\(2^{n}\) 未必超过给定的元素，此步不能成立），
+  于是 \(\seq{a_{n}}\) 是 Cauchy 列，由假设收敛于某个 \(\beta\)，
+  而 \(\beta\) 即 \(\sup S\)。
+\end{proof}
+
+\begin{remark}[本章的核心]
+  \label{rem:the-point}
+  \Cref{thm:completeness-split} 把一条性质拆成了两条，而这两条的性质截然不同：
+  \begin{itemize}
+    \item 阿基米德性（\cref{def:archimedean}）的陈述里出现了 \(<\)，是一条\emph{序}陈述；
+    \item Cauchy 完备性（\cref{def:cauchy}）的陈述里只出现 \(d\)，是一条\emph{度量}陈述。
+  \end{itemize}
+  自第 2 章起所讨论的空间中一般不存在序：在函数空间中比较两个函数的大小
+  并无意义，而它们之间的距离有意义。因此可以原样推广的只有 Cauchy 完备性。
+  这解释了后续抽象理论中何以出现「完备度量空间」而非「具有确界的空间」。
+  确界原理并未被弃置，它在 \(\R\) 上仍是最便利的工具，但它是 \(\R\)
+  所特有的性质，不具备普遍性。
+\end{remark}
+
+\section{实数集不可数}
+\label{sec:uncountable}
+
+\Cref{thm:complete-implies-arch}(iii) 说 \(\Q\) 在 \(\R\) 中稠密，
+这容易让人以为两者差别不大。下面说明差别是根本性的。
+
+\begin{theorem}[康托尔]
+  \label{thm:uncountable}
+  \(\R\) 不可数。
+\end{theorem}
+
+\begin{proof}
+  只需证区间 \([0,1]\) 不可数。设 \(f \mapsdef \N \to [0,1]\) 为任一映射，
+  我们构造不在其像中的元素。把 \([0,1]\) 三等分，其中至少有一个闭子区间
+  \(I_{1}\) 不含 \(f(1)\)。把 \(I_{1}\) 三等分，取其中不含 \(f(2)\) 的闭子区间
+  \(I_{2}\)。如此下去得到闭区间套
+  \begin{equation}
+    \label{eq:nested-intervals}
+    I_{1} \supseteq I_{2} \supseteq \cdots, \qquad
+    \abs{I_{n}} = 3^{-n}, \qquad f(n) \notin I_{n}.
+  \end{equation}
+  记 \(I_{n} = [\alpha_{n}, \beta_{n}]\)。数列 \(\seq{\alpha_{n}}\) 单调递增且
+  以 \(\beta_{1}\) 为上界，由确界原理有上确界 \(\alpha = \sup_{n} \alpha_{n}\)。
+  对每个 \(n\)，\(\alpha_{n} \le \alpha \le \beta_{n}\)，故 \(\alpha \in I_{n}\)
+  对一切 \(n\) 成立。于是 \(\alpha \neq f(n)\) 对一切 \(n\) 成立，\(f\) 不是满射。
+\end{proof}
+
+\begin{corollary}
+  \label{cor:irrationals}
+  无理数集 \(\R \setminus \Q\) 不可数。
+\end{corollary}
+
+\begin{proof}
+  \(\Q\) 可数。若 \(\R \setminus \Q\) 可数，则 \(\R\) 作为两个可数集之并可数，
+  与\cref{thm:uncountable} 矛盾。
+\end{proof}
+
+\begin{remark}
+  \Cref{cor:irrationals} 与稠密性合在一起，给出一幅与直觉不符的图景：
+  \(\Q\) 在 \(\R\) 中处处稠密，却只占「可数多个」位置。
+  这个反差在第 7 章讨论 Riemann 可积性时会再次出现，
+  届时「可数」将被更细的\term{零测集}{null set}概念取代。
+\end{remark}
+
+\section{本章结论在更一般框架下的地位}
+\label{sec:outlook}
+
+把本章出现的各条性质按其所依赖的结构整理如下。表中「可推广至」一栏指明
+该性质在后续哪一类空间上仍然有意义。
+
+\begin{table}[htbp]
+  \centering
+  \caption{实数系各条性质所依赖的结构。只依赖距离的性质可推广至任意度量空间，
+    依赖序的性质则不能——一般度量空间中没有序。}
+  \label{tab:structure-dependence}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    性质 & 依赖的结构 & 可推广至 \\
+    \midrule
+    上确界性质、下确界性质 & 序           & 全序集（\cref{thm:order-complete-equiv}） \\
+    戴德金分割性质         & 序           & 全序集 \\
+    单调有界定理           & 序           & 全序集上的单调网 \\
+    阿基米德性             & 序 + 域运算  & 有序域 \\
+    三角不等式             & 距离         & 度量空间（第 2 章） \\
+    Cauchy 完备性          & 距离         & 度量空间；赋范空间 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\Cref{tab:structure-dependence} 是本章的总结，也是全书的一条主线：
+每证明一个定理，都应查明它用到了哪些结构。所用结构越少，可推广的范围越广。
+第 2 章将把表中最后两行抽象出来，
+第 4 章则会说明，在失去序之后，接替确界原理承担主要工作的是紧性。
 
 \section*{习题}
 \addcontentsline{toc}{section}{习题}
 
-\begin{exercise}
-  \label{exr:inf-def}
-  仿照 \cref{def:supremum} 写出下界与下确界 \(\inf S\) 的定义，
-  并给出与上确界第二条刻画相对应的 \(\varepsilon\) 形式。
-  \answerspace[3cm]
-  \begin{solution}
-    设 \(S \subseteq \R\) 非空。若存在 \(m \in \R\) 使对一切 \(x \in S\)
-    有 \(x \ge m\)，则称 \(m\) 为 \(S\) 的下界。\(S\) 的下界之中的最大者
-    \(\alpha\) 称为 \(S\) 的下确界，记 \(\alpha = \inf S\)。
+以下习题分三档。标「例行」者检验定义，标「结构」者要求指出所用到的结构，
+标「延伸」者指向后续章节。
 
-    \(\varepsilon\) 形式：\(\alpha = \inf S\) 当且仅当
-    （i）对一切 \(x \in S\) 有 \(x \ge \alpha\)；
-    （ii）对任意 \(\varepsilon > 0\)，存在 \(x_{0} \in S\) 使
-    \(x_{0} < \alpha + \varepsilon\)。
+\begin{exercise}[例行]
+  \label{exr:inf-def}
+  仿照\cref{def:supremum} 之后关于 \(\varepsilon\) 刻画的注，写出 \(\alpha = \inf S\) 的 \(\varepsilon\) 形式刻画。
+  \answerspace[2.5cm]
+  \begin{solution}
+    \(\alpha = \inf S\) 当且仅当：（i）对一切 \(x \in S\) 有 \(x \ge \alpha\)；
+    （ii）对任意 \(\varepsilon > 0\)，存在 \(x_{0} \in S\) 使 \(x_{0} < \alpha + \varepsilon\)。
   \end{solution}
 \end{exercise}
 
-\begin{exercise}
+\begin{exercise}[例行]
   \label{exr:sup-sum}
   设 \(A, B \subseteq \R\) 非空且均有上界，令
-  \(A + B = \setst{a + b}{a \in A,\ b \in B}\)。
-  证明：\(\sup(A + B) = \sup A + \sup B\)。
-  \answerspace[4.5cm]
+  \(A + B = \setst{a + b}{a \in A,\ b \in B}\)。证明 \(\sup(A + B) = \sup A + \sup B\)。
+  \answerspace[4cm]
   \begin{solution}
-    记 \(\alpha = \sup A\)，\(\beta = \sup B\)。
+    记 \(\alpha = \sup A\)，\(\beta = \sup B\)。任取 \(a \in A\)、\(b \in B\)，
+    有 \(a + b \le \alpha + \beta\)，故 \(\sup(A+B) \le \alpha + \beta\)。
 
-    先证 \(\le\)。任取 \(a \in A\)、\(b \in B\)，有
-    \(a + b \le \alpha + \beta\)，故 \(\alpha + \beta\) 是 \(A + B\) 的上界，
-    从而 \(\sup(A+B) \le \alpha + \beta\)。
-
-    再证 \(\ge\)。任取 \(\varepsilon > 0\)。存在 \(a_{0} \in A\) 使
+    反向：任取 \(\varepsilon > 0\)，存在 \(a_{0} \in A\) 使
     \(a_{0} > \alpha - \varepsilon/2\)，存在 \(b_{0} \in B\) 使
-    \(b_{0} > \beta - \varepsilon/2\)。于是
-    \(a_{0} + b_{0} > \alpha + \beta - \varepsilon\)，
-    故 \(\sup(A+B) > \alpha + \beta - \varepsilon\)。
-    由 \(\varepsilon\) 的任意性得 \(\sup(A+B) \ge \alpha + \beta\)。
+    \(b_{0} > \beta - \varepsilon/2\)，于是
+    \(a_{0} + b_{0} > \alpha + \beta - \varepsilon\)。
+    由 \(\varepsilon\) 任意性得 \(\sup(A+B) \ge \alpha + \beta\)。
+  \end{solution}
+\end{exercise}
 
-    两式合并即得结论。
+\begin{exercise}[例行]
+  \label{exr:sup-scalar}
+  设 \(S \subseteq \R\) 非空有上界，\(c > 0\)。求 \(\sup(cS)\) 与 \(\sup(-S)\)，
+  其中 \(cS = \setst{cx}{x \in S}\)，\(-S = \setst{-x}{x \in S}\)。
+  \answerspace[3cm]
+  \begin{solution}
+    \(\sup(cS) = c\sup S\)：\(c\sup S\) 显然是上界；若 \(M\) 是 \(cS\) 的上界，
+    则 \(M/c\) 是 \(S\) 的上界，故 \(M/c \ge \sup S\)，即 \(M \ge c\sup S\)。
+
+    \(\sup(-S) = -\inf S\)：\(x \le \beta\) 对一切 \(x \in S\) 成立当且仅当
+    \(-\beta \le -x\) 对一切 \(x \in S\) 成立，即 \(S\) 的上界与 \(-S\) 的下界
+    一一对应且反序，取最小者对应取最大者。注意本题用到了\cref{def:ordered-field}
+    的相容性条件，纯全序集上无此结论。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:cut-vs-sup}
+  \Cref{thm:order-complete-equiv} 的证明中，三步各自用到了全序的哪些性质？
+  特别地，指出何处用到了「任意两元素可比较」这一条。
+  \answerspace[3.5cm]
+  \begin{solution}
+    三步都只用到序关系的自反、反对称、传递以及上界与下界的定义。
+    可比较性用在「\(A\) 的每个元素都是 \(B\) 的上界」一类断言中：
+    要断定 \(a \le b\) 对一切 \(a \in A\)、\(b \in B\) 成立，
+    在偏序集中未必能做到。事实上\cref{thm:order-complete-equiv}
+    在偏序集上一般不成立，(i) 与 (iii) 的等价性会失效。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:archimedean-fails}
+  在\cref{ex:non-archimedean} 的有序域 \(\R(t)\) 中，考察元素 \(1/t\)。
+  证明 \(0 < 1/t < 1/n\) 对一切 \(n \in \N\) 成立，并由此说明数列
+  \(\seq{1/n}\) 在 \(\R(t)\) 中不以 \(0\) 为极限。这与
+  \cref{thm:complete-implies-arch}(i) 有何关系？
+  \answerspace[4cm]
+  \begin{solution}
+    \(1/t > 0\) 因分子分母最高次系数同为正。\(1/n - 1/t = (t - n)/(nt)\)，
+    分子最高次系数为 \(1\)，分母为 \(n > 0\)，故该差为正，即 \(1/t < 1/n\)。
+
+    于是取 \(\varepsilon = 1/t > 0\)，对一切 \(n\) 都有 \(1/n > \varepsilon\)，
+    故 \(\seq{1/n}\) 不收敛于 \(0\)。这正说明
+    \cref{thm:complete-implies-arch}(i) 的结论依赖完备性：
+    在非阿基米德的有序域中它不成立，因而 \(\inf\setst{1/n}{n \in \N}\)
+    即便存在也不等于 \(0\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:bw}
+  证明 Bolzano--Weierstrass 定理：\(\R\) 中每个有界数列都有收敛子列。
+  指出证明中确界原理用在何处。
+  \answerspace[5cm]
+  \begin{solution}
+    设 \(\seq{a_{n}}\) 有界，取 \([\alpha_{0}, \beta_{0}]\) 含全部项。
+    反复二等分：两半之中至少有一半含 \(\seq{a_{n}}\) 的无穷多项，取之为
+    \([\alpha_{1}, \beta_{1}]\)，如此得闭区间套，长度为 \(2^{-k}(\beta_{0}-\alpha_{0})\)。
+    在第 \(k\) 个区间中取一项 \(a_{n_{k}}\) 且 \(n_{k} > n_{k-1}\)，得子列。
+
+    确界原理用在两处：一是断言 \(\seq{\alpha_{k}}\) 单调有界故有上确界
+    \(\alpha = \sup_{k}\alpha_{k}\)；二是断言区间长度趋于零，
+    这依赖\cref{thm:complete-implies-arch}(i)，而后者又由确界原理推出。
+    子列收敛于 \(\alpha\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:cauchy-bounded}
+  证明 Cauchy 列必有界。这个证明用到了序吗？
+  \answerspace[3.5cm]
+  \begin{solution}
+    取 \(\varepsilon = 1\)，存在 \(N\) 使 \(m, n \ge N\) 时 \(d(a_{m}, a_{n}) < 1\)。
+    于是对 \(n \ge N\) 有 \(d(a_{n}, a_{N}) < 1\)，全部项落在有限个数
+    \(d(a_{1},a_{N}), \dots, d(a_{N-1},a_{N}), 1\) 的最大值所界定的范围内。
+
+    证明只用到 \(d\) 的三条性质与有限集有最大元。注意所比较的是
+    \(d\) 的取值（它们本来就是实数），\emph{数列所在的空间上并未用到任何序}。
+    因此这个结论在任意度量空间中都成立（其中「有界」指含于某个球内），
+    第 2 章将原样重述它。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:nested}
+  证明闭区间套定理：若 \([a_{n}, b_{n}]\) 递减且 \(b_{n} - a_{n} \to 0\)，
+  则交集恰含一点。再说明：若去掉「闭」或去掉「有界」，结论如何失效，各给一反例。
+  \answerspace[5cm]
+  \begin{solution}
+    存在性：\(\seq{a_{n}}\) 单调递增有上界 \(b_{1}\)，令 \(c = \sup_{n} a_{n}\)，
+    则 \(a_{n} \le c \le b_{n}\) 对一切 \(n\) 成立。唯一性：若 \(c, c'\) 均在交集中，
+    则 \(\abs{c - c'} \le b_{n} - a_{n} \to 0\)，故 \(c = c'\)。
+
+    换成开区间：\((0, 1/n)\) 递减，交集为空。
+    换成无界闭集：\([n, +\infty)\) 递减，交集为空。
+    两个反例说明「闭」与「有界」缺一不可，这一对条件在第 4 章
+    将被统一为紧性。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:sup-not-metric}
+  举出一个集合与其上的度量，使得该集合上无法定义与度量相容的全序。
+  由此说明为什么 第 2 章 起不再谈确界。
+  \answerspace[4cm]
+  \begin{solution}
+    取平面 \(\R^{2}\) 及欧氏距离。设有全序 \(\preceq\) 与之相容
+    （意即序区间构成的族生成同一拓扑）。去掉一点后 \(\R^{2}\) 仍连通，
+    而全序集去掉一个非端点必分成两个非空的开集之并，矛盾。
+
+    注意结论不是「\(\R^{2}\) 上没有全序」——由良序定理它有全序——
+    而是\emph{没有与度量相容的全序}。距离则始终存在。
+    这正是\cref{sec:cauchy} 末尾所说的情形。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:construction}
+  阅读附录 A 中戴德金分割的构造，说明为什么按该构造得到的 \(\R\)
+  自动满足\cref{thm:order-complete-equiv} 的 (iii)，而验证域公理反倒麻烦。
+  \answerspace[4cm]
+  \begin{solution}
+    分割性质是构造方式本身的直接推论：一个分割就是一个实数，
+    分点按定义即属于新构造的集合。而域公理需要逐条验证分割的
+    加法与乘法定义良好，尤其是乘法要按符号分情形讨论，
+    以及乘法逆元的存在性。这正是构造法的代价：完备性变得平凡，
+    代数结构变得琐碎。康托尔的 Cauchy 列构造恰好相反，
+    域公理几乎自动成立，完备性则需要对角线论证。
   \end{solution}
 \end{exercise}
