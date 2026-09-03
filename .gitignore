@@ -2,9 +2,11 @@
 build/
 
 # dist/ 下的最终 PDF 需要随代码一并发布，故不忽略。
+# math/refs/ 下的参考书 PDF 与其 OCR 全文亦入库（见 math/refs/readme.md）。
 # 除此之外的 PDF 一律不入库。
 *.pdf
 !dist/*.pdf
+!math/refs/*.pdf
 
 # LaTeX 中间文件（正常情况下都在 build/ 里，此处兜底）
 *.aux
@@ -31,3 +33,4 @@ build/
 *.swp
 *~
 .DS_Store
+
