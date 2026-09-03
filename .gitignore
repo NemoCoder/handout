@@ -1,0 +1,33 @@
+# 编译中间文件（不入库）
+build/
+
+# dist/ 下的最终 PDF 需要随代码一并发布，故不忽略。
+# 除此之外的 PDF 一律不入库。
+*.pdf
+!dist/*.pdf
+
+# LaTeX 中间文件（正常情况下都在 build/ 里，此处兜底）
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store

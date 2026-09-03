@@ -1,0 +1,64 @@
+%%% ==========================================================================
+%%%  macros-econ.tex —— 经济学讲义专用宏
+%%%  仅收录跨章节反复使用的记号；一次性记号请就地定义在所在章内。
+%%%  记号约定见 docs/style-guide.md「数学记号」一节。
+%%% ==========================================================================
+
+%% ---- 概率与统计 ----
+\DeclareMathOperator*{\E}{\mathbb{E}}          % 期望
+\DeclareMathOperator*{\Var}{Var}               % 方差
+\DeclareMathOperator*{\Cov}{Cov}               % 协方差
+\DeclareMathOperator*{\Corr}{Corr}             % 相关系数
+\DeclareMathOperator*{\plim}{plim}             % 依概率极限
+\newcommand{\indep}{\perp\!\!\!\perp}          % 独立
+\newcommand{\iid}{\text{i.i.d.}}
+\newcommand{\Normal}{\mathcal{N}}
+
+%% ---- 最优化 ----
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\st}{s.t.}               % subject to
+
+%% ---- 常用集合 ----
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Rplus}{\mathbb{R}_{+}}
+\newcommand{\N}{\mathbb{N}}
+
+%% ---- 微观：效用、需求、价格 ----
+\newcommand{\util}{u}                          % 效用函数
+\newcommand{\Util}{U}                          % 间接效用 / 序数效用
+\newcommand{\bundle}[1]{\mathbf{#1}}           % 消费束（黑体向量）
+\newcommand{\price}{p}
+\newcommand{\income}{m}
+\newcommand{\MRS}{\mathrm{MRS}}                % 边际替代率
+\newcommand{\MRT}{\mathrm{MRT}}                % 边际转换率
+\newcommand{\MU}{\mathrm{MU}}                  % 边际效用
+\newcommand{\MC}{\mathrm{MC}}                  % 边际成本
+\newcommand{\MR}{\mathrm{MR}}                  % 边际收益
+\newcommand{\AC}{\mathrm{AC}}                  % 平均成本
+\newcommand{\TC}{\mathrm{TC}}                  % 总成本
+
+%% ---- 宏观 ----
+\newcommand{\GDP}{\mathrm{GDP}}
+\newcommand{\CPI}{\mathrm{CPI}}
+\newcommand{\sstate}[1]{#1^{\ast}}             % 稳态值 / 均衡值（\ss 已被 LaTeX 占用）
+
+%% ---- 弹性：\elast{Q}{P} 排作 \varepsilon_{Q,P} ----
+\newcommand{\elast}[2]{\varepsilon_{#1,#2}}
+
+%% ---- 偏导速记 ----
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdd}[2]{\frac{\partial^{2} #1}{\partial #2^{2}}}
+\newcommand{\dd}[2]{\frac{\mathrm{d} #1}{\mathrm{d} #2}}
+
+%% ---- 货币单位（siunitx 需显式声明，\text 保证用中文字体排出）----
+\DeclareSIUnit{\yuan}{\text{元}}
+\DeclareSIUnit{\wanyuan}{\text{万元}}
+\DeclareSIUnit{\yiyuan}{\text{亿元}}
+\DeclareSIUnit{\xiaoshi}{\text{小时}}
+\DeclareSIUnit{\gongshi}{\text{工时}}
+
+%% ---- 计量：估计量加帽、真值 ----
+\newcommand{\est}[1]{\widehat{#1}}
+\newcommand{\betahat}{\widehat{\beta}}
+\newcommand{\transpose}{^{\top}}

@@ -1,0 +1,182 @@
+%%% ==========================================================================
+%%%  第一章：稀缺性与选择
+%%%  本章同时用作模板样章，演示讲义可用的全部排版构件。
+%%%  正式撰写时请删去本段注释与「排版构件速查」一节。
+%%% ==========================================================================
+\chapter{稀缺性与选择}
+\label{ch:scarcity}
+
+\begin{keypoint}
+  \begin{itemize}
+    \item 稀缺性是经济学的出发点：资源有限而欲望无限，因而必须作出选择。
+    \item 选择的真实代价是机会成本，而非会计账面上的支出。
+    \item 生产可能性边界刻画了一个经济体在既定资源与技术下的产出上限，
+          其斜率即为两种产品之间的机会成本。
+  \end{itemize}
+\end{keypoint}
+
+\section{稀缺性}
+\label{sec:scarcity}
+
+经济学研究的是人们如何在资源有限的条件下作出选择。所谓\term{稀缺性}{scarcity}，
+指的是可支配资源相对于人们的欲望而言总是不足。稀缺性并不等同于贫穷：即便在物质
+最为丰裕的社会中，时间、注意力与自然环境依然稀缺。正因如此，任何社会都必须回答
+三个基本问题：生产什么、如何生产、为谁生产。
+
+\begin{definition}[稀缺性]
+  \label{def:scarcity}
+  若在既定价格下，某种资源的需求量超过其可得量，则称该资源是稀缺的。
+\end{definition}
+
+\begin{remark}
+  \Cref{def:scarcity} 把稀缺性定义为一种\emph{相对}关系，而非资源的绝对数量。
+  这一处理方式使得稀缺性成为一个可以随价格变化的概念，为后续引入市场机制留下接口。
+\end{remark}
+
+\section{机会成本}
+\label{sec:opportunity-cost}
+
+既然必须选择，选择就有代价。经济学用\term{机会成本}{opportunity cost}来度量这一代价。
+
+\begin{definition}[机会成本]
+  \label{def:opportunity-cost}
+  一项选择的机会成本，是指为作出该选择而放弃的诸多备选方案中，价值最高的那一项。
+\end{definition}
+
+机会成本与\term{会计成本}{accounting cost}的区别在于，前者计入了未发生实际支付的
+隐性代价。设某人辞去年薪 \qty{20}{\wanyuan} 的工作去创业，一年内店铺租金与原料支出共
+\qty{15}{\wanyuan}，营业收入 \qty{30}{\wanyuan}。则其会计利润为
+\begin{equation}
+  \label{eq:accounting-profit}
+  \pi_{\text{会计}} = 30 - 15 = \qty{15}{\wanyuan},
+\end{equation}
+而\term{经济利润}{economic profit}须再扣除放弃的工资：
+\begin{equation}
+  \label{eq:economic-profit}
+  \pi_{\text{经济}} = 30 - 15 - 20 = \qty{-5}{\wanyuan}.
+\end{equation}
+比较 \cref{eq:accounting-profit} 与 \cref{eq:economic-profit} 可见，一项在账面上
+盈利的活动，在经济意义上未必值得从事。
+
+\begin{example}[通勤方式的选择]
+  \label{ex:commute}
+  某人上班可以骑车（耗时 \qty{50}{\minute}，无货币支出）或打车（耗时 \qty{20}{\minute}，
+  车费 \qty{25}{\yuan}）。若其时间的价值为 \qty{60}{\yuan\per\xiaoshi}，问应当选择哪一种方式？
+  \begin{solution}
+    骑车的成本为放弃的 \qty{50}{\minute} 时间，折合
+    \(50/60 \times 60 = \qty{50}{\yuan}\)；打车的成本为车费加上 \qty{20}{\minute} 时间，
+    折合 \(25 + 20/60 \times 60 = \qty{45}{\yuan}\)。打车成本更低，应选择打车。
+
+    本题的要点在于：时间必须与货币一并计入成本。若时间价值降至
+    \qty{30}{\yuan\per\xiaoshi}，则骑车成本 \qty{25}{\yuan}、打车成本 \qty{35}{\yuan}，
+    结论随之反转。可见机会成本依赖于决策者的具体处境，并非客观给定。
+  \end{solution}
+\end{example}
+
+\section{生产可能性边界}
+\label{sec:ppf}
+
+把机会成本的思想推广到整个经济体，便得到\term{生产可能性边界}{production
+possibility frontier}。设一经济体只生产粮食与布匹两种产品，在既定的资源与技术
+条件下，所有可行产出组合构成的集合的外沿即为该边界。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=1.0]
+    \begin{axis}[
+      width=9cm, height=6.6cm,
+      axis lines=left,
+      xlabel={粮食产量 \(x\)}, ylabel={布匹产量 \(y\)},
+      xlabel style={at={(axis description cs:1,0)}, anchor=north east},
+      ylabel style={at={(axis description cs:0,1)}, anchor=south east, rotate=-90},
+      xmin=0, xmax=11, ymin=0, ymax=11,
+      xtick=\empty, ytick=\empty,
+      clip=false,
+    ]
+      \addplot[htRule, very thick, domain=0:10, samples=100]
+        {sqrt(100 - x^2)};
+      \node[htRule, anchor=west] at (axis cs:7.6,7.6) {生产可能性边界};
+      \addplot[only marks, mark=*, htAccent, mark size=2pt]
+        coordinates {(6,8) (4,4) (9,7)};
+      \node[htAccent, anchor=south west] at (axis cs:6,8)   {\(A\)};
+      \node[htGray,   anchor=north east] at (axis cs:4,4)   {\(B\)};
+      \node[htAccent, anchor=south west] at (axis cs:9,7)   {\(C\)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{生产可能性边界。点 \(A\) 有效率，点 \(B\) 存在资源闲置，
+           点 \(C\) 在现有条件下不可达。}
+  \label{fig:ppf}
+\end{figure}
+
+\Cref{fig:ppf} 中，边界上的点（如 \(A\)）是\term{生产有效}{productive
+efficiency}的：不减少一种产品的产量就无法增加另一种。边界内部的点（如 \(B\)）
+意味着资源未被充分利用。边界的斜率绝对值即为多生产一单位粮食所需放弃的布匹数量，
+也就是粮食的机会成本。
+
+\begin{proposition}[机会成本递增]
+  \label{prop:increasing-cost}
+  若各种生产要素在两个部门之间的适用程度不同，则生产可能性边界向外凸，
+  即粮食产量越高，多生产一单位粮食的机会成本越大。
+\end{proposition}
+
+\begin{proof}
+  设边界由 \(y = f(x)\) 给出，机会成本为 \(-f'(x)\)。
+  资源适用程度的差异意味着：随着粮食产量上升，被调入粮食部门的要素越来越不适宜
+  于务农，故每增产一单位粮食须调入越来越多的要素，相应放弃的布匹越来越多，
+  即 \(-f'(x)\) 随 \(x\) 递增，亦即 \(f''(x) < 0\)，边界向外凸。
+\end{proof}
+
+\begin{table}[htbp]
+  \centering
+  \caption{三种产出组合的比较}
+  \label{tab:ppf-points}
+  \begin{tabular}{lccl}
+    \toprule
+    组合 & 粮食 \(x\) & 布匹 \(y\) & 评价 \\
+    \midrule
+    \(A\) & 6 & 8 & 生产有效，位于边界之上 \\
+    \(B\) & 4 & 4 & 资源闲置，位于边界之内 \\
+    \(C\) & 9 & 7 & 现有资源与技术下不可达 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+关于生产可能性边界的更完整讨论，可参见 \textcite{mankiw2020} 第二章；
+其在国际贸易中的应用见 \textcite{krugman2018}。
+
+\section*{习题}
+\addcontentsline{toc}{section}{习题}
+
+\begin{exercise}
+  \label{exr:free-lunch}
+  「天下没有免费的午餐」这一说法，用本章的哪一个概念可以最准确地表述？
+  请用不超过一百字加以说明。
+  \answerspace[2.5cm]
+  \begin{solution}
+    是机会成本（\cref{def:opportunity-cost}）。即便某项物品无须付费取得，
+    获取它仍要占用时间、注意力等稀缺资源，这些资源本可用于其他用途，
+    其中价值最高者即为该物品的真实代价。故「免费」只是货币支出为零，
+    而非成本为零。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}
+  \label{exr:ppf-shift}
+  下列事件分别会使 \cref{fig:ppf} 中的生产可能性边界如何移动？
+  \begin{enumerate}[label=(\arabic*)]
+    \item 一项只提高农业产量的技术革新；
+    \item 一场使部分劳动力永久丧失劳动能力的疫病；
+    \item 失业率由 \qty{8}{\percent} 降至 \qty{4}{\percent}。
+  \end{enumerate}
+  \answerspace[4cm]
+  \begin{solution}
+    （1）边界沿横轴方向外移，纵轴截距不变：粮食产量上限提高，
+    而全部资源用于布匹时的产量不变。
+
+    （2）边界整体内移：可用要素减少，两种产品的产量上限同时下降。
+
+    （3）边界不移动。失业下降意味着经济体由边界内部的点（如 \(B\)）
+    向边界靠拢，是资源利用效率的改善，而非生产能力本身的变化。
+    这一区分是本题的考点。
+  \end{solution}
+\end{exercise}

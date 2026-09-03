@@ -1,0 +1,50 @@
+%%% ==========================================================================
+%%%  macros-math.tex —— 数学讲义专用宏
+%%%  仅收录跨章节反复使用的记号；一次性记号请就地定义在所在章内。
+%%% ==========================================================================
+
+%% ---- 数系与集合 ----
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\setst}[2]{\left\{\,#1 \;\middle|\; #2\,\right\}}   % {x | P(x)}
+
+%% ---- 常用算子 ----
+\DeclareMathOperator{\im}{Im}                  % 像
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator*{\esssup}{ess\,sup}
+\renewcommand{\ker}{\operatorname{Ker}}
+
+%% ---- 括号与范数（mathtools 可伸缩版本）----
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\inner}{\langle}{\rangle}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%% ---- 微积分 ----
+\newcommand{\dif}{\mathop{}\!\mathrm{d}}       % 正体微分号（国标要求）
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dd}[2]{\frac{\dif #1}{\dif #2}}
+\newcommand{\eval}[1]{\left.#1\right|}
+\newcommand{\eu}{\mathrm{e}}                   % 自然常数（国标正体）
+\newcommand{\iu}{\mathrm{i}}                   % 虚数单位（国标正体）
+
+%% ---- 向量与矩阵 ----
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\mat}[1]{\boldsymbol{#1}}
+\newcommand{\transpose}{^{\mathsf{T}}}
+\newcommand{\inv}{^{-1}}
+
+%% ---- 收敛与映射箭头 ----
+\newcommand{\mapsdef}{\colon}                  % f\mapsdef X \to Y
+\newcommand{\converge}[1]{\xrightarrow{\;#1\;}}
