@@ -1,0 +1,1244 @@
+%%% ==========================================================================
+%%%  第二章：度量空间
+%%%  设计说明与逐条依据见 math/notes/ch02-metric-spaces.md。
+%%%  面向零基础新生，顺序具体先行、抽象后置，同第一章。
+%%%  本章的核心是 2.6 节：完备性依赖度量本身，而非它诱导的拓扑。
+%%%  术语取定：聚点用去心邻域（依 Garling），闭包点不去心。Pugh 的 limit
+%%%  相当于我们的闭包点，2.5 节的常见错误框写明这一分歧。
+%%%  TODO：第 3、4、5、7、8 章与卷二建立后，把「第 N 章」改回 \cref{ch:...}。
+%%% ==========================================================================
+\chapter{度量空间}
+\label{ch:metric}
+
+\begin{keypoint}[本章要点]
+  \begin{itemize}
+    \item 第 1 章的结论是：能离开 \(\R\) 的只有依赖距离的那些性质。本章把距离的
+          三条性质取作公理，看看这样得到的框架能走多远。
+    \item 同一个集合上可以有多个度量。它们可能给出相同的开集却不同的完备性，
+          因此\emph{完备性依赖度量本身，不依赖它诱导的拓扑}。
+    \item 完备化把任何度量空间补成完备的，其手法与第 1 章从 \(\Q\) 造 \(\R\)
+          完全相同。第 1 章的构造是本章一般构造的特例。
+    \item 压缩映射原理是本章的终点，也是全书使用最频繁的存在性工具。
+          它在卷二给出微分方程解的存在唯一性与反函数定理。
+  \end{itemize}
+\end{keypoint}
+
+\section{为什么要有度量空间}
+\label{sec:why-metric}
+
+第 1 章末尾留下了一个判断：实数系的各条性质中，依赖序的搬不出 \(\R\)，
+依赖距离的搬得出去。本章兑现这个判断。
+
+先看一个具体的问题。设 \(C[0,1]\) 为闭区间 \([0,1]\) 上全体连续实值函数之集，
+考虑其中的一列函数
+\begin{equation}
+  \label{eq:fn-example}
+  f_{n}(x) = x^{n}, \qquad n = 1, 2, 3, \dots
+\end{equation}
+这列函数是否「收敛」？这个问题在提出时并没有意义，因为我们还没有说
+两个函数之间的远近如何度量。而一旦约定了度量，答案就随之确定，并且
+\emph{不同的约定给出不同的答案}。
+
+若规定两个函数的距离为它们在各点之差的最大值，
+\begin{equation}
+  \label{eq:uniform-metric-intro}
+  d_{\infty}(f, g) = \max_{0 \le x \le 1} \abs{f(x) - g(x)},
+\end{equation}
+则 \(\seq{f_{n}}\) 不收敛：无论 \(n\) 多大，\(f_{n}\) 在靠近 \(1\) 处仍从 \(0\)
+急速升到 \(1\)，与任何连续函数的最大偏差都不小于某个正数。
+若改为规定距离是两函数之差所围的面积，
+\begin{equation}
+  \label{eq:l1-metric-intro}
+  d_{1}(f, g) = \int_{0}^{1} \abs{f(x) - g(x)} \dif x,
+\end{equation}
+则 \(d_{1}(f_{n}, 0) = 1/(n+1) \to 0\)，\(\seq{f_{n}}\) 收敛到零函数。
+
+同一列函数，在一种距离下发散、在另一种距离下收敛。这说明距离不是集合自带的东西，
+而是我们附加上去的结构，且这个结构的选择直接决定了分析学的结论。
+把「距离」这一概念本身作为研究对象，正是本章的出发点。
+
+注意在整个讨论中，我们从未问过「\(f_{n}\) 与 \(g\) 谁大谁小」。
+在 \(C[0,1]\) 上这个问题没有意义：\(x\) 与 \(x^{2}\) 在 \([0,1]\) 上互有高低。
+序在这里不存在，而距离存在。这正是第 1 章所预告的情形。
+
+本章做四件事：
+
+\begin{enumerate}[label=(\arabic*)]
+  \item 把距离的三条性质取作公理，建立度量空间，并一次性建足例子库
+        （\cref{sec:metric-def}）。此后各章的抽象概念都要回到这批例子上检验。
+  \item 把 \(\R\) 上的收敛、开集、闭集逐条搬过来，看哪些搬得动
+        （\cref{sec:convergence}、\cref{sec:open-closed}）。
+  \item 处理完备性，并说明它比开集更「细」：同一个拓扑可以由完备的度量
+        诱导，也可以由不完备的度量诱导（\cref{sec:completeness}）。
+  \item 证明压缩映射原理（\cref{sec:contraction}），本书使用最频繁的存在性工具。
+\end{enumerate}
+
+\begin{table}[htbp]
+  \centering
+  \caption{本章各条结论在后续章节中的用途。度量空间是全书其余部分的工作场所，
+    因此本章的每一条几乎都会被反复调用。}
+  \label{tab:ch2-where-used}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    本章结论 & 首次使用 & 用途 \\
+    \midrule
+    开集与闭集     & 第 3 章 & 连续性的开集刻画 \\
+    子空间度量     & 第 4 章 & 紧子集；第 5 章连通子集 \\
+    \(C(X)\) 与一致度量 & 第 8 章 & 函数列一致收敛；Stone--Weierstrass \\
+    完备性         & 第 8 章 & \(C(X)\) 完备；卷五 \(L^{p}\) 空间 \\
+    完备化         & 卷五     & \(L^{p}\) 空间的构造 \\
+    压缩映射原理   & 卷二     & 微分方程解的存在唯一性；反函数定理 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{remark}[读法建议]
+  \cref{sec:metric-def} 的例子库必须逐个算过，后面每遇到一个新概念都要回来
+  在这些例子上验证一遍，这是本章唯一有效的学法。
+  \cref{sec:norm} 关于范数与内积的部分初读可略，它在卷二才真正用上；
+  \cref{sec:completion} 完备化的构造细节可以先跳过结论以后再补。
+  \cref{sec:contraction} 的压缩映射原理必须掌握，其证明只有半页，值得背下来。
+\end{remark}
+
+\section{度量与例子库}
+\label{sec:metric-def}
+
+\begin{concept}{度量}
+  \cwhy{第 1 章证明了确界原理依赖序而 Cauchy 完备性只依赖距离。
+    要把后者用到 \(C[0,1]\) 这类没有序的集合上，先得说清什么叫距离。}
+  \crel{它是绝对值 \(\abs{x-y}\) 的抽象。加上线性结构就得到范数
+    （\cref{sec:norm}），再加上角度就得到内积。度量是这一串结构里最弱的一层，
+    因而适用面最广。}
+  \cwhere{分析学与拓扑学的公共底座。泛函分析、微分几何、概率论中的
+    Wasserstein 距离、数据科学中的相似性度量，都建立在这三条公理上。}
+  \cdo{凡只用到距离的论证，一次证完即在 \(\R\)、\(\R^{n}\)、\(C[a,b]\)、
+    \(\ell^{1}\) 上同时成立。\cref{thm:contraction} 的压缩映射原理是最好的例子。}
+\end{concept}
+
+\begin{definition}[度量空间]
+  \label{def:metric-space}
+  设 \(X\) 为非空集合，\(d \mapsdef X \times X \to \R\) 满足：
+  \begin{enumerate}[label=(M\arabic*)]
+    \item \(d(x,y) = 0\) 当且仅当 \(x = y\)；
+    \item \(d(x,y) = d(y,x)\)（对称性）；
+    \item \(d(x,z) \le d(x,y) + d(y,z)\)（三角不等式）。
+  \end{enumerate}
+  则称 \(d\) 为 \(X\) 上的一个\term{度量}{metric}，称 \((X,d)\) 为一个
+  \term{度量空间}{metric space}。
+\end{definition}
+
+\begin{remark}
+  \label{rem:nonneg-redundant}
+  定义中没有要求 \(d \ge 0\)，因为这一条可以推出来：由 (M3) 与 (M2)，
+  \begin{equation}
+    \label{eq:nonneg}
+    0 = d(x,x) \le d(x,y) + d(y,x) = 2d(x,y),
+  \end{equation}
+  故 \(d(x,y) \ge 0\)。有些书（如 Pugh）把非负性写进公理，
+  有些书（如 Garling）把 \(d\) 的陪域直接取作 \(\R_{+}\)，三种写法等价。
+  这是读者第一次遇到公理组的冗余：一组公理未必是彼此独立的，
+  写法上的差别不影响所定义的对象。
+\end{remark}
+
+三条公理的直观内容是：不同的两点相距为正，距离与方向无关，绕道不会更近。
+下面把例子一次列足。此后每引入一个新概念，都应回到这批例子上逐一验证；
+这是本章唯一有效的学法。
+
+\begin{example}[实直线与复平面]
+  \label{ex:metric-R}
+  \(\R\) 上取 \(d(x,y) = \abs{x-y}\)，\(\C\) 上取 \(d(z,w) = \abs{z-w}\)。
+  三条公理已在第 1 章验证。不特别声明时，\(\R\) 与 \(\C\) 一律指这个度量，
+  称为\term{通常度量}{usual metric}。
+\end{example}
+
+\begin{example}[\(\R^{n}\) 上的三个度量]
+  \label{ex:metric-Rn}
+  在 \(\R^{n}\) 上，对 \(x = (x_{1},\dots,x_{n})\) 与 \(y = (y_{1},\dots,y_{n})\) 定义
+  \begin{align}
+    d_{2}(x,y) &= \Bigl(\textstyle\sum_{j=1}^{n}(x_{j}-y_{j})^{2}\Bigr)^{1/2}
+      && \text{（欧氏度量）}, \label{eq:d2}\\
+    d_{1}(x,y) &= \textstyle\sum_{j=1}^{n}\abs{x_{j}-y_{j}}
+      && \text{（出租车度量）}, \label{eq:d1}\\
+    d_{\infty}(x,y) &= \max_{1 \le j \le n}\abs{x_{j}-y_{j}}
+      && \text{（最大值度量）}. \label{eq:dinf}
+  \end{align}
+  三者都是度量。\(d_{1}\) 与 \(d_{\infty}\) 的三角不等式逐项即得；
+  \(d_{2}\) 需要 Cauchy 不等式（\cref{prop:cauchy-ineq}）。
+  \(d_{1}\) 之所以叫出租车度量，是因为它量的是沿坐标方向行走的路程，
+  正如街道呈方格网的城市里出租车所走的距离。
+\end{example}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=0.9]
+    \foreach \dx/\name/\shape in {0/{\(d_{1}\)}/1, 4.2/{\(d_{2}\)}/2, 8.4/{\(d_{\infty}\)}/3} {
+      \begin{scope}[xshift=\dx cm]
+        \draw[->, htGray] (-1.5,0) -- (1.5,0);
+        \draw[->, htGray] (0,-1.5) -- (0,1.5);
+        \ifnum\shape=1 \draw[htRule, very thick] (1,0) -- (0,1) -- (-1,0) -- (0,-1) -- cycle; \fi
+        \ifnum\shape=2 \draw[htRule, very thick] (0,0) circle (1); \fi
+        \ifnum\shape=3 \draw[htRule, very thick] (-1,-1) rectangle (1,1); \fi
+        \node[below] at (0,-1.8) {\small \name\ 的单位球};
+      \end{scope}
+    }
+  \end{tikzpicture}
+  \caption{\(\R^{2}\) 上三个度量的单位球 \(\setst{x}{d(x,0) \le 1}\)。
+    同一个集合配上不同的度量，「离原点不超过 \(1\) 的点」构成的形状完全不同。
+    这三个度量将在\cref{exr:equiv-metrics}中被证明是等价的，
+    即它们给出相同的开集与相同的收敛数列。}
+  \label{fig:unit-balls}
+\end{figure}
+
+\begin{example}[离散度量]
+  \label{ex:metric-discrete}
+  设 \(X\) 为任一非空集合，定义
+  \begin{equation}
+    \label{eq:discrete}
+    d(x,y) = \begin{cases} 0, & x = y,\\ 1, & x \neq y. \end{cases}
+  \end{equation}
+  三条公理直接验证即得，其中三角不等式只需注意左端至多为 \(1\)、
+  右端在 \(x \neq z\) 时至少为 \(1\)。称之为\term{离散度量}{discrete metric}。
+
+  这个度量难以画出，但作为反例的来源极有价值：它使任何集合都成为度量空间，
+  而其中的收敛、开集、紧性都退化到平凡情形（见\cref{exr:discrete}）。
+  三点集上的离散度量可以想成单位正三角形的三个顶点，两两距离为 \(1\)。
+\end{example}
+
+\begin{example}[连续函数空间与一致度量]
+  \label{ex:metric-CX}
+  设 \(C[a,b]\) 为 \([a,b]\) 上全体连续实值函数之集。定义
+  \begin{equation}
+    \label{eq:uniform-metric}
+    d_{\infty}(f,g) = \max_{a \le x \le b} \abs{f(x) - g(x)}.
+  \end{equation}
+  最大值确实存在，因为 \(\abs{f-g}\) 连续而 \([a,b]\) 是闭区间
+  （这一点将在第 4 章由紧性给出，此处暂且承认）。
+  三条公理逐点验证即得：(M1) 因 \(\max\abs{f-g}=0\) 当且仅当 \(f\) 与 \(g\)
+  处处相等；(M3) 由 \(\abs{f(x)-h(x)} \le \abs{f(x)-g(x)}+\abs{g(x)-h(x)}\)
+  两端取最大值得到。称 \(d_{\infty}\) 为\term{一致度量}{uniform metric}。
+
+  这是本讲义中最重要的函数空间例子。第 8 章将证明 \((C[a,b], d_{\infty})\) 完备，
+  这个事实是全部逼近理论的基础。
+\end{example}
+
+\begin{example}[序列空间]
+  \label{ex:metric-sequences}
+  设 \(\ell^{\infty}\) 为全体有界实数列 \(x = \seq{x_{j}}\) 之集，定义
+  \begin{equation}
+    \label{eq:linf}
+    d_{\infty}(x,y) = \sup_{j \ge 1} \abs{x_{j}-y_{j}} .
+  \end{equation}
+  上确界有限，因为两个有界数列之差有界；三条公理逐项验证即得，
+  与\cref{ex:metric-CX} 的做法相同，只把「每个 \(x \in [a,b]\)」换成「每个下标 \(j\)」。
+
+  设 \(\ell^{1}\) 为满足 \(\sum_{j}\abs{x_{j}} < \infty\) 的数列之集，定义
+  \(d_{1}(x,y) = \sum_{j}\abs{x_{j}-y_{j}}\)。级数收敛由
+  \(\abs{x_{j}-y_{j}} \le \abs{x_{j}}+\abs{y_{j}}\) 保证。
+
+  这两个空间是\cref{ex:metric-Rn} 中 \(d_{\infty}\) 与 \(d_{1}\) 的无穷维版本。
+  它们在卷五讨论 \(L^{p}\) 空间时会作为最简单的范例反复出现。
+\end{example}
+
+\begin{example}[子空间度量]
+  \label{ex:metric-subspace}
+  设 \((X,d)\) 为度量空间，\(A \subseteq X\) 非空。把 \(d\) 限制在 \(A \times A\) 上，
+  仍满足三条公理，于是 \((A, d|_{A \times A})\) 也是度量空间，称为 \(X\) 的
+  \term{度量子空间}{metric subspace}。
+
+  这个构造看似平凡，却是后续各章反复使用的手法：谈「\([0,1]\) 是紧的」
+  或「\(\Q\) 不完备」时，用的都是 \(\R\) 的子空间度量。
+\end{example}
+
+\begin{pitfall}
+  \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
+    \item \textbf{以为度量是集合自带的。} 度量是附加的结构。
+          \cref{eq:fn-example} 的函数列在 \(d_{\infty}\) 下发散、在 \(d_{1}\) 下收敛，
+          说明「收敛」这个词离开度量就没有意义。写 \((X,d)\) 而非 \(X\)
+          正是为了提醒这一点。
+    \item \textbf{验证三角不等式时只验证一种情形。} 离散度量的三角不等式
+          须按 \(x,y,z\) 是否两两相异分情形讨论，漏掉任何一种都不算证完。
+    \item \textbf{把 \(\max\) 写成 \(\sup\) 而不加说明。} \cref{eq:uniform-metric}
+          中的最大值之所以能写成 \(\max\)，依赖 \([a,b]\) 上连续函数取到最值；
+          在一般集合上只能写 \(\sup\)，且须另证其有限。
+  \end{enumerate}
+\end{pitfall}
+
+\section{范数与内积：结构的阶梯}
+\label{sec:norm}
+
+\cref{sec:metric-def} 的例子里，\(\R^{n}\)、\(C[a,b]\)、\(\ell^{1}\) 都不只是集合，
+它们还能做加法与数乘。这些额外结构使得距离可以由一个更简单的量导出。
+
+\begin{definition}[范数]
+  \label{def:norm}
+  设 \(E\) 为实（或复）向量空间，\(\norm{\cdot} \mapsdef E \to \R\) 满足：
+  \begin{enumerate}[label=(N\arabic*)]
+    \item \(\norm{x} = 0\) 当且仅当 \(x = 0\)；
+    \item \(\norm{\lambda x} = \abs{\lambda}\,\norm{x}\) 对一切标量 \(\lambda\)（齐次性）；
+    \item \(\norm{x+y} \le \norm{x} + \norm{y}\)（三角不等式）。
+  \end{enumerate}
+  则称 \(\norm{\cdot}\) 为 \(E\) 上的一个\term{范数}{norm}，
+  \((E, \norm{\cdot})\) 为\term{赋范空间}{normed space}。
+\end{definition}
+
+\begin{proposition}
+  \label{prop:norm-gives-metric}
+  设 \((E,\norm{\cdot})\) 为赋范空间，令 \(d(x,y) = \norm{x-y}\)。
+  则 \(d\) 是 \(E\) 上的度量，且满足两条额外性质：
+  \begin{equation}
+    \label{eq:norm-metric-props}
+    d(x+z,\, y+z) = d(x,y) \quad\text{（平移不变）}, \qquad
+    d(\lambda x, \lambda y) = \abs{\lambda}\, d(x,y) \quad\text{（齐次）}.
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  (M1) 由 (N1) 得 \(\norm{x-y}=0\) 当且仅当 \(x=y\)。
+  (M2) 由 (N2) 取 \(\lambda=-1\) 得 \(\norm{y-x}=\norm{-(x-y)}=\norm{x-y}\)。
+  (M3) 由 (N3)，\(\norm{x-z} = \norm{(x-y)+(y-z)} \le \norm{x-y}+\norm{y-z}\)。
+  两条额外性质分别由 \((x+z)-(y+z) = x-y\) 与 (N2) 直接得到。
+\end{proof}
+
+\begin{remark}
+  \label{rem:not-every-metric-from-norm}
+  反过来不成立：\emph{并非每个度量都来自范数}。
+  由\cref{eq:norm-metric-props}，来自范数的度量必平移不变且齐次，
+  而离散度量（\cref{ex:metric-discrete}）在 \(X=\R\) 上不齐次：
+  \(d(2\cdot 1, 2\cdot 0) = 1\) 而 \(2\,d(1,0) = 2\)。
+  故离散度量不来自任何范数。
+
+  这是本章第一次出现「结构的阶梯」：度量最弱，范数次之，内积最强。
+  每上一级，可用的工具更多，适用的空间更少。写定理时应当停在够用的那一级。
+\end{remark}
+
+\begin{definition}[内积]
+  \label{def:inner-product}
+  设 \(E\) 为实向量空间，\(\inner{\cdot,\cdot} \mapsdef E \times E \to \R\)
+  双线性、对称，且 \(\inner{x,x} > 0\) 对一切 \(x \neq 0\) 成立，
+  则称之为 \(E\) 上的一个\term{内积}{inner product}。
+\end{definition}
+
+\begin{proposition}[Cauchy--Schwarz 不等式]
+  \label{prop:cauchy-ineq}
+  设 \(\inner{\cdot,\cdot}\) 为 \(E\) 上的内积，则对一切 \(x, y \in E\)，
+  \begin{equation}
+    \label{eq:cauchy-schwarz}
+    \abs{\inner{x,y}} \le \inner{x,x}^{1/2}\,\inner{y,y}^{1/2},
+  \end{equation}
+  等号成立当且仅当 \(x\) 与 \(y\) 线性相关。
+\end{proposition}
+
+\begin{strategy}
+  待证的是一个不等式，而手上只有「\(\inner{z,z} \ge 0\) 对一切 \(z\) 成立」这一条。
+  于是造一个含参数的向量 \(z = x - t y\)，把 \(\inner{z,z} \ge 0\) 展开成
+  关于 \(t\) 的二次多项式，再用判别式非正。这个手法在分析学中反复出现。
+\end{strategy}
+
+\begin{proof}
+  若 \(y = 0\) 则两端皆为零。设 \(y \neq 0\)，对一切 \(t \in \R\)，
+  \begin{equation}
+    \label{eq:cs-quadratic}
+    0 \le \inner{x-ty,\, x-ty} = \inner{x,x} - 2t\inner{x,y} + t^{2}\inner{y,y}.
+  \end{equation}
+  右端是关于 \(t\) 的二次多项式，首项系数 \(\inner{y,y} > 0\)，
+  且恒非负，故判别式非正：
+  \(4\inner{x,y}^{2} - 4\inner{x,x}\inner{y,y} \le 0\)，即\cref{eq:cauchy-schwarz}。
+
+  等号成立当且仅当判别式为零，即\cref{eq:cs-quadratic} 有实根 \(t_{0}\)，
+  此时 \(\inner{x-t_{0}y,\,x-t_{0}y\,} = 0\)，故 \(x = t_{0}y\)。
+\end{proof}
+
+\begin{corollary}
+  \label{cor:inner-gives-norm}
+  令 \(\norm{x} = \inner{x,x}^{1/2}\)，则 \(\norm{\cdot}\) 是 \(E\) 上的范数。
+  特别地，\cref{eq:d2} 的欧氏度量 \(d_{2}\) 确实是 \(\R^{n}\) 上的度量。
+\end{corollary}
+
+\begin{proof}
+  (N1) 与 (N2) 直接验证。(N3)：由\cref{eq:cauchy-schwarz}，
+  \begin{equation}
+    \label{eq:triangle-from-cs}
+    \norm{x+y}^{2} = \norm{x}^{2} + 2\inner{x,y} + \norm{y}^{2}
+      \le \norm{x}^{2} + 2\norm{x}\norm{y} + \norm{y}^{2} = (\norm{x}+\norm{y})^{2}.
+  \end{equation}
+  两端开方即得。\(\R^{n}\) 上取 \(\inner{x,y} = \sum_{j} x_{j}y_{j}\)，
+  则 \(\norm{x} = d_{2}(x,0)\)，故 \(d_{2}\) 由范数导出，从而是度量。
+\end{proof}
+
+\section{收敛}
+\label{sec:convergence}
+
+有了距离就可以谈收敛。定义与 \(\R\) 上的一字不差，只把 \(\abs{a_{n}-l}\)
+换成 \(d(a_{n},l)\)。
+
+\begin{definition}[收敛与开球]
+  \label{def:convergence}
+  设 \((X,d)\) 为度量空间。对 \(x \in X\) 与 \(\varepsilon > 0\)，称
+  \begin{equation}
+    \label{eq:open-ball}
+    B(x,\varepsilon) = \setst{y \in X}{d(y,x) < \varepsilon}
+  \end{equation}
+  为以 \(x\) 为心、\(\varepsilon\) 为半径的\term{开球}{open ball}。
+
+  数列 \(\seq{a_{n}}\) 称为\term{收敛}{convergent}于 \(l \in X\)，记作
+  \(a_{n} \to l\)，若对任意 \(\varepsilon > 0\) 存在 \(N\)，使 \(n \ge N\) 时
+  \(d(a_{n}, l) < \varepsilon\)，亦即 \(a_{n} \in B(l,\varepsilon)\)。
+\end{definition}
+
+等价地，\(a_{n} \to l\) 当且仅当实数列 \(d(a_{n},l) \to 0\)。
+于是度量空间中的收敛问题总可以化归为 \(\R\) 中的收敛问题，
+这是本章反复使用的手法。
+
+\begin{proposition}
+  \label{prop:d-continuous}
+  若 \(a_{n} \to l\) 且 \(b_{n} \to m\)，则 \(d(a_{n},b_{n}) \to d(l,m)\)。
+\end{proposition}
+
+\begin{proof}
+  由三角不等式两次得四点不等式
+  \begin{equation}
+    \label{eq:quadrilateral}
+    \abs{d(a,b) - d(x,y)} \le d(a,x) + d(b,y)
+  \end{equation}
+  （证明见\cref{exr:quadrilateral}）。取 \(a=a_{n}\)、\(b=b_{n}\)、\(x=l\)、\(y=m\) 得
+  \(\abs{d(a_{n},b_{n}) - d(l,m)} \le d(a_{n},l) + d(b_{n},m) \to 0\)。
+\end{proof}
+
+\begin{corollary}[极限唯一]
+  \label{cor:limit-unique}
+  若 \(a_{n} \to l\) 且 \(a_{n} \to m\)，则 \(l = m\)。
+\end{corollary}
+
+\begin{proof}
+  在\cref{prop:d-continuous} 中取 \(b_{n} = a_{n}\)（此时 \(a_{n} \to l\) 且
+  \(a_{n} \to m\) 同时成立）。该命题断言数列 \(d(a_{n},a_{n})\) 收敛于 \(d(l,m)\)。
+  但这个数列恒等于 \(0\)，故其极限为 \(0\)，即 \(d(l,m)=0\)，从而 \(l=m\)。
+\end{proof}
+
+\begin{remark}
+  \cref{cor:limit-unique} 的常见证法是反设 \(l \neq m\)，取
+  \(\varepsilon = d(l,m)/2\) 导出矛盾。上面的证法把唯一性归结为
+  \(d\) 自身的连续性（\cref{prop:d-continuous}），一举两得：
+  \(d\) 的连续性在后文另有用处。
+\end{remark}
+
+\begin{example}[度量不同，收敛不同]
+  \label{ex:convergence-differs}
+  回到\cref{eq:fn-example} 的 \(f_{n}(x) = x^{n}\)，视为 \(C[0,1]\) 中的数列。
+  \begin{worked}
+    在 \(d_{1}\)（\cref{eq:l1-metric-intro}）下，
+    \(d_{1}(f_{n}, 0) = \int_{0}^{1} x^{n} \dif x = \dfrac{1}{n+1} \to 0\)，
+    故 \(f_{n} \to 0\)。
+
+    在 \(d_{\infty}\)（\cref{eq:uniform-metric}）下，设 \(f_{n} \to g\)。
+    对每个固定的 \(x \in [0,1)\) 有 \(\abs{f_{n}(x)-g(x)} \le d_{\infty}(f_{n},g) \to 0\)，
+    故 \(g(x) = \lim x^{n} = 0\)；而 \(x=1\) 处 \(f_{n}(1)=1\) 给出 \(g(1)=1\)。
+    这样的 \(g\) 在 \(x=1\) 处不连续，不属于 \(C[0,1]\)，矛盾。
+    故 \(\seq{f_{n}}\) 在 \(d_{\infty}\) 下不收敛。
+
+    结论：同一列元素在同一个集合上，因度量不同而有不同的收敛性。
+  \end{worked}
+\end{example}
+
+\section{开集与闭集}
+\label{sec:open-closed}
+
+\begin{definition}[开集与闭集]
+  \label{def:open-closed}
+  设 \((X,d)\) 为度量空间，\(A \subseteq X\)。
+  \begin{itemize}
+    \item 称 \(A\) 为\term{开集}{open set}，若对每个 \(a \in A\) 存在
+          \(\varepsilon > 0\) 使 \(B(a,\varepsilon) \subseteq A\)。
+    \item 称 \(b \in X\) 为 \(A\) 的\term{闭包点}{closure point}，
+          若对每个 \(\varepsilon > 0\) 有 \(B(b,\varepsilon) \cap A \neq \emptyset\)。
+          闭包点全体记作 \(\overline{A}\)，称为 \(A\) 的\term{闭包}{closure}。
+    \item 称 \(b \in X\) 为 \(A\) 的\term{聚点}{limit point}，
+          若对每个 \(\varepsilon > 0\) 有 \(\bigl(B(b,\varepsilon)\setminus\set{b}\bigr) \cap A \neq \emptyset\)。
+    \item 称 \(A\) 为\term{闭集}{closed set}，若 \(A = \overline{A}\)。
+  \end{itemize}
+\end{definition}
+
+闭包点与聚点的差别只在于是否把 \(b\) 本身挖掉。二者的关系如下。
+
+\begin{proposition}
+  \label{prop:closure-vs-limit}
+  \(b \in \overline{A}\) 当且仅当 \(b \in A\) 或 \(b\) 是 \(A\) 的聚点。
+  等价地，\(\overline{A}\) 由 \(A\) 的元素与 \(A\) 的聚点合并而成。
+\end{proposition}
+
+\begin{proof}
+  若 \(b \in A\)，则每个 \(B(b,\varepsilon)\) 含 \(b\) 本身，故 \(b \in \overline{A}\)。
+  若 \(b\) 是聚点，则每个去心球与 \(A\) 相交，更有每个球与 \(A\) 相交。
+  反之设 \(b \in \overline{A}\) 而 \(b \notin A\)。对每个 \(\varepsilon>0\)，
+  \(B(b,\varepsilon)\) 中有 \(A\) 的点，而这点不等于 \(b\)（因 \(b \notin A\)），
+  故 \(b\) 是聚点。
+\end{proof}
+
+\begin{example}
+  \label{ex:closure-examples}
+  在 \(\R\) 中取 \(A = \set{0} \cup [1,2]\)。
+  \begin{worked}
+    \(\overline{A} = A\)：\(0\) 与 \([1,2]\) 中每点都是闭包点，
+    而 \(A\) 之外的点 \(b\) 与 \(A\) 有正距离，取 \(\varepsilon\) 小于该距离即知 \(b \notin \overline{A}\)。
+    故 \(A\) 是闭集。
+
+    \(A\) 的聚点全体是 \([1,2]\)。\(0\) 不是聚点：取 \(\varepsilon = 1/2\)，
+    去心球 \((-1/2,0)\cup(0,1/2)\) 与 \(A\) 不交。这样的点称为 \(A\) 的
+    \term{孤立点}{isolated point}。
+
+    于是 \(A\) 是闭集，但 \(A\) 的聚点集 \([1,2]\) 真包含于 \(A\)。
+    这个例子说明二者确实不同。
+  \end{worked}
+\end{example}
+
+\begin{pitfall}
+  \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
+    \item \textbf{术语在不同书里不一致。} 本讲义按 Garling 的用法：
+          聚点用去心球，闭包点不去心，因而有限集没有聚点却等于自身的闭包。
+          Pugh 的《Real Mathematical Analysis》把不去心的那种叫 limit，
+          并明确声明他不采用「去心」的约定。读英文文献时须先确认作者用的是哪一套。
+    \item \textbf{以为「不是开集」就是「闭集」。} 二者不互斥也不穷尽。
+          在 \(\R\) 中 \([0,1)\) 既不开也不闭；而 \(\emptyset\) 与 \(\R\)
+          既开又闭。开与闭不是一对反义词。
+    \item \textbf{把闭包当成「加上边界点」而不加验证。} 在离散度量下
+          （\cref{ex:metric-discrete}）每个子集都既开又闭，闭包就是自身，
+          与「边界」的直观不符。
+  \end{enumerate}
+\end{pitfall}
+
+\begin{theorem}[度量诱导拓扑]
+  \label{thm:metric-topology}
+  设 \((X,d)\) 为度量空间，\(\mathcal{T}\) 为 \(X\) 中全体开集之族。则
+  \begin{enumerate}[label=(\roman*)]
+    \item \(\emptyset \in \mathcal{T}\) 且 \(X \in \mathcal{T}\)；
+    \item \(\mathcal{T}\) 中任意多个成员的并仍在 \(\mathcal{T}\) 中；
+    \item \(\mathcal{T}\) 中有限多个成员的交仍在 \(\mathcal{T}\) 中。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  (i) 空集平凡地满足定义；\(X\) 中任一点的任一球含于 \(X\)。
+
+  (ii) 设 \(\set{U_{i}}_{i \in I} \subseteq \mathcal{T}\)，\(a \in \bigcup_{i} U_{i}\)。
+  则 \(a \in U_{i_{0}}\) 对某个 \(i_{0}\) 成立，取 \(\varepsilon\) 使
+  \(B(a,\varepsilon) \subseteq U_{i_{0}} \subseteq \bigcup_{i} U_{i}\)。
+
+  (iii) 设 \(U_{1},\dots,U_{n} \in \mathcal{T}\)，\(a \in \bigcap_{k} U_{k}\)。
+  对每个 \(k\) 取 \(\varepsilon_{k}\) 使 \(B(a,\varepsilon_{k}) \subseteq U_{k}\)，
+  令 \(\varepsilon = \min_{k}\varepsilon_{k} > 0\)，则 \(B(a,\varepsilon) \subseteq \bigcap_{k}U_{k}\)。
+\end{proof}
+
+\begin{remark}
+  \label{rem:finite-only}
+  (iii) 中的「有限」不能去掉：在 \(\R\) 中 \(\bigcap_{n \ge 1}(-1/n,\,1/n) = \set{0}\)，
+  是可数多个开集之交，却不是开集。取最小值的那一步正是有限性用武之处。
+
+  \cref{thm:metric-topology} 的三条性质将在卷四被抽出来作为\term{拓扑空间}{topological space}
+  的公理：不再要求有度量，只要求给定一族满足这三条的集合。
+  届时会看到，有些拓扑不来自任何度量，且在那样的空间里数列不再足以刻画闭包，
+  必须换成更一般的「网」。这是本讲义收敛概念的第二级推广。
+\end{remark}
+
+\section{完备性}
+\label{sec:completeness}
+
+\begin{concept}{完备性}
+  \cwhy{第 1 章证明 \(\R\) 的完备性等价于阿基米德性与 Cauchy 完备性之合，
+    其中只有后者不依赖序。现在把后者原样搬到度量空间上。}
+  \crel{它是第 1 章 Cauchy 完备性的逐字推广。与紧性（第 4 章）关系密切：
+    紧蕴含完备，反之不然。}
+  \cwhere{分析学的通用假设。Banach 空间、Hilbert 空间、\(L^{p}\) 空间的定义中
+    都含有完备性一条；没有它，几乎所有存在性定理都无法成立。}
+  \cdo{有了完备性才能「不知道极限是什么就断言极限存在」。
+    \cref{thm:contraction} 的压缩映射原理是这一用法的典型，
+    它在卷二给出微分方程解的存在唯一性。}
+\end{concept}
+
+\begin{definition}[Cauchy 列与完备性]
+  \label{def:complete}
+  设 \((X,d)\) 为度量空间。数列 \(\seq{a_{n}}\) 称为 \term{Cauchy 列}{Cauchy sequence}，
+  若对任意 \(\varepsilon>0\) 存在 \(N\)，使 \(m,n \ge N\) 时 \(d(a_{m},a_{n})<\varepsilon\)。
+  若 \(X\) 中每个 Cauchy 列都收敛于 \(X\) 中的点，则称 \((X,d)\) 为
+  \term{完备的}{complete}。
+\end{definition}
+
+\begin{proposition}
+  \label{prop:cauchy-basics}
+  设 \((X,d)\) 为度量空间。
+  \begin{enumerate}[label=(\roman*)]
+    \item 收敛列必是 Cauchy 列；
+    \item Cauchy 列必有界；
+    \item 若 Cauchy 列有一个收敛于 \(l\) 的子列，则该列本身收敛于 \(l\)。
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  (i) 设 \(a_{n} \to l\)。给定 \(\varepsilon>0\)，取 \(N\) 使 \(n \ge N\) 时
+  \(d(a_{n},l)<\varepsilon/2\)。则 \(m,n \ge N\) 时
+  \(d(a_{m},a_{n}) \le d(a_{m},l)+d(l,a_{n}) < \varepsilon\)。
+
+  (ii) 与第 1 章习题中 \(\R\) 上的证明逐字相同，只把绝对值换成 \(d\)。
+
+  (iii) 给定 \(\varepsilon>0\)，取 \(N\) 使 \(m,n \ge N\) 时 \(d(a_{m},a_{n})<\varepsilon/2\)，
+  再取子列下标 \(n_{K} \ge N\) 使 \(d(a_{n_{K}},l)<\varepsilon/2\)。
+  则 \(n \ge N\) 时 \(d(a_{n},l) \le d(a_{n},a_{n_{K}})+d(a_{n_{K}},l)<\varepsilon\)。
+\end{proof}
+
+(iii) 是后文证明完备性时最常用的工具：只需从 Cauchy 列中抽出一个收敛子列。
+
+\begin{example}[完备与不完备]
+  \label{ex:complete-examples}
+  \begin{worked}
+    \(\R\) 与 \(\C\) 完备，这就是第 1 章的 Cauchy 完备性。
+
+    \(\R^{n}\) 完备：数列 \(\seq{x^{(m)}}\) 是 Cauchy 列当且仅当每个坐标数列
+    \(\seq{x^{(m)}_{j}}\) 是 \(\R\) 中的 Cauchy 列，因为
+    \(\abs{x^{(m)}_{j}-x^{(k)}_{j}} \le d_{2}(x^{(m)},x^{(k)}) \le \sqrt{n}\max_{j}\abs{x^{(m)}_{j}-x^{(k)}_{j}}\)。
+    逐坐标取极限即得。
+
+    \(\Q\) 以 \(\R\) 的子空间度量不完备：\cref{eq:sqrt2-decimal} 的数列是 Cauchy 列，
+    但极限 \(\sqrt{2} \notin \Q\)。
+
+    开区间 \((0,1)\) 以 \(\R\) 的子空间度量不完备：\(a_{n} = 1/n\) 是 Cauchy 列，
+    极限 \(0\) 不在 \((0,1)\) 中。
+
+    离散度量下任何集合都完备：Cauchy 列必最终为常数（取 \(\varepsilon = 1/2\)），
+    故收敛。
+  \end{worked}
+\end{example}
+
+\subsection*{完备性不是拓扑性质}
+
+前一小节的最后两个例子放在一起，给出本章最要紧的一个观察。
+
+\begin{theorem}
+  \label{thm:complete-not-topological}
+  存在同一个集合上的两个度量，它们给出完全相同的开集，
+  但一个完备而另一个不完备。
+\end{theorem}
+
+\begin{proof}
+  取 \(X = (0,1)\)，\(d\) 为 \(\R\) 的子空间度量。取 \(\varphi \mapsdef (0,1) \to \R\)
+  为任一双射且双向连续者，例如
+  \begin{equation}
+    \label{eq:phi-homeo}
+    \varphi(x) = \tan\Bigl(\pi x - \frac{\pi}{2}\Bigr),
+  \end{equation}
+  并令 \(\rho(x,y) = \abs{\varphi(x)-\varphi(y)}\)。
+  则 \(\rho\) 是 \(X\) 上的度量（三条公理由 \(\varphi\) 单射与 \(\R\) 上的
+  绝对值直接得到）。
+
+  两个度量给出相同的开集：因 \(\varphi\) 与 \(\varphi^{-1}\) 都连续，
+  \(U\) 在 \(d\) 下开当且仅当 \(\varphi(U)\) 在 \(\R\) 中开，当且仅当 \(U\) 在 \(\rho\) 下开。
+
+  但 \((X,d)\) 不完备（\cref{ex:complete-examples}），
+  而 \((X,\rho)\) 完备：若 \(\seq{a_{n}}\) 是 \(\rho\)-Cauchy 列，
+  则 \(\seq{\varphi(a_{n})}\) 是 \(\R\) 中的 Cauchy 列，由 \(\R\) 完备收敛于某个 \(t\)；
+  因 \(\varphi\) 是到 \(\R\) 上的双射，\(t = \varphi(a)\) 对某个 \(a \in X\) 成立，
+  于是 \(\rho(a_{n},a) = \abs{\varphi(a_{n})-t} \to 0\)。
+\end{proof}
+
+\begin{remark}[对第 1 章对照表的修正]
+  \label{rem:refine-ch1-table}
+  第 1 章末把实数系的各条性质分成「依赖序」与「依赖距离」两类。
+  \cref{thm:complete-not-topological} 表明后一类还须再分一层：
+
+  \begin{center}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    性质 & 依赖的层次 & 例 \\
+    \midrule
+    开集、闭集、闭包、连续 & 度量诱导的\emph{拓扑} & 在等价度量下不变 \\
+    完备性、有界、一致连续 & \emph{度量本身} & \cref{thm:complete-not-topological} \\
+    确界、单调 & \emph{序} & 一般度量空间中无意义 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  也就是说，第 1 章说「Cauchy 完备性只依赖距离」是对的，但还不够细：
+  它依赖的是距离本身，而不是距离所诱导的开集族。这一层区分在卷四讨论
+  拓扑空间时至关重要——那里根本没有距离，因而完备性无从谈起，
+  取而代之的是紧性与 Baire 性质。
+\end{remark}
+
+\section{完备化}
+\label{sec:completion}
+
+\(\Q\) 不完备，而 \(\R\) 完备且 \(\Q\) 在其中稠密。第 1 章附录 A 用 Cauchy 列
+把 \(\Q\) 补成 \(\R\)。本节说明那不是 \(\Q\) 特有的手法，而是一般构造。
+
+\begin{definition}[稠密与完备化]
+  \label{def:completion}
+  设 \((X,d)\) 为度量空间。称 \(A \subseteq X\) 在 \(X\) 中\term{稠密}{dense}，
+  若 \(\overline{A} = X\)。若存在完备度量空间 \((\widehat{X},\widehat{d}\,)\)
+  与保距映射 \(\iota \mapsdef X \to \widehat{X}\)（即 \(\widehat{d}(\iota x,\iota y)=d(x,y)\)），
+  使 \(\iota(X)\) 在 \(\widehat{X}\) 中稠密，则称 \(\widehat{X}\) 为 \(X\) 的
+  \term{完备化}{completion}。
+\end{definition}
+
+稠密性这一条不可省略。若只要求「含于某个完备空间」，则 \((0,1)\) 含于 \(\R\)，
+也含于 \(\R^{2}\)，谈不上唯一。加上稠密性之后完备化在保距同构意义下唯一
+（见\cref{exr:completion-unique}）。
+
+\begin{theorem}[完备化定理]
+  \label{thm:completion}
+  每个度量空间都有完备化。
+\end{theorem}
+
+\begin{strategy}
+  手上只有 \(X\) 本身，要造出新的点来填补空缺。想法是：
+  \emph{把 Cauchy 列本身当作新的点}。一个在 \(X\) 中无处可去的 Cauchy 列，
+  正好指向一个「本该存在」的位置，就用这个列去代表那个位置。
+  两个指向同一位置的列应当视为相同，于是要作商。
+  这与第 1 章附录 A 从 \(\Q\) 造 \(\R\) 的手法完全一致。
+\end{strategy}
+
+\begin{proof}
+  记 \(\mathcal{C}\) 为 \(X\) 中全体 Cauchy 列之集（收敛与否不论）。
+  称 \(\seq{p_{n}}\) 与 \(\seq{q_{n}}\) \emph{等价}，若 \(d(p_{n},q_{n}) \to 0\)；
+  由\cref{eq:quadrilateral} 易验证这是 \(\mathcal{C}\) 上的等价关系。
+  令 \(\widehat{X} = \mathcal{C}/\!\sim\)，其元素记作 \(P = [\seq{p_{n}}]\)，并定义
+  \begin{equation}
+    \label{eq:completion-metric}
+    \widehat{d}(P,Q) = \lim_{n \to \infty} d(p_{n},q_{n}).
+  \end{equation}
+
+  \emph{极限存在}：由\cref{eq:quadrilateral}，
+  \(\abs{d(p_{m},q_{m}) - d(p_{n},q_{n})} \le d(p_{m},p_{n}) + d(q_{m},q_{n})\)，
+  故 \(\seq{d(p_{n},q_{n})}\) 是 \(\R\) 中的 Cauchy 列，由 \(\R\) 完备而收敛。
+
+  \emph{与代表元无关}：若 \(\seq{p_{n}} \sim \seq{p'_{n}}\) 且 \(\seq{q_{n}} \sim \seq{q'_{n}}\)，
+  同一不等式给出 \(\abs{d(p_{n},q_{n})-d(p'_{n},q'_{n})} \le d(p_{n},p'_{n})+d(q_{n},q'_{n}) \to 0\)。
+
+  \emph{\(\widehat{d}\) 是度量}：对称性与三角不等式由 \(d\) 的相应性质取极限得到；
+  \(\widehat{d}(P,Q)=0\) 恰是两个代表列等价，即 \(P=Q\)。
+
+  \emph{嵌入}：令 \(\iota(x) = [\,(x,x,x,\dots)\,]\)，即常数列所在的类。
+  显然 \(\widehat{d}(\iota x, \iota y) = d(x,y)\)，故 \(\iota\) 保距，特别地是单射。
+
+  \emph{稠密}：设 \(P = [\seq{p_{n}}] \in \widehat{X}\)，\(\varepsilon>0\)。
+  取 \(N\) 使 \(m,n \ge N\) 时 \(d(p_{m},p_{n})<\varepsilon\)，则
+  \(\widehat{d}(P, \iota p_{N}) = \lim_{n} d(p_{n},p_{N}) \le \varepsilon\)。
+  故 \(\iota(X)\) 中的点可以任意接近 \(P\)。
+
+  \emph{完备}：设 \(\seq{P_{k}}\) 为 \(\widehat{X}\) 中的 Cauchy 列。
+  由稠密性，对每个 \(k\) 取 \(x_{k} \in X\) 使 \(\widehat{d}(P_{k}, \iota x_{k}) < 1/k\)。
+  则 \(\seq{x_{k}}\) 是 \(X\) 中的 Cauchy 列：由 \(\iota\) 保距与三角不等式，
+  \(d(x_{j},x_{k}) = \widehat{d}(\iota x_{j},\iota x_{k})
+    \le \tfrac{1}{j} + \widehat{d}(P_{j},P_{k}) + \tfrac{1}{k}\)，
+  右端当 \(j,k\) 充分大时任意小。记 \(P = [\seq{x_{k}}]\)。
+
+  余下要证 \(\widehat{d}(\iota x_{k},P) \to 0\)。按\cref{eq:completion-metric}，
+  \(\widehat{d}(\iota x_{k},P) = \lim_{j} d(x_{k},x_{j})\)。给定 \(\varepsilon>0\)，
+  取 \(N\) 使 \(j,k \ge N\) 时 \(d(x_{k},x_{j})<\varepsilon\)，则 \(k \ge N\) 时
+  该极限不超过 \(\varepsilon\)。于是由三角不等式
+  \(\widehat{d}(P_{k},P) \le \widehat{d}(P_{k},\iota x_{k}) + \widehat{d}(\iota x_{k},P) \to 0\)。
+\end{proof}
+
+\begin{remark}
+  取 \(X = \Q\) 便重新得到 \(\R\)。因此第 1 章附录 A 的康托尔构造，
+  是\cref{thm:completion} 的一个特例。这也解释了那里为何要对 Cauchy 列作商：
+  \(1, 1.4, 1.41, \dots\) 与任何另一个逼近 \(\sqrt{2}\) 的有理列都应当代表同一个数。
+
+  卷五构造 \(L^{p}\) 空间时会再次用到\cref{thm:completion}：
+  \(L^{p}\) 正是连续函数空间在 \(p\) 次幂积分范数下的完备化。
+\end{remark}
+
+\section{压缩映射原理}
+\label{sec:contraction}
+
+本章以一个定理收尾。它的陈述只有一行，证明只有半页，
+却是本讲义此后使用最频繁的存在性工具。
+
+\begin{concept}{压缩映射}
+  \cwhy{分析学中大量问题可以化为解方程 \(f(x)=x\)：微分方程的解、
+    反函数的存在、数值迭代的极限，形式上都是求不动点。
+    需要一个判据来断言不动点存在。}
+  \crel{它是「把距离按固定比例缩小」的映射。比 Lipschitz 条件强
+    （要求常数严格小于 \(1\)），比线性收缩弱（不要求线性结构）。}
+  \cwhere{分析学与应用数学的公共工具。常微分方程、隐函数定理、数值迭代法、
+    分形几何中的迭代函数系统、经济学中的动态规划，用的都是这一条。}
+  \cdo{一次性给出解的\emph{存在}、\emph{唯一}与\emph{逼近方法}三件事，
+    并附带误差估计。卷二的 Picard--Lindelöf 定理与反函数定理都由它证出。}
+\end{concept}
+
+\begin{definition}[压缩映射]
+  \label{def:contraction}
+  设 \((X,d)\) 为度量空间。映射 \(f \mapsdef X \to X\) 称为\term{压缩映射}{contraction mapping}，
+  若存在常数 \(K\) 满足 \(0 \le K < 1\)，使得
+  \begin{equation}
+    \label{eq:contraction}
+    d\bigl(f(x), f(y)\bigr) \le K\, d(x,y) \qquad \text{对一切 } x,y \in X.
+  \end{equation}
+  称 \(x^{*} \in X\) 为 \(f\) 的\term{不动点}{fixed point}，若 \(f(x^{*}) = x^{*}\)。
+\end{definition}
+
+\begin{theorem}[压缩映射原理]
+  \label{thm:contraction}
+  设 \((X,d)\) 为非空完备度量空间，\(f \mapsdef X \to X\) 为压缩映射，
+  压缩常数为 \(K\)。则 \(f\) 有唯一的不动点 \(x^{*}\)。
+  并且，任取 \(x_{0} \in X\)，由 \(x_{n+1} = f(x_{n})\) 定义的数列收敛于 \(x^{*}\)，且
+  \begin{equation}
+    \label{eq:contraction-error}
+    d(x_{n}, x^{*}) \le \frac{K^{n}}{1-K}\, d(x_{0},x_{1}).
+  \end{equation}
+\end{theorem}
+
+\begin{strategy}
+  完备性只能用来断言 Cauchy 列有极限，所以整个证明的任务就是
+  \emph{造出一个 Cauchy 列}。造法是从任一点出发反复作用 \(f\)。
+  相邻两项的距离按 \(K\) 的幂次衰减，求和是等比级数，于是可以估计任意两项的距离。
+  最后用 \(f\) 的连续性把极限搬到等式两边。
+\end{strategy}
+
+\begin{proof}
+  任取 \(x_{0} \in X\)，令 \(x_{n+1} = f(x_{n})\)。反复用\cref{eq:contraction} 得
+  \begin{equation}
+    \label{eq:iterate-decay}
+    d(x_{n}, x_{n+1}) \le K\, d(x_{n-1},x_{n}) \le \cdots \le K^{n} d(x_{0},x_{1}).
+  \end{equation}
+  于是对 \(n > m\)，由三角不等式与等比级数求和，
+  \begin{equation}
+    \label{eq:cauchy-estimate}
+    d(x_{m},x_{n}) \le \sum_{k=m}^{n-1} d(x_{k},x_{k+1})
+      \le d(x_{0},x_{1}) \sum_{k=m}^{n-1} K^{k}
+      \le \frac{K^{m}}{1-K}\, d(x_{0},x_{1}).
+  \end{equation}
+  因 \(0 \le K < 1\)，\(K^{m} \to 0\)，故右端可以任意小，\(\seq{x_{n}}\) 是 Cauchy 列。
+  由完备性存在 \(x^{*} \in X\) 使 \(x_{n} \to x^{*}\)。
+
+  \(f\) 连续（由\cref{eq:contraction}，\(d(x,y)<\varepsilon\) 蕴含
+  \(d(f(x),f(y))<\varepsilon\)），故在 \(x_{n+1} = f(x_{n})\) 两端取极限得
+  \(x^{*} = f(x^{*})\)。
+
+  唯一性：若 \(y\) 也是不动点，则
+  \(d(y,x^{*}) = d(f(y),f(x^{*})) \le K d(y,x^{*})\)，
+  即 \((1-K)\,d(y,x^{*}) \le 0\)。因 \(1-K>0\) 故 \(d(y,x^{*})=0\)，即 \(y=x^{*}\)。
+
+  误差估计：\cref{eq:cauchy-estimate} 中取较小的下标为 \(n\)，得
+  \(d(x_{n},x_{N}) \le K^{n} d(x_{0},x_{1})/(1-K)\) 对一切 \(N>n\) 成立。
+  令 \(N \to \infty\)，因 \(x_{N} \to x^{*}\)，由\cref{prop:d-continuous}
+  左端趋于 \(d(x_{n},x^{*})\)，而右端与 \(N\) 无关，故\cref{eq:contraction-error} 成立。
+\end{proof}
+
+\begin{remark}
+  \label{rem:contraction-remarks}
+  三点值得注意。
+
+  其一，\cref{eq:contraction-error} 取 \(n=0\) 给出
+  \(d(x_{0},x^{*}) \le d(x_{0},x_{1})/(1-K)\)：只算一步迭代就能框住不动点的位置。
+  数值计算中真正使用的正是这个形式。
+
+  其二，收敛是指数快的。由 \(d(x_{n+1},x^{*}) = d(f(x_{n}),f(x^{*})) \le K d(x_{n},x^{*})\)
+  得 \(d(x_{n},x^{*}) \le K^{n} d(x_{0},x^{*})\)。取 \(K=1/2\)，每迭代一次精度翻一倍。
+
+  其三，定理对 \(X\) 的要求只有「非空」与「完备」。既不需要线性结构，
+  也不需要有限维，更不需要序。这正是本章把度量单独抽出来的价值所在：
+  同一个定理在 \(\R\)、\(\R^{n}\)、\(C[a,b]\) 上一次证完。
+\end{remark}
+
+\begin{pitfall}
+  \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
+    \item \textbf{把条件减弱为 \(d(f(x),f(y)) < d(x,y)\)。} 这样不够。
+          取 \(X = [0,\infty)\)（以 \(\R\) 的子空间度量，完备），
+          \(f(x) = x + \eu^{-x}\)。则 \(f(x) - x = \eu^{-x} > 0\)，故 \(f\) 无不动点；
+          但由中值定理，对 \(x \neq y\) 有
+          \(\abs{f(x)-f(y)} = \abs{1-\eu^{-c}}\,\abs{x-y} < \abs{x-y}\)。
+          问题在于 \(\sup_{c}(1-\eu^{-c}) = 1\)，找不到一个\emph{统一的}
+          \(K<1\)。定义中「存在常数 \(K\)」的「存在」二字不可丢。
+    \item \textbf{忘记检查 \(f\) 把 \(X\) 映进 \(X\)。} 压缩映射必须是
+          \(X\) 到自身的映射。若 \(f\) 把某点映到 \(X\) 外，迭代第二步就无从谈起。
+    \item \textbf{忘记完备性。} 取 \(X=(0,1)\)，\(f(x)=x/2\)，则 \(f\) 是压缩映射
+          且映 \(X\) 入 \(X\)，但不动点 \(0\) 不在 \(X\) 中。\((0,1)\) 不完备
+          （\cref{ex:complete-examples}）。
+  \end{enumerate}
+\end{pitfall}
+
+\begin{example}[用压缩映射求平方根]
+  \label{ex:sqrt-newton}
+  设 \(a>0\)。在 \(X = [\sqrt{a},\,\infty)\) 上定义
+  \(f(x) = \frac{1}{2}\bigl(x + \frac{a}{x}\bigr)\)。证明 \(f\) 有唯一不动点，
+  并说明它等于 \(\sqrt{a}\)。
+  \begin{worked}
+    先证 \(f\) 把 \(X\) 映进 \(X\)：由均值不等式
+    \(f(x) \ge \sqrt{x \cdot a/x} = \sqrt{a}\)。
+
+    再证压缩。\(f'(x) = \frac{1}{2}(1 - a/x^{2})\)，在 \(x \ge \sqrt{a}\) 上
+    \(0 \le f'(x) < 1/2\)。由中值定理 \(\abs{f(x)-f(y)} \le \frac{1}{2}\abs{x-y}\)，
+    故 \(f\) 是压缩常数 \(K=1/2\) 的压缩映射。
+
+    \(X\) 作为 \(\R\) 的闭子集完备（\cref{exr:closed-subset-complete}）。
+    由\cref{thm:contraction}，\(f\) 有唯一不动点 \(x^{*}\)。
+    解 \(x = \frac{1}{2}(x+a/x)\) 得 \(x^{2}=a\)，故 \(x^{*}=\sqrt{a}\)。
+
+    误差估计\cref{eq:contraction-error} 给出 \(d(x_{n},x^{*}) \le 2^{-n+1}d(x_{0},x_{1})\)，
+    即每迭代一次精度约翻一倍。这正是古巴比伦人求平方根所用的算法。
+  \end{worked}
+\end{example}
+
+\section{本章结论在更一般框架下的地位}
+\label{sec:ch2-outlook}
+
+本章把第 1 章中依赖距离的那些性质抽出来，安置在度量空间上。
+\cref{tab:ch2-structure} 汇总本章各概念所处的层次。
+
+\begin{table}[htbp]
+  \centering
+  \caption{度量空间中各概念所依赖的结构层次。上层的性质在下层不再有意义，
+    下层的性质在上层自动成立。写定理时应当停在够用的那一层。}
+  \label{tab:ch2-structure}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    层次 & 概念 & 在何处失效或推广 \\
+    \midrule
+    集合            & 无                       & --- \\
+    拓扑            & 开集、闭集、闭包、连续     & 卷四：不来自度量的拓扑 \\
+    度量            & 收敛、Cauchy 列、完备性、有界 & 卷四：无度量则完备性无意义 \\
+    范数（度量 + 线性） & 凸性、算子范数            & 卷五：Banach 空间 \\
+    内积（范数 + 角度） & 正交、投影                & 卷五：Hilbert 空间 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+三点向前的接口：
+
+\emph{其一}，\cref{thm:metric-topology} 的三条性质在卷四被取作拓扑空间的公理。
+届时会看到有些拓扑不来自任何度量，且在那样的空间里数列不足以刻画闭包，
+必须换成\term{网}{net}——它可以想成「指标集不必可数的数列」。
+这是本讲义收敛概念的第三级：度量、拓扑、网。
+
+\emph{其二}，\cref{thm:contraction} 在卷二反复使用：
+先给出常微分方程解的存在唯一性（Picard--Lindelöf 定理），
+再给出反函数定理与隐函数定理。三者用的是同一个证明模式。
+
+\emph{其三}，\cref{thm:completion} 在卷五给出 \(L^{p}\) 空间。
+本章的完备化与第 1 章附录 A 从 \(\Q\) 造 \(\R\) 是同一件事，
+读者此时应当回看第 1 章，确认那里的每一步都能在\cref{thm:completion}
+的证明中找到对应。
+
+\section*{习题}
+\addcontentsline{toc}{section}{习题}
+
+同第 1 章，习题分三档：标「例行」者检验定义，标「结构」者要求指出所用到的结构，
+标「延伸」者指向后续章节。
+
+\begin{exercise}[例行]
+  \label{exr:discrete-metric-check}
+  验证\cref{eq:discrete} 的离散度量满足三条公理。三角不等式须按
+  \(x,y,z\) 的相等情况分情形讨论，不得只验证一种。
+  \begin{solution}
+    (M1)(M2) 显然。(M3)：若 \(x=z\) 则左端为 \(0\)，不等式成立。
+    若 \(x \neq z\) 则左端为 \(1\)；此时 \(y\) 不能同时等于 \(x\) 与 \(z\)，
+    故 \(d(x,y)\) 与 \(d(y,z)\) 中至少一个为 \(1\)，右端 \(\ge 1\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:nonneg}
+  由 (M2) 与 (M3) 推出 \(d(x,y) \ge 0\)，即\cref{def:metric-space} 之后一条注所述。
+  \begin{solution}
+    在 (M3) 中取 \(z = x\)：\(d(x,x) \le d(x,y)+d(y,x)\)。
+    由 (M1) 左端为 \(0\)，由 (M2) 右端为 \(2d(x,y)\)，故 \(d(x,y) \ge 0\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:quadrilateral}
+  证明四点不等式\cref{eq:quadrilateral}：
+  \(\abs{d(a,b) - d(x,y)} \le d(a,x) + d(b,y)\)。
+  \begin{solution}
+    由三角不等式用两次，
+    \(d(a,b) \le d(a,x)+d(x,y)+d(y,b)\)，故 \(d(a,b)-d(x,y) \le d(a,x)+d(b,y)\)。
+    交换 \((a,b)\) 与 \((x,y)\) 的角色得 \(d(x,y)-d(a,b) \le d(a,x)+d(b,y)\)。
+    两式合并即得。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:equiv-metrics}
+  证明 \(\R^{n}\) 上的三个度量\cref{eq:d2}--\cref{eq:dinf} 满足
+  \(d_{\infty} \le d_{2} \le d_{1} \le n\, d_{\infty}\)，
+  并由此说明三者给出相同的开集与相同的收敛数列。
+  \begin{solution}
+    记 \(u_{j} = \abs{x_{j}-y_{j}}\)，\(M = \max_{j} u_{j}\)。
+    则 \(M^{2} \le \sum u_{j}^{2}\) 给出 \(d_{\infty} \le d_{2}\)；
+    \(\sum u_{j}^{2} \le (\sum u_{j})^{2}\) 给出 \(d_{2} \le d_{1}\)；
+    \(\sum u_{j} \le nM\) 给出 \(d_{1} \le n d_{\infty}\)。
+
+    于是每个 \(d_{2}\)-球含有一个同心的 \(d_{1}\)-球，反之亦然（半径按上述常数缩放），
+    故开集族相同；又 \(d_{i}(a_{k},l) \to 0\) 三者互相蕴含，故收敛数列相同。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:CX-distance}
+  在 \(C[0,1]\) 中取 \(f(x)=x\)，\(g(x)=x^{2}\)。分别求 \(d_{\infty}(f,g)\)
+  与 \(d_{1}(f,g)\)。
+  \begin{solution}
+    \(\abs{f-g} = x - x^{2}\) 在 \([0,1]\) 上于 \(x=1/2\) 取最大值 \(1/4\)，
+    故 \(d_{\infty}(f,g) = 1/4\)。
+    \(d_{1}(f,g) = \int_{0}^{1}(x-x^{2})\dif x = 1/2 - 1/3 = 1/6\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:open-closed-check}
+  在 \(\R\)（通常度量）中判断下列集合是否开、是否闭：
+  \((0,1]\)、\([0,\infty)\)、\(\Q\)、\(\setst{1/n}{n \in \N}\)、\(\emptyset\)。
+  \begin{solution}
+    \((0,1]\) 既不开（\(1\) 处无球含于其中）也不闭（\(0\) 是闭包点而不属于它）。
+    \([0,\infty)\) 闭不开。\(\Q\) 既不开也不闭（其闭包为 \(\R\)）。
+    \(\setst{1/n}{n}\) 不闭（\(0\) 是闭包点）也不开。
+    \(\emptyset\) 既开又闭。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:closure-compute}
+  求 \(\overline{\Q}\)（在 \(\R\) 中）以及 \(A = \setst{1/n}{n \in \N}\) 的闭包与聚点集。
+  \begin{solution}
+    \(\overline{\Q} = \R\)：由第 1 章的稠密性，任一实数的任一邻域中都有有理数。
+
+    \(\overline{A} = A \cup \set{0}\)：\(0\) 的每个球含有充分大的 \(1/n\)；
+    而 \(A \cup \set{0}\) 之外的点与该集有正距离。
+    \(A\) 的聚点集为 \(\set{0}\)：每个 \(1/n\) 都是孤立点，
+    取 \(\varepsilon\) 小于它与相邻两点的距离即可。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:discrete}
+  在离散度量空间中，哪些子集是开集？哪些数列收敛？该空间是否完备？
+  \begin{solution}
+    每个子集都是开集：对 \(a \in A\) 取 \(\varepsilon = 1/2\)，
+    则 \(B(a,1/2) = \set{a} \subseteq A\)。于是每个子集也都是闭集（其补集开）。
+
+    收敛的数列恰是最终为常数的数列：取 \(\varepsilon=1/2\)，
+    \(d(a_{n},l)<1/2\) 蕴含 \(a_{n}=l\)。
+
+    完备：Cauchy 列同理最终为常数，故收敛。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:closed-ball}
+  证明闭球 \(\overline{B}(x,r) = \setst{y}{d(y,x) \le r}\) 是闭集。
+  再举例说明它未必等于开球 \(B(x,r)\) 的闭包。
+  \begin{solution}
+    设 \(b \notin \overline{B}(x,r)\)，即 \(d(b,x) > r\)。取
+    \(\varepsilon = d(b,x)-r > 0\)。若 \(y \in B(b,\varepsilon)\)，则由三角不等式
+    \(d(y,x) \ge d(b,x)-d(b,y) > r\)，故 \(B(b,\varepsilon)\) 与 \(\overline{B}(x,r)\) 不交，
+    \(b \notin \overline{\overline{B}(x,r)}\)。故闭球是闭集。
+
+    反例：离散度量下 \(B(x,1) = \set{x}\)，其闭包为 \(\set{x}\)，
+    而 \(\overline{B}(x,1) = X\)。当 \(X\) 多于一点时二者不同。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:closed-subset-complete}
+  设 \((X,d)\) 完备，\(A \subseteq X\) 为闭集。证明 \((A, d|_{A})\) 完备。
+  再证反之：完备的子空间必是闭集。
+  \begin{solution}
+    设 \(\seq{a_{n}} \subseteq A\) 为 Cauchy 列。它在 \(X\) 中也是 Cauchy 列，
+    由 \(X\) 完备收敛于某 \(l \in X\)。每个球 \(B(l,\varepsilon)\) 含有某个 \(a_{n}\)，
+    故 \(l \in \overline{A} = A\)。于是该列在 \(A\) 中收敛。
+
+    反之设 \(A\) 完备，\(l \in \overline{A}\)。取 \(a_{n} \in A \cap B(l,1/n)\)，
+    则 \(\seq{a_{n}}\) 收敛于 \(l\)，故是 Cauchy 列，由 \(A\) 完备其极限在 \(A\) 中；
+    由极限唯一（\cref{cor:limit-unique}）该极限即 \(l\)，故 \(l \in A\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:cos-fixed-point}
+  证明方程 \(x = \cos x\) 在 \([0,1]\) 中有唯一解，
+  并估计从 \(x_{0}=0\) 出发迭代 \(10\) 次后的误差。
+  \begin{solution}
+    \(f(x)=\cos x\) 把 \([0,1]\) 映入 \([\cos 1, 1] \subseteq [0,1]\)。
+    \(\abs{f'(x)} = \abs{\sin x} \le \sin 1 \approx 0.8415 < 1\)，
+    由中值定理 \(f\) 是压缩常数 \(K = \sin 1\) 的压缩映射。
+    \([0,1]\) 作为 \(\R\) 的闭子集完备（\cref{exr:closed-subset-complete}），
+    由\cref{thm:contraction} 不动点存在唯一。
+
+    \(d(x_{0},x_{1}) = \abs{0 - \cos 0} = 1\)，由\cref{eq:contraction-error}，
+    \(d(x_{10},x^{*}) \le (\sin 1)^{10}/(1-\sin 1) \approx 0.1785/0.1585 \approx 1.13\)。
+    这个界很粗；实际收敛快得多，因为在不动点附近 \(\abs{f'}\) 远小于 \(\sin 1\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:open-iff-complement-closed}
+  证明 \(A\) 是闭集当且仅当 \(X \setminus A\) 是开集。
+  这个证明用到了度量的哪些性质？
+  \begin{solution}
+    设 \(A\) 闭，\(b \in X\setminus A\)。因 \(b \notin \overline{A}\)，
+    存在 \(\varepsilon>0\) 使 \(B(b,\varepsilon) \cap A = \emptyset\)，
+    即 \(B(b,\varepsilon) \subseteq X\setminus A\)。故补集开。
+    反之设补集开，\(b \in \overline{A}\)。若 \(b \notin A\)，则有球含于补集，
+    与 \(b\) 是闭包点矛盾。故 \(b \in A\)，即 \(A = \overline{A}\)。
+
+    证明只用到「球」这一概念，未用到 \(d\) 的具体数值，
+    也未用到三角不等式。因此它在任意拓扑空间中原样成立——
+    事实上在卷四中闭集正是这样定义的。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:not-from-norm}
+  证明 \(\R\) 上的离散度量不来自任何范数。
+  \begin{solution}
+    由\cref{eq:norm-metric-props}，来自范数的度量满足
+    \(d(\lambda x,\lambda y) = \abs{\lambda} d(x,y)\)。
+    取 \(x=1\)、\(y=0\)、\(\lambda=2\)：离散度量给出左端 \(d(2,0)=1\)，
+    右端 \(2 d(1,0)=2\)，不等。故它不来自范数。
+
+    本题说明「结构的阶梯」是严格的：度量真多于赋范空间上的度量。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:infinite-intersection}
+  举例说明\cref{thm:metric-topology}(iii) 中的「有限」不能换成「可数」。
+  指出证明中哪一步在无限情形下失效。
+  \begin{solution}
+    \(\bigcap_{n\ge 1}(-1/n,\,1/n) = \set{0}\)，各项皆开而交不开。
+
+    失效之处是取 \(\varepsilon = \min_{k}\varepsilon_{k}\) 那一步：
+    有限个正数的最小值仍为正，可数个正数的下确界可能为零。
+    这一步用到的正是第 1 章的确界概念——有限集必有最小元，无限集只有下确界。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:completeness-not-topological}
+  重述\cref{thm:complete-not-topological} 的证明，
+  并指出其中哪一步用到了度量本身而非它诱导的拓扑。
+  \begin{solution}
+    两个度量 \(d\) 与 \(\rho\) 给出相同的开集，这一步只用拓扑。
+    而「\(\seq{a_{n}}\) 是 Cauchy 列」的判断用到了 \(d(a_{m},a_{n})\) 的\emph{数值}：
+    \(a_{n}=1/n\) 在 \(d\) 下是 Cauchy 列，在 \(\rho\) 下不是，
+    因为 \(\rho(a_{m},a_{n}) = \abs{\varphi(1/m)-\varphi(1/n)}\) 并不趋于零。
+
+    结论：Cauchy 性不能只由开集族读出，故完备性不是拓扑性质。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:cauchy-bounded-again}
+  证明\cref{prop:cauchy-basics}(ii)：Cauchy 列必有界（即含于某个球内）。
+  与第 1 章的相应习题比较，说明哪些地方一字未改。
+  \begin{solution}
+    取 \(\varepsilon=1\)，存在 \(N\) 使 \(m,n \ge N\) 时 \(d(a_{m},a_{n})<1\)。
+    令 \(R = \max\set{d(a_{1},a_{N}),\dots,d(a_{N-1},a_{N}),\,1}\)，
+    则全部项含于 \(\overline{B}(a_{N},R)\)。
+
+    与第 1 章的证明逐字相同，只把 \(\abs{a_{m}-a_{n}}\) 换成 \(d(a_{m},a_{n})\)。
+    第 1 章当时已指出该证明未用到数列所在空间的序，这里兑现了那个预言。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:completion-unique}
+  证明完备化在保距同构的意义下唯一：若 \((\widehat{X}_{1},\iota_{1})\) 与
+  \((\widehat{X}_{2},\iota_{2})\) 都是 \(X\) 的完备化，
+  则存在保距双射 \(\Phi \mapsdef \widehat{X}_{1} \to \widehat{X}_{2}\)
+  使 \(\Phi \circ \iota_{1} = \iota_{2}\)。
+  \begin{solution}
+    在 \(\iota_{1}(X)\) 上令 \(\Phi(\iota_{1}x) = \iota_{2}x\)，这是保距的。
+    任取 \(P \in \widehat{X}_{1}\)，由稠密性取 \(\iota_{1}x_{n} \to P\)；
+    则 \(\seq{\iota_{1}x_{n}}\) 是 Cauchy 列，因 \(\Phi\) 保距，
+    \(\seq{\iota_{2}x_{n}}\) 也是 Cauchy 列，由 \(\widehat{X}_{2}\) 完备而收敛，
+    定义 \(\Phi(P)\) 为其极限。良定义性与保距性由\cref{prop:d-continuous} 取极限得到。
+    对称地构造逆映射即得双射。
+
+    稠密性在此处不可缺：它保证 \(\Phi\) 在 \(\iota_{1}(X)\) 上的值决定了它在全空间的值。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:sequential-closure}
+  证明：在度量空间中 \(b \in \overline{A}\) 当且仅当存在 \(A\) 中的数列收敛于 \(b\)。
+  这条结论在什么地方用到了度量？
+  \begin{solution}
+    若有 \(a_{n} \to b\)，\(a_{n} \in A\)，则每个球 \(B(b,\varepsilon)\) 含有某个 \(a_{n}\)，
+    故 \(b \in \overline{A}\)。反之设 \(b \in \overline{A}\)，
+    对每个 \(n\) 取 \(a_{n} \in A \cap B(b,1/n)\)，则 \(d(a_{n},b)<1/n \to 0\)。
+
+    反向用到了「可以取半径为 \(1/n\) 的球」，即球的半径构成一个\emph{可数}的
+    递减基。一般拓扑空间没有这条，因而数列不足以刻画闭包，
+    必须换成网。这正是卷四要处理的问题。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:C1-not-complete}
+  证明 \((C[0,1], d_{1})\) 不完备，其中 \(d_{1}\) 如\cref{eq:l1-metric-intro}。
+  \begin{solution}
+    取分段线性函数 \(f_{n}\)：在 \([0,1/2]\) 上为 \(0\)，
+    在 \([1/2+1/n,\,1]\) 上为 \(1\)，中间线性连接。
+    则对 \(m>n\)，\(d_{1}(f_{n},f_{m}) \le 1/n \to 0\)，故为 Cauchy 列。
+
+    设它在 \(C[0,1]\) 中收敛于 \(f\)。在 \([0,1/2]\) 上 \(f_{n}\) 恒为 \(0\)，故
+    \(\int_{0}^{1/2}\abs{f} = \int_{0}^{1/2}\abs{f-f_{n}} \le d_{1}(f,f_{n}) \to 0\)，
+    即 \(\int_{0}^{1/2}\abs{f}=0\)。非负连续函数的积分为零蕴含它恒为零
+    （否则在某点为正，由连续性在一个小区间上有正下界，积分为正），
+    故 \(f \equiv 0\) 于 \([0,1/2]\)。同理对任意 \(\delta>0\)，
+    在 \([1/2+\delta,1]\) 上当 \(n>1/\delta\) 时 \(f_{n}\) 恒为 \(1\)，得 \(f \equiv 1\) 于该区间。
+    于是 \(f(1/2)=0\) 而 \(f(x)=1\) 对一切 \(x>1/2\) 成立，与 \(f\) 在 \(1/2\) 处连续矛盾。
+
+    补足它得到的空间正是卷五的 \(L^{1}[0,1]\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:picard-preview}
+  设 \(g \mapsdef \R \to \R\) 连续且满足 \(\abs{g(u)-g(v)} \le L\abs{u-v}\)。
+  在 \(C[0,h]\) 上定义 \((Tf)(t) = y_{0} + \int_{0}^{t} g(f(s))\dif s\)。
+  证明当 \(hL < 1\) 时 \(T\) 是压缩映射，并说明其不动点满足什么微分方程。
+  \begin{solution}
+    \(\abs{(Tf)(t)-(Tf_{2})(t)} \le \int_{0}^{t} L\abs{f(s)-f_{2}(s)}\dif s
+      \le hL\, d_{\infty}(f,f_{2})\)，两端取最大值得
+    \(d_{\infty}(Tf,Tf_{2}) \le hL\, d_{\infty}(f,f_{2})\)。
+    当 \(hL<1\) 时 \(T\) 是压缩映射。
+
+    \((C[0,h], d_{\infty})\) 完备（第 8 章），故 \(T\) 有唯一不动点 \(f\)，
+    满足 \(f(t) = y_{0}+\int_{0}^{t} g(f(s))\dif s\)。两端求导得
+    \(f'(t) = g(f(t))\)，\(f(0)=y_{0}\)。
+
+    这就是常微分方程初值问题解的存在唯一性，卷二将完整叙述。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:completion-vs-ch1}
+  把\cref{thm:completion} 的证明与第 1 章附录 A 中康托尔从 \(\Q\) 构造 \(\R\)
+  的过程逐步对照，指出每一步的对应关系。哪一步在一般情形下比 \(\Q\) 的情形更难？
+  \begin{solution}
+    对应关系：Cauchy 列之集对应有理 Cauchy 列之集；co-Cauchy 等价关系对应
+    「差趋于零」的等价；\cref{eq:completion-metric} 对应 \(\R\) 上绝对值的定义；
+    常数列的嵌入对应 \(\Q \hookrightarrow \R\)。
+
+    在 \(\Q\) 的情形下额外要做的是验证域运算与序，一般情形没有这些结构，
+    因而反倒更简单。真正更难的一步是\cref{eq:completion-metric} 中极限的存在性：
+    在 \(\Q\) 的情形可以直接用有理数的运算，一般情形必须借道四点不等式
+    \cref{eq:quadrilateral} 把它化归为 \(\R\) 中的 Cauchy 列。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:baire-preview}
+  设 \((X,d)\) 为\emph{非空}完备度量空间，\(\seq{U_{n}}\) 为一列稠密开集。
+  试证 \(\bigcap_{n} U_{n}\) 非空。（提示：用完备性与闭球套。）
+  \begin{solution}
+    取 \(x_{1} \in U_{1}\) 与 \(r_{1}<1\) 使 \(\overline{B}(x_{1},r_{1}) \subseteq U_{1}\)。
+    因 \(U_{2}\) 稠密且开，\(B(x_{1},r_{1}) \cap U_{2}\) 非空开，
+    取 \(x_{2}\) 与 \(r_{2}<1/2\) 使 \(\overline{B}(x_{2},r_{2}) \subseteq B(x_{1},r_{1}) \cap U_{2}\)。
+    如此得递减闭球套，半径趋于零。诸中心构成 Cauchy 列，
+    由完备性收敛于某 \(x\)，且 \(x\) 属于每个 \(\overline{B}(x_{n},r_{n})\)，
+    从而属于每个 \(U_{n}\)。
+
+    这就是 Baire 纲定理，卷五泛函分析中三大定理的基础。
+    注意证明只用到完备性，未用到线性结构。
+  \end{solution}
+\end{exercise}
