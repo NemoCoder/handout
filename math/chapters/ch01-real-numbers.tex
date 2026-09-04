@@ -1,10 +1,10 @@
 %%% ==========================================================================
 %%%  第一章：实数系
 %%%  设计说明见 math/notes/ch01-real-numbers.md。
-%%%  TODO：第 2、4、7 章建立后，把正文中「第 N 章」的字样改回\cref{ch:...}。
-%%%  本章的核心是：确界原理 = 阿基米德性 + Cauchy 完备性。
-%%%  左端是序陈述，右端拆成一条序陈述与一条度量陈述；能推广到一般空间的
-%%%  只有后者。删改本章 1.6、1.8 两节前请先读该笔记的「埋线清单」。
+%%%  面向零基础新生（2026-09-04 定）。顺序上具体先行、抽象后置：
+%%%  1.4/1.5 先在 R 上把确界算熟，1.6 才回头指出证明里没用到域运算并一般化。
+%%%  本章的核心是 1.9 节：确界原理 = 阿基米德性 + Cauchy 完备性。
+%%%  TODO：第 2、4、7 章建立后，把正文中「第 N 章」的字样改回 \cref{ch:...}。
 %%% ==========================================================================
 \chapter{实数系}
 \label{ch:reals}
@@ -13,12 +13,12 @@
   \begin{itemize}
     \item 分析学的每一个概念都含有极限过程，而极限是存在性断言。
           有理数系中存在「本该收敛却无处可去」的数列，因此不足以承载分析学。
+    \item 上确界是「够得着但可能取不到」的边界。它未必属于集合本身，
+          这是初学时最容易出错的一处。
     \item 「数系没有空隙」有几种不同的精确表述，它们彼此等价，
           可任选其一作为公理。实数系即序完备的有序域，在同构意义下唯一。
     \item 这些表述所依赖的结构并不相同：确界原理依赖序，
           Cauchy 完备性只依赖距离。这一差别决定了它们各自能推广到多远。
-    \item 后续各章推广到一般空间的是 Cauchy 完备性，不是确界原理。
-          本章末的\cref{tab:structure-dependence}是这一分辨的总结。
   \end{itemize}
 \end{keypoint}
 
@@ -54,16 +54,36 @@
 \end{proof}
 
 问题不在数列，而在 \(\Q\)。\cref{eq:sqrt2-decimal} 的各项在 \(\Q\) 中
-不断挤紧，它们所指向的那个位置上却没有数。若在这样的数系上建立分析学，
-则无论一个数列的各项挤得多紧，都不能断言它有极限；而分析学的几乎每一条定理
-都要用到这类断言。单调有界必收敛、闭区间上的连续函数取到最大值、
-Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
+不断挤紧，它们所指向的那个位置上却没有数（\cref{fig:q-gap}）。
+若在这样的数系上建立分析学，则无论一个数列的各项挤得多紧，
+都不能断言它有极限；而分析学的几乎每一条定理都要用到这类断言。
+单调有界必收敛、闭区间上的连续函数取到最大值、Cauchy 判别法，
+这些结论在 \(\Q\) 上全部不成立。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=1.0]
+    \draw[->, thick] (-0.4,0) -- (7.2,0) node[right] {\small \(\Q\)};
+    \foreach \x/\l in {0/1, 6/2} {\draw (\x,0.12) -- (\x,-0.12) node[below] {\small \(\l\)};}
+    \draw[htRule, very thick] (0,0.35) -- (3.4,0.35);
+    \node[htRule, above] at (1.7,0.4) {\small \(A:\ x^{2} < 2\)};
+    \draw[htAccent, very thick] (3.7,0.35) -- (6,0.35);
+    \node[htAccent, above] at (4.85,0.4) {\small \(B:\ x^{2} > 2\)};
+    \draw[dashed, htGray] (3.55,-0.5) -- (3.55,0.75);
+    \node[htGray, below, align=center] at (3.55,-0.5) {\small 此处无数\\[-2pt]\small （\cref{prop:q-cut-fails}）};
+    \draw[<->, htGray] (3.4,0.12) -- (3.7,0.12);
+  \end{tikzpicture}
+  \caption{有理数轴上的空隙。集合 \(A\) 中的每个数都小于 \(B\) 中的每个数，
+    两者紧紧相邻，但 \(\Q\) 中没有任何数夹在它们之间。
+    \cref{eq:sqrt2-decimal} 的数列正是沿 \(A\) 向右挤向这个位置。}
+  \label{fig:q-gap}
+\end{figure}
 
 于是首要的任务是把「数系没有空隙」这句话说精确。本章做三件事：
 
 \begin{enumerate}[label=(\arabic*)]
   \item 给出「没有空隙」的精确表述。这样的表述不止一种，
-        \cref{sec:order-complete} 与 \cref{sec:cauchy} 共给出四种。
+        \cref{sec:sup-calc} 到 \cref{sec:cauchy} 共给出四种。
   \item 证明这些表述彼此等价。因而可以任选其一作为公理，其余作为定理，
         选择哪一条是体例问题，不是数学问题。
   \item 分辨每种表述各自依赖数系的哪一部分结构。这一条决定了它们各自
@@ -94,11 +114,11 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \end{table}
 
 \begin{remark}[读法建议]
-  本章的内容比后续各章更偏基础，初次阅读时不必全部吃透。
-  \Cref{thm:order-complete-equiv} 的证明与\cref{ex:non-archimedean}可以暂时略过，
-  只需记住结论：完备性有几种等价说法，其中确界原理在 \(\R\) 上最便于使用。
-  读完第 2 章的度量空间之后再回看\cref{sec:cauchy}，
-  那里的分辨会比现在清楚得多。
+  本章比后续各章更偏基础，初次阅读不必全部吃透。
+  \cref{sec:sup-calc} 与 \cref{sec:sup-principle} 是必须掌握的，
+  确界的计算要练到不假思索；\cref{sec:order-complete} 的一般化、
+  \cref{ex:non-archimedean} 的非阿基米德域、以及\cref{thm:uniqueness}
+  可以先跳过，读完第 2 章的度量空间再回看。
 \end{remark}
 
 \section{有理数系的缺陷}
@@ -119,6 +139,13 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   则 \(A, B\) 非空，且对一切 \(a \in A\)、\(b \in B\) 有 \(a < b\)；
   但不存在 \(c \in \Q\) 使得对一切 \(a \in A\)、\(b \in B\) 都有 \(a \le c \le b\)。
 \end{proposition}
+
+\begin{strategy}
+  要证「不存在这样的 \(c\)」，标准办法是反设有一个，然后从它出发造出一个
+  更靠近空隙的数，与它的位置矛盾。下面的 \(\xi\) 就是这样造出来的：
+  当 \(c\) 偏小时 \(\xi\) 把它往右推，当 \(c\) 偏大时把它往左拉，
+  两个方向都推不动才说明 \(c\) 存在。
+\end{strategy}
 
 \begin{proof}
   \(1 \in A\)，\(2 \in B\)，故两者非空。若 \(a \in A\)、\(b \in B\)，则
@@ -153,7 +180,7 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \Cref{prop:q-cut-fails} 指出了 \(\Q\) 的缺陷，但要把「补上这个缺陷」说清楚，
 先得知道补的是什么之上的缺陷。\(\Q\) 与 \(\R\) 并非处处不同：四则运算的规则、
 不等式的运算、绝对值的性质，两者完全一致，差别只在一处。本节先把相同的那部分
-固定下来，下一节再单独处理那唯一的差别。
+固定下来，下一节起再处理那唯一的差别。
 
 \begin{concept}{有序域}
   \cwhy{\(\Q\) 与 \(\R\) 的差别只在一条性质上。要把这条差别单独提出来，
@@ -178,6 +205,8 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 
 有理数域 \(\Q\) 与实数域 \(\R\) 都是有序域。有序域的元素可以谈正负、
 谈大小、谈绝对值，几乎全部初等不等式都只用到\cref{def:ordered-field}。
+例如「\(x \le y\) 且 \(z < 0\) 蕴含 \(xz \ge yz\)」这条中学熟知的规则，
+就是把 (ii) 用于 \(-z \ge 0\) 再移项得到的，其证明在任何有序域中一字不差。
 
 下述性质看似显然，但并非每个有序域都具备。
 
@@ -187,6 +216,12 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   且 \(a > 0\)，存在 \(n \in \N\) 使得 \(b < na\)。
 \end{definition}
 
+\begin{intuition}
+  阿基米德性的直观内容是：以任一固定的正量反复累加，总能超过预先给定的量。
+  用一把一厘米的尺子去量任何长度，量足够多次总能超过它。
+  \Cref{thm:complete-implies-arch} 将说明，完备性自动排除了反例。
+\end{intuition}
+
 \begin{example}[一个非阿基米德的有序域]
   \label{ex:non-archimedean}
   设 \(\R(t)\) 为实系数有理函数域。对非零的 \(f \in \R(t)\)，
@@ -194,45 +229,36 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   最高次项系数同号。验证这确实定义了一个全序并与域运算相容之后，
   \(\R(t)\) 成为有序域。但对一切 \(n \in \N\) 都有 \(t > n\)：
   因为 \(t - n\) 的最高次项系数为 \(1 > 0\)。于是取 \(a = 1\)、\(b = t\)，
-  \cref{def:archimedean} 的要求不成立。
-  \begin{solution}
+  \cref{def:archimedean} 的要求不成立。这里 \(t\) 扮演「无穷大」的角色，
+  \(1/t\) 则是一个正的无穷小。
+  \begin{worked}
     需验证的是：所定义的正元集合 \(P\) 对加法与乘法封闭，且
     \(K \setminus \set{0}\) 被 \(P\) 与 \(-P\) 剖分。乘法封闭性由
     最高次项系数相乘即得。加法封闭性：先把两个分式的分母规范为
     最高次项系数为正，则两个分子的最高次项系数均为正；通分后新分子
     的最高次项系数，在两项次数相同时为二者之和、次数不同时为次数
     较高者的系数，两种情形都为正。剖分性由「同号」的三分律直接得到。
-
-    这个例子说明：\(t\) 在 \(\R(t)\) 中扮演「无穷大」的角色，
-    而 \(1/t\) 则是一个正的无穷小。阿基米德性正是排除这两类元素的那一条。
-  \end{solution}
+  \end{worked}
 \end{example}
 
-\begin{intuition}
-  阿基米德性的直观内容是：以任一固定的正量反复累加，总能超过预先给定的量。
-  \Cref{ex:non-archimedean} 表明，若不附加条件，有序域中可以存在无法这样超越的元素。
-  \Cref{thm:complete-implies-arch} 将说明，完备性自动排除了这种情形。
-\end{intuition}
+\begin{remark}
+  \Cref{ex:non-archimedean} 初读可以略过，只需记住结论：
+  有序域中可以存在无法用有限次累加超越的元素，阿基米德性正是排除这种情形的条件。
+  它在\cref{thm:complete-implies-arch} 中会作为完备性的推论重新出现。
+\end{remark}
 
-\section{序完备性的三副面孔}
-\label{sec:order-complete}
+\section{确界：定义与计算}
+\label{sec:sup-calc}
 
-\(\Q\) 与 \(\R\) 都是有序域，两者的差别不在\cref{def:ordered-field}之内。
-本节处理这个差别。
-
-先注意一件事。\cref{prop:q-cut-fails} 中被违反的那条性质，
-即「存在 \(c\) 使 \(a \le c \le b\)」，其陈述里只出现 \(\le\)。
-至于 \(A\) 与 \(B\) 本身借助平方给出，那只是为了举出一个具体的反例，
-与所违反的性质是什么无关。既然缺陷可以只用序陈述，修补它的条件也应当
-只用序陈述。因此以下的讨论在全序集上进行，而不限于有序域。
-这样安排可以分辨哪些结论与域运算无关，以便日后在没有运算的场合直接引用；
-第 2 章的度量空间正是这样的场合。
+本节引入本章最重要的概念，并把它算熟。定义本身只有两行，
+真正需要练习的是「给定一个集合，如何求出它的确界并加以证明」。
 
 \begin{concept}{上确界}
   \cwhy{\cref{eq:sqrt2-decimal} 的数列在 \(\Q\) 中无处可去。要断言它有极限，
     须先保证它所指向的那个位置上确有一个数。上确界就是把这个位置指出来的工具。}
-  \crel{三种刻画（上确界、下确界、戴德金分割）彼此等价，且只依赖序。
-    单调有界定理是它在数列上的形态；第 4 章的紧性是它在拓扑层面的接替者。}
+  \crel{它是「最小的上界」。当集合有最大元时上确界就是最大元；
+    没有最大元时它仍然存在，这正是它比最大元有用的地方。
+    第 4 章的紧性是它在拓扑层面的接替者。}
   \cwhere{序理论。完备格、完备 Boole 代数、以及任一偏序集的
     Dedekind--MacNeille 完备化，用的都是同一条性质。}
   \cdo{由它可证单调有界必收敛、闭区间套定理、Bolzano--Weierstrass 定理，
@@ -241,24 +267,290 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 
 \begin{definition}[上界与上确界]
   \label{def:supremum}
-  设 \(X\) 是全序集，\(S \subseteq X\) 非空。若存在 \(M \in X\) 使得对一切
-  \(x \in S\) 都有 \(x \le M\)，则称 \(M\) 为 \(S\) 的一个\term{上界}{upper bound}，
-  并称 \(S\) 有上界。若 \(S\) 的上界之中存在最小者 \(\beta\)，则称 \(\beta\) 为
-  \(S\) 的\term{上确界}{supremum}，记作 \(\beta = \sup S\)。
-  \term{下界}{lower bound}与\term{下确界}{infimum} \(\inf S\) 对偶地定义。
+  设 \(S \subseteq \R\) 非空。若存在 \(M \in \R\) 使得对一切 \(x \in S\)
+  都有 \(x \le M\)，则称 \(M\) 为 \(S\) 的一个\term{上界}{upper bound}，
+  并称 \(S\) \emph{有上界}。若 \(S\) 的全体上界之中存在最小者 \(\beta\)，
+  则称 \(\beta\) 为 \(S\) 的\term{上确界}{supremum}，记作 \(\beta = \sup S\)。
+
+  对偶地，\(m\) 称为 \(S\) 的\term{下界}{lower bound}，若对一切 \(x \in S\)
+  有 \(x \ge m\)；\(S\) 的全体下界中的最大者称为\term{下确界}{infimum}，
+  记作 \(\inf S\)。
 \end{definition}
 
-\begin{remark}
-  \label{rem:sup-epsilon}
-  当 \(X = \R\) 时，\(\beta = \sup S\) 等价于下述两条同时成立：
+注意上界一般不唯一：若 \(M\) 是上界，则任何大于 \(M\) 的数也是上界。
+上确界则是这一族上界中最靠左的那一个，因而唯一。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=1.0]
+    % 上排：有最大元
+    \draw[->] (-0.3,1.6) -- (6.6,1.6);
+    \draw[htRule, line width=2pt] (1,1.6) -- (4,1.6);
+    \fill[htRule] (1,1.6) circle (2.2pt); \fill[htRule] (4,1.6) circle (2.2pt);
+    \node[above] at (4,1.72) {\small \(\sup S_{1} = 1 \in S_{1}\)};
+    \node[left] at (-0.35,1.6) {\small \(S_{1}=[0,1]\)};
+    \foreach \x in {4.6,5.3,6.0} \fill[htGray] (\x,1.6) circle (1.4pt);
+    \node[htGray, below] at (5.3,1.5) {\small 其余上界};
+    % 下排：无最大元
+    \draw[->] (-0.3,0) -- (6.6,0);
+    \draw[htAccent, line width=2pt] (1,0) -- (4,0);
+    \fill[htAccent] (1,0) circle (2.2pt); \draw[htAccent, fill=white, line width=1pt] (4,0) circle (2.2pt);
+    \node[above] at (4,0.12) {\small \(\sup S_{2} = 1 \notin S_{2}\)};
+    \node[left] at (-0.35,0) {\small \(S_{2}=[0,1)\)};
+    \foreach \x in {4.6,5.3,6.0} \fill[htGray] (\x,0) circle (1.4pt);
+  \end{tikzpicture}
+  \caption{上确界与最大元的区别。两个集合的上确界都是 \(1\)。
+    \(S_{1}\) 含有 \(1\)，于是 \(1\) 既是上确界也是最大元；
+    \(S_{2}\) 不含 \(1\)，它没有最大元，但上确界照样存在。
+    空心圆表示该点不属于集合。\textbf{上确界未必属于集合}，这是初学时最常出错的一处。}
+  \label{fig:sup-vs-max}
+\end{figure}
+
+\begin{proposition}[上确界的 \(\varepsilon\) 刻画]
+  \label{prop:sup-epsilon}
+  设 \(S \subseteq \R\) 非空，\(\beta \in \R\)。则 \(\beta = \sup S\)
+  当且仅当下述两条同时成立：
   \begin{enumerate}[label=(\roman*)]
-    \item 对一切 \(x \in S\)，有 \(x \le \beta\)；
-    \item 对任意 \(\varepsilon > 0\)，存在 \(x_{0} \in S\) 使 \(x_{0} > \beta - \varepsilon\)。
+    \item \(\beta\) 是上界：对一切 \(x \in S\)，有 \(x \le \beta\)；
+    \item 对任意 \(\varepsilon > 0\)，存在 \(x_{0} \in S\) 使
+          \(x_{0} > \beta - \varepsilon\)。
   \end{enumerate}
-  第二条是实际证明中最常用的刻画：它把「最小」这一比较性陈述，
-  转化为可以逐点检验的存在性陈述。注意这条刻画用到了减法，
-  因而只在有序域中可说；\cref{def:supremum} 本身不需要运算。
+\end{proposition}
+
+\begin{proof}
+  设 \(\beta = \sup S\)。(i) 由定义。对 (ii)：\(\beta - \varepsilon < \beta\)，
+  而 \(\beta\) 是\emph{最小}的上界，故 \(\beta - \varepsilon\) 不是上界，
+  即存在 \(x_{0} \in S\) 使 \(x_{0} > \beta - \varepsilon\)。
+
+  反之设 (i)(ii) 成立。由 (i)，\(\beta\) 是上界。设 \(b\) 是任一上界且 \(b < \beta\)，
+  取 \(\varepsilon = \beta - b > 0\)，由 (ii) 存在 \(x_{0} \in S\) 使
+  \(x_{0} > \beta - \varepsilon = b\)，与 \(b\) 是上界矛盾。故一切上界 \(b\)
+  都满足 \(b \ge \beta\)，即 \(\beta\) 是最小上界。
+\end{proof}
+
+\begin{intuition}
+  条件 (ii) 的含义是：把 \(\beta\) 往左挪动任意一点点，就不再是上界了。
+  它是实际证明中最常用的形式，因为它把「最小」这一需要比较全体上界的陈述，
+  换成了一个只需找出\emph{一个}元素的存在性陈述。
+\end{intuition}
+
+\begin{strategy}[求上确界的标准两步]
+  给定 \(S\)，先\emph{猜}出答案 \(\beta\)（通常从 \(S\) 的元素的变化趋势看出），
+  再按\cref{prop:sup-epsilon} 验证两条：
+  第一步证 \(\beta\) 是上界，通常是一个不等式；
+  第二步取定 \(\varepsilon > 0\)，具体地\emph{构造}出一个 \(x_{0} \in S\)
+  使 \(x_{0} > \beta - \varepsilon\)。第二步是关键，也是评分时看的地方。
+\end{strategy}
+
+\begin{example}[闭区间与开区间]
+  \label{ex:sup-intervals}
+  求 \(\sup[0,1]\)、\(\inf[0,1]\)、\(\sup(0,1)\)、\(\inf(0,1)\)。
+  \begin{worked}
+    四个答案分别是 \(1, 0, 1, 0\)。
+
+    以 \(\sup(0,1) = 1\) 为例。第一步：对一切 \(x \in (0,1)\) 有 \(x < 1\)，
+    故 \(1\) 是上界。第二步：任取 \(\varepsilon > 0\)。
+    若 \(\varepsilon \ge 1\)，取 \(x_{0} = 1/2\) 即有 \(x_{0} > 1 - \varepsilon\)；
+    若 \(\varepsilon < 1\)，取 \(x_{0} = 1 - \varepsilon/2\)，则
+    \(0 < x_{0} < 1\) 故 \(x_{0} \in (0,1)\)，且 \(x_{0} > 1 - \varepsilon\)。
+    两步都成立，故 \(\sup(0,1) = 1\)。
+
+    注意 \(1 \notin (0,1)\)：上确界不属于集合。而 \(\sup[0,1] = 1 \in [0,1]\)，
+    此时上确界同时是最大元。
+  \end{worked}
+\end{example}
+
+\begin{example}[由数列给出的集合]
+  \label{ex:sup-sequence}
+  设 \(S = \setst{1 - 1/n}{n \in \N}\)。求 \(\sup S\) 与 \(\inf S\)。
+  \begin{worked}
+    \(S = \set{0, 1/2, 2/3, 3/4, \dots}\)，各项递增趋向 \(1\)。
+
+    \(\sup S = 1\)：第一步，\(1 - 1/n < 1\) 对一切 \(n\) 成立。
+    第二步，任取 \(\varepsilon > 0\)，要找 \(n\) 使 \(1 - 1/n > 1 - \varepsilon\)，
+    即 \(1/n < \varepsilon\)，即 \(n > 1/\varepsilon\)。
+    由\cref{thm:complete-implies-arch}(ii) 这样的 \(n\) 存在。
+
+    \(\inf S = 0\)：取 \(n = 1\) 得 \(0 \in S\)，而 \(1 - 1/n \ge 0\) 恒成立，
+    故 \(0\) 是下界且属于 \(S\)，因而是最小元，也就是下确界。
+
+    本例中上确界不属于 \(S\)，下确界属于 \(S\)。两种情形都会出现。
+  \end{worked}
+\end{example}
+
+\begin{example}[两端都取不到]
+  \label{ex:sup-alternating}
+  设 \(S = \setst{(-1)^{n}\left(1 - \dfrac{1}{n}\right)}{n \in \N}\)。求 \(\sup S\)、\(\inf S\)。
+  \begin{worked}
+    偶数项 \(1 - 1/n\) 递增趋于 \(1\)，奇数项 \(-(1-1/n)\) 递减趋于 \(-1\)。
+    故 \(\sup S = 1\)，\(\inf S = -1\)，两者都不属于 \(S\)。
+
+    验证 \(\sup S = 1\)：上界显然。任取 \(\varepsilon > 0\)，取偶数 \(n > 1/\varepsilon\)，
+    则该项等于 \(1 - 1/n > 1 - \varepsilon\)。下确界同理。
+  \end{worked}
+\end{example}
+
+\begin{example}[回到空隙]
+  \label{ex:sup-sqrt2}
+  设 \(S = \setst{x \in \R}{x > 0,\ x^{2} < 2}\)。说明 \(\sup S\) 在 \(\R\) 中存在，
+  并说明相应的集合 \(A = \setst{x \in \Q}{x > 0,\ x^{2} < 2}\) 在 \(\Q\) 中没有上确界。
+  \begin{worked}
+    \(S\) 非空（\(1 \in S\)）且有上界（若 \(x \ge 2\) 则 \(x^{2} \ge 4 > 2\)，
+    故 \(2\) 是上界）。由\cref{ax:completeness}，\(\sup S\) 在 \(\R\) 中存在。
+    可以进一步证明 \((\sup S)^{2} = 2\)，即 \(\sup S = \sqrt{2}\)（见\cref{exr:sup-sqrt2-value}）。
+
+    而 \cref{prop:q-cut-fails} 表明，在 \(\Q\) 内 \(A\) 的上界集合没有最小元：
+    对任何有理上界 \(c\) 都能造出更小的有理上界。故 \(A\) 在 \(\Q\) 中无上确界。
+
+    这正是 \(\R\) 与 \(\Q\) 的全部差别所在。
+  \end{worked}
+\end{example}
+
+\begin{example}[有限集与无上界的集合]
+  \label{ex:sup-finite}
+  （a）设 \(S\) 为有限非空集，求 \(\sup S\)。（b）\(\sup \Z\) 是否存在？
+  \begin{worked}
+    （a）有限非空集必有最大元 \(\max S\)（对元素个数用归纳法），
+    而最大元显然是最小的上界，故 \(\sup S = \max S\)。
+    有限集的情形下上确界不提供新信息，它的价值全在无限集上。
+
+    （b）不存在。由\cref{thm:complete-implies-arch}(ii)，对任何 \(M \in \R\)
+    都存在 \(n \in \N\) 使 \(n > M\)，故 \(\Z\) 没有上界，
+    从而谈不上「最小的上界」。此时有些书写 \(\sup \Z = +\infty\)，
+    这只是一个约定记号，须事先声明；本讲义中 \(\sup S\) 一律指实数，
+    只对有上界的非空集合使用。
+  \end{worked}
+\end{example}
+
+\begin{pitfall}
+  \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
+    \item \textbf{误以为上确界必属于集合。} \((0,1)\) 的上确界是 \(1\)，
+          而 \(1 \notin (0,1)\)。属于集合的那种情形有专门的名字，叫最大元。
+    \item \textbf{把\cref{prop:sup-epsilon}(ii) 的量词写反。}
+          正确的是「对\emph{任意} \(\varepsilon > 0\)，\emph{存在} \(x_{0} \in S\)」。
+          写成「存在 \(\varepsilon\)，对一切 \(x_{0}\)」就成了另一个命题。
+    \item \textbf{只验证上界就断言是上确界。} \(2\) 是 \((0,1)\) 的上界，
+          但不是上确界。两步缺一不可。
+    \item \textbf{对无上界的集合谈上确界。} \(\sup \Z\) 不是实数。
+          使用 \(\sup S\) 之前必须先说明 \(S\) 非空且有上界。
+  \end{enumerate}
+\end{pitfall}
+
+\section{确界原理及其推论}
+\label{sec:sup-principle}
+
+上一节练习了确界的计算，但每一次都默认了「上确界存在」。
+这件事对 \(\Q\) 不成立（\cref{ex:sup-sqrt2}），因此它不是可以推导出来的定理，
+而必须作为对 \(\R\) 的要求写下来。
+
+\begin{assumption}[确界公理]
+  \label{ax:completeness}
+  \(\R\) 中任一非空有上界的子集必有上确界。
+\end{assumption}
+
+这是 \(\R\) 区别于 \(\Q\) 的\emph{唯一}实质性质：两者同为有序域，
+差别仅在于前者满足\cref{ax:completeness}。本节说明由它可以推出什么。
+
+\begin{theorem}[单调有界定理]
+  \label{thm:monotone-convergence}
+  设数列 \(\seq{a_{n}}\) 单调递增且有上界，则 \(\seq{a_{n}}\) 收敛，
+  且 \(\lim_{n \to \infty} a_{n} = \sup_{n} a_{n}\)。
+\end{theorem}
+
+\begin{strategy}
+  要证收敛，先得有一个候选的极限值。数列本身只给出一串数，
+  唯一能从中造出「它趋向的位置」的工具就是上确界。造出来之后，
+  再用\cref{prop:sup-epsilon}(ii) 把「靠近上确界」翻译成 \(\varepsilon\) 语言。
+\end{strategy}
+
+\begin{proof}
+  记 \(S = \setst{a_{n}}{n \in \N}\)。由假设 \(S\) 非空且有上界，
+  据\cref{ax:completeness}，\(\beta = \sup S\) 存在。
+
+  任取 \(\varepsilon > 0\)。由\cref{prop:sup-epsilon}(ii)，存在 \(N\) 使
+  \(a_{N} > \beta - \varepsilon\)。又 \(\seq{a_{n}}\) 单调递增，
+  故当 \(n \ge N\) 时
+  \begin{equation}
+    \label{eq:monotone-squeeze}
+    \beta - \varepsilon < a_{N} \le a_{n} \le \beta < \beta + \varepsilon,
+  \end{equation}
+  即 \(\abs{a_{n} - \beta} < \varepsilon\)。由 \(\varepsilon\) 的任意性，
+  \(a_{n} \to \beta\)。
+\end{proof}
+
+\begin{remark}
+  回看\cref{eq:sqrt2-decimal}。那个数列单调递增且以 \(2\) 为上界，
+  在 \(\R\) 中由\cref{thm:monotone-convergence} 必定收敛；
+  在 \(\Q\) 中却不收敛。差别的全部来源就是\cref{ax:completeness}。
 \end{remark}
+
+\begin{example}[自然常数的存在性]
+  \label{ex:e-limit}
+  证明数列 \(a_{n} = \left(1 + \dfrac{1}{n}\right)^{n}\) 收敛。
+  \begin{worked}
+    由二项式定理，
+    \[
+      a_{n} = \sum_{k=0}^{n} \binom{n}{k} \frac{1}{n^{k}}
+            = \sum_{k=0}^{n} \frac{1}{k!}
+              \prod_{j=1}^{k-1}\left(1 - \frac{j}{n}\right).
+    \]
+    把 \(n\) 换成 \(n+1\)，右端每一项中的因子 \(1 - j/n\) 均增大，
+    且求和多出一项非负项，故 \(a_{n+1} > a_{n}\)，数列单调递增。
+
+    又因 \(\prod_{j=1}^{k-1}(1 - j/n) \le 1\) 且 \(k! \ge 2^{k-1}\)，
+    \[
+      a_{n} \le \sum_{k=0}^{n} \frac{1}{k!}
+            \le 1 + \sum_{k=1}^{n} \frac{1}{2^{k-1}} < 3,
+    \]
+    数列有上界。由\cref{thm:monotone-convergence} 即得收敛，该极限记作 \(\eu\)。
+
+    注意这个证明没有算出 \(\eu\) 是多少，只断言它存在。
+    这正是完备性的典型用法：\emph{先保证极限存在，再研究它的性质}。
+  \end{worked}
+\end{example}
+
+\begin{theorem}[闭区间套定理]
+  \label{thm:nested-intervals}
+  设闭区间列 \(I_{n} = [\alpha_{n}, \beta_{n}]\) 满足
+  \(I_{1} \supseteq I_{2} \supseteq \cdots\)，则 \(\bigcap_{n} I_{n} \neq \varnothing\)。
+  若进一步有 \(\beta_{n} - \alpha_{n} \to 0\)，则该交集恰含一点。
+\end{theorem}
+
+\begin{proof}
+  由区间套关系，\(\seq{\alpha_{n}}\) 单调递增，\(\seq{\beta_{n}}\) 单调递减，
+  且对一切 \(m, n\) 有 \(\alpha_{m} \le \beta_{n}\)（取下标较大者比较即得）。
+  于是 \(\seq{\alpha_{n}}\) 有上界 \(\beta_{1}\)，令 \(c = \sup_{n} \alpha_{n}\)。
+  对每个 \(n\)，\(\beta_{n}\) 是 \(\seq{\alpha_{m}}\) 的上界，故 \(c \le \beta_{n}\)；
+  又 \(\alpha_{n} \le c\)。因此 \(c \in I_{n}\) 对一切 \(n\) 成立。
+
+  若 \(\beta_{n} - \alpha_{n} \to 0\)，设 \(c, c'\) 均属于交集，
+  则 \(\abs{c - c'} \le \beta_{n} - \alpha_{n} \to 0\)，故 \(c = c'\)。
+\end{proof}
+
+\begin{pitfall}
+  \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
+    \item \textbf{把\cref{thm:nested-intervals} 用到开区间上。}
+          \((0, 1/n)\) 是递减的开区间列，交集为空。
+    \item \textbf{把它用到无界闭集上。} \([n, +\infty)\) 递减，交集也为空。
+          「闭」与「有界」缺一不可，这一对条件将在第 4 章被统一为紧性。
+  \end{enumerate}
+\end{pitfall}
+
+\section{回头看：序完备性的三种面孔}
+\label{sec:order-complete}
+
+现在把\cref{sec:sup-calc} 与\cref{sec:sup-principle} 的证明重读一遍，
+问一个问题：这些证明用到了 \(\R\) 的哪些结构？
+
+\cref{thm:monotone-convergence} 与\cref{thm:nested-intervals} 的证明里出现了减法
+（在 \(\varepsilon\) 的估计中），但\cref{def:supremum} 本身、
+以及「上界的最小者」这一说法，从头到尾只用到了 \(\le\)。
+这提示我们：确界的理论也许根本不需要加法与乘法。本节验证这一点，
+顺带说明「没有空隙」还有另外两种同样自然的说法。
+
+以下把舞台从 \(\R\) 换成任意全序集。这样做不是追求一般性，
+而是为了看清哪些结论与运算无关，以便日后在没有运算的场合直接引用；
+第 2 章的度量空间正是这样的场合。
 
 \begin{theorem}[序完备性的三种等价刻画]
   \label{thm:order-complete-equiv}
@@ -272,6 +564,13 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   \end{enumerate}
   满足其中任一条的全序集称为\term{序完备的}{order complete}。
 \end{theorem}
+
+\begin{strategy}
+  三条互相等价，按 \((\mathrm{i}) \Rightarrow (\mathrm{ii}) \Rightarrow
+  (\mathrm{iii}) \Rightarrow (\mathrm{i})\) 绕一圈即可。
+  每一步的手法相同：把手上没有的那个界，改写成另一个集合的界。
+  比如要造下确界，就去看「全体下界」这个集合的上确界。
+\end{strategy}
 
 \begin{proof}
   \((\mathrm{i}) \Rightarrow (\mathrm{ii})\)。设 \(A\) 非空且有下界。
@@ -289,13 +588,16 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   \((\mathrm{iii}) \Rightarrow (\mathrm{i})\)。设 \(A\) 非空且有上界，
   令 \(B\) 为 \(A\) 的全体上界之集。则 \(B\) 非空，
   且对一切 \(a \in A\) 与 \(b \in B\) 都有 \(a \le b\)。
-  由 (iii) 知存在 \(c\)，使 \(a \le c \le b\) 对一切这样的 \(a\) 与 \(b\) 成立。前半个不等式说明 \(c \in B\)，
-  后半个说明 \(c\) 是 \(B\) 的最小元，即 \(c = \sup A\)。
+  由 (iii) 知存在 \(c\)，使 \(a \le c \le b\) 对一切这样的 \(a\) 与 \(b\) 成立。
+  前半个不等式说明 \(c \in B\)，后半个说明 \(c\) 是 \(B\) 的最小元，即 \(c = \sup A\)。
 \end{proof}
 
 \begin{remark}
   \label{rem:which-axiom}
-  \Cref{thm:order-complete-equiv} 表明，以其中哪一条作为公理是可以选择的：
+  证明中没有出现过一次加法或乘法。因此这三条是纯粹的序性质，
+  与 \(\R\) 的域结构无关。
+
+  由此还得到一个体例上的结论：以其中哪一条作为公理是可以选择的。
   \textcite{garling2013} 取上确界性质，\textcite{zorich2015} 取分割性质，
   两种处理给出同一个实数系。若只陈述确界公理并以之为唯一起点，
   容易使读者误以为完备性必然以确界的形式出现。
@@ -315,7 +617,7 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   \term{实数系}{real number system} \(\R\) 是一个序完备的有序域。
 \end{definition}
 
-本定义综合了前两节的内容：域公理与序公理刻画 \(\Q\) 已具备的结构，
+本定义综合了前几节的内容：域公理与序公理刻画 \(\Q\) 已具备的结构，
 序完备性刻画 \(\Q\) 所缺失的结构。定义本身既未断言这样的对象存在，
 也未断言它唯一。两者都成立，但其地位不同。
 
@@ -330,7 +632,7 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   证明的思路是：两个域各自含有一份 \(\Q\) 的拷贝，先在有理数上把 \(j\) 定死，
   再用二进制逼近 \(x_{n} = \floor{2^{n}x}/2^{n}\) 把 \(j\) 延拓到全体实数，
   最后验证运算与序都被保持。技术细节冗长而无新意，本讲义置于附录 A，
-  完整叙述可参见\textcite{garling2013} 的 3.3 节。
+  完整叙述可参见\textcite{garling2013} 的 3.3 节。初读可跳过。
 \end{remark}
 
 \begin{remark}[一段史实]
@@ -340,12 +642,12 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   准备微分学讲义时，按他自己的说法，比以往任何时候都更强烈地感到算术缺乏
   真正科学的基础，遂发现了用分割构造实数的方法；这一结果直到 1872 年才发表。
   从柯西到戴德金相隔半个世纪，可见把「数系没有空隙」说精确并非易事。
-  本节的\cref{def:reals}把这半个世纪的结果压缩成了一行。
+  \cref{def:reals} 把这半个世纪的结果压缩成了一行。
   史料见\textcite{garling2013} 3.1 节。
 \end{remark}
 
 存在性只能靠构造。历史上有两种途径：戴德金取 \(\Q\) 的分割，
-康托尔用 \(\Q\) 中的 Cauchy 列。两者都放在附录 A。
+康托尔取 \(\Q\) 中的 Cauchy 列。两者都放在附录 A。
 在此之前，我们照\textcite{amann2005} 的做法，把构造当作已知，
 转而从\cref{def:reals} 推出分析学所需的全部性质。
 
@@ -359,6 +661,7 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \label{sec:archimedean}
 
 \Cref{ex:non-archimedean} 表明阿基米德性并非有序域所固有。以下说明它是完备性的推论。
+本节的三条结论在前面的例题中已多次借用，现在补上证明。
 
 \begin{theorem}
   \label{thm:complete-implies-arch}
@@ -396,7 +699,7 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \end{proof}
 
 \begin{remark}
-  \Cref{thm:complete-implies-arch} 的 (i) 说 \(\R\) 中没有正的无穷小，
+  \Cref{thm:complete-implies-arch} 的 (i) 说明 \(\R\) 中没有正的无穷小，
   (ii) 说明其中没有无穷大。对照\cref{ex:non-archimedean}，\(\R(t)\) 两者兼有，
   故它虽为有序域，却不可能序完备。这提供了一个无须直接验证确界的判别方法。
 \end{remark}
@@ -468,6 +771,13 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   若 \(\R\) 中每个 Cauchy 列都收敛，则称 \(\R\) 是 \term{Cauchy 完备的}{Cauchy complete}。
 \end{definition}
 
+\begin{intuition}
+  收敛的定义要求各项靠近\emph{极限}，Cauchy 条件只要求各项\emph{彼此}靠近。
+  前者需要事先知道极限是谁，后者不需要。
+  \cref{eq:sqrt2-decimal} 是 Cauchy 列，在 \(\R\) 中收敛，在 \(\Q\) 中不收敛，
+  可见「是否 Cauchy」是数列自身的性质，「是否收敛」则取决于它所在的数系。
+\end{intuition}
+
 \begin{theorem}[完备性的分解]
   \label{thm:completeness-split}
   设 \(K\) 为有序域。则 \(K\) 序完备，当且仅当 \(K\) 既是阿基米德的、
@@ -508,27 +818,53 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \label{sec:uncountable}
 
 \Cref{thm:complete-implies-arch}(iii) 说 \(\Q\) 在 \(\R\) 中稠密，
-这容易让人以为两者差别不大。下面说明差别是根本性的。
+这容易让人以为两者差别不大。本节说明差别是根本性的。先把「可数」说清楚。
+
+\begin{definition}[可数]
+  \label{def:countable}
+  集合 \(S\) 称为\term{可数的}{countable}，若存在从 \(\N\) 到 \(S\) 的满射，
+  或者 \(S\) 为有限集。不可数即不满足此条件。
+\end{definition}
+
+\begin{example}[几个可数集]
+  \label{ex:countable}
+  \begin{enumerate}[label=(\alph*)]
+    \item \(\Z\) 可数：按 \(0, 1, -1, 2, -2, \dots\) 排列即得一个枚举。
+    \item \(\N \times \N\) 可数：按对角线枚举，先排 \(m+n = 2\) 的一对，
+          再排 \(m+n = 3\) 的两对，如此下去，每条对角线上只有有限多对。
+    \item \(\Q\) 可数：每个有理数写成既约分数 \(p/q\)，对应到 \(\Z \times \N\)
+          中的一个元素，而后者由 (a)(b) 可数。
+    \item 可数多个可数集之并可数：把第 \(i\) 个集合的第 \(j\) 个元素放在
+          坐标 \((i,j)\) 处，再用 (b)。
+  \end{enumerate}
+\end{example}
 
 \begin{theorem}[康托尔]
   \label{thm:uncountable}
   \(\R\) 不可数。
 \end{theorem}
 
+\begin{strategy}
+  要证不存在满射 \(f \mapsdef \N \to [0,1]\)，就对\emph{任给}的 \(f\)
+  造出一个漏掉的数。造法是逐步缩小范围：第 \(n\) 步把当前区间三等分，
+  取一段避开 \(f(n)\)。区间套定理保证这些区间有公共点，
+  而这个公共点被每一步都避开了。
+\end{strategy}
+
 \begin{proof}
-  只需证区间 \([0,1]\) 不可数。设 \(f \mapsdef \N \to [0,1]\) 为任一映射，
-  我们构造不在其像中的元素。把 \([0,1]\) 三等分，其中至少有一个闭子区间
-  \(I_{1}\) 不含 \(f(1)\)。把 \(I_{1}\) 三等分，取其中不含 \(f(2)\) 的闭子区间
-  \(I_{2}\)。如此下去得到闭区间套
+  只需证区间 \([0,1]\) 不可数。设 \(f \mapsdef \N \to [0,1]\) 为任一映射。
+  把 \([0,1]\) 三等分为三个闭子区间；\(f(1)\) 至多落在其中两个之内
+  （只有当它是分点时才落在两个内），故至少有一个闭子区间 \(I_{1}\) 不含 \(f(1)\)。
+  把 \(I_{1}\) 三等分，同理取其中不含 \(f(2)\) 的闭子区间 \(I_{2}\)。
+  如此下去得到闭区间套
   \begin{equation}
     \label{eq:nested-intervals}
     I_{1} \supseteq I_{2} \supseteq \cdots, \qquad
     \abs{I_{n}} = 3^{-n}, \qquad f(n) \notin I_{n}.
   \end{equation}
-  记 \(I_{n} = [\alpha_{n}, \beta_{n}]\)。数列 \(\seq{\alpha_{n}}\) 单调递增且
-  以 \(\beta_{1}\) 为上界，由确界原理有上确界 \(\alpha = \sup_{n} \alpha_{n}\)。
-  对每个 \(n\)，\(\alpha_{n} \le \alpha \le \beta_{n}\)，故 \(\alpha \in I_{n}\)
-  对一切 \(n\) 成立。于是 \(\alpha \neq f(n)\) 对一切 \(n\) 成立，\(f\) 不是满射。
+  由\cref{thm:nested-intervals}，存在 \(\alpha \in \bigcap_{n} I_{n}\)。
+  于是对一切 \(n\)，\(\alpha \in I_{n}\) 而 \(f(n) \notin I_{n}\)，
+  故 \(\alpha \neq f(n)\)。因此 \(f\) 不是满射。
 \end{proof}
 
 \begin{corollary}
@@ -537,13 +873,15 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \end{corollary}
 
 \begin{proof}
-  \(\Q\) 可数。若 \(\R \setminus \Q\) 可数，则 \(\R\) 作为两个可数集之并可数，
+  由\cref{ex:countable}(c)，\(\Q\) 可数。若 \(\R \setminus \Q\) 也可数，
+  则由\cref{ex:countable}(d)，\(\R\) 作为两个可数集之并可数，
   与\cref{thm:uncountable} 矛盾。
 \end{proof}
 
 \begin{remark}
   \Cref{cor:irrationals} 与稠密性合在一起，给出一幅与直觉不符的图景：
-  \(\Q\) 在 \(\R\) 中处处稠密，却只占「可数多个」位置。
+  \(\Q\) 在 \(\R\) 中处处稠密，任何两个实数之间都夹着有理数，
+  可它只占「可数多个」位置，绝大多数实数都是无理数。
   这个反差在第 7 章讨论 Riemann 可积性时会再次出现，
   届时「可数」将被更细的\term{零测集}{null set}概念取代。
 \end{remark}
@@ -557,7 +895,7 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \begin{table}[htbp]
   \centering
   \caption{实数系各条性质所依赖的结构。只依赖距离的性质可推广至任意度量空间，
-    依赖序的性质则不能——一般度量空间中没有序。}
+    依赖序的性质则不能，因为一般度量空间中没有序。}
   \label{tab:structure-dependence}
   \begin{tabular}{@{}lll@{}}
     \toprule
@@ -566,6 +904,7 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
     上确界性质、下确界性质 & 序           & 全序集（\cref{thm:order-complete-equiv}） \\
     戴德金分割性质         & 序           & 全序集 \\
     单调有界定理           & 序           & 全序集上的单调网 \\
+    闭区间套定理           & 序           & 全序集；第 4 章由紧性取代 \\
     阿基米德性             & 序 + 域运算  & 有序域 \\
     三角不等式             & 距离         & 度量空间（第 2 章） \\
     Cauchy 完备性          & 距离         & 度量空间；赋范空间 \\
@@ -581,13 +920,12 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \section*{习题}
 \addcontentsline{toc}{section}{习题}
 
-以下习题分三档。标「例行」者检验定义，标「结构」者要求指出所用到的结构，
-标「延伸」者指向后续章节。
+习题分三档：标「例行」者检验定义与计算，应当全做；标「结构」者要求指出证明
+所依赖的结构，是本章的重点；标「延伸」者指向后续章节，初读可略。
 
 \begin{exercise}[例行]
   \label{exr:inf-def}
-  仿照\cref{def:supremum} 之后关于 \(\varepsilon\) 刻画的注，写出 \(\alpha = \inf S\) 的 \(\varepsilon\) 形式刻画。
-  \answerspace[2.5cm]
+  仿照\cref{prop:sup-epsilon}，写出 \(\alpha = \inf S\) 的 \(\varepsilon\) 形式刻画。
   \begin{solution}
     \(\alpha = \inf S\) 当且仅当：（i）对一切 \(x \in S\) 有 \(x \ge \alpha\)；
     （ii）对任意 \(\varepsilon > 0\)，存在 \(x_{0} \in S\) 使 \(x_{0} < \alpha + \varepsilon\)。
@@ -595,10 +933,58 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \end{exercise}
 
 \begin{exercise}[例行]
+  \label{exr:sup-compute-1}
+  求下列集合的上确界与下确界，并指出哪些属于集合本身：
+  (a) \([-1, 3)\)；\quad
+  (b) \(\setst{1/n}{n \in \N}\)；\quad
+  (c) \(\setst{n/(n+1)}{n \in \N}\)；\quad
+  (d) \(\setst{x \in \R}{x^{2} < 5}\)。
+  \begin{solution}
+    (a) \(\sup = 3 \notin S\)，\(\inf = -1 \in S\)。
+
+    (b) \(\sup = 1 \in S\)（取 \(n=1\)），\(\inf = 0 \notin S\)。
+    下确界的验证：\(0\) 是下界；任取 \(\varepsilon>0\)，
+    由\cref{thm:complete-implies-arch}(ii) 存在 \(n > 1/\varepsilon\)，
+    则 \(1/n < \varepsilon\)。
+
+    (c) \(n/(n+1) = 1 - 1/(n+1)\) 递增趋于 \(1\)。
+    \(\sup = 1 \notin S\)，\(\inf = 1/2 \in S\)（取 \(n=1\)）。
+
+    (d) \(S = (-\sqrt{5}, \sqrt{5})\)，故 \(\sup = \sqrt{5}\)，\(\inf = -\sqrt{5}\)，
+    均不属于 \(S\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:sup-compute-2}
+  设 \(S = \setst{m/n}{m, n \in \N,\ m < n}\)。求 \(\sup S\) 与 \(\inf S\)。
+  \begin{solution}
+    \(\sup S = 1\)：由 \(m < n\) 得 \(m/n < 1\)，故 \(1\) 是上界。
+    任取 \(\varepsilon > 0\)，取 \(n > 1/\varepsilon\) 与 \(m = n - 1\)，
+    则 \(m/n = 1 - 1/n > 1 - \varepsilon\)。故 \(\sup S = 1 \notin S\)。
+
+    \(\inf S = 0\)：\(m/n > 0\) 故 \(0\) 是下界。取 \(m = 1\)、\(n\) 充分大，
+    得 \(1/n < \varepsilon\)。故 \(\inf S = 0 \notin S\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:max-sup}
+  证明：\(S\) 有最大元当且仅当 \(\sup S\) 存在且 \(\sup S \in S\)。
+  此时 \(\max S = \sup S\)。
+  \begin{solution}
+    设 \(M = \max S\)。则 \(M\) 是上界；又任一上界 \(b\) 满足 \(b \ge M\)
+    （因 \(M \in S\)），故 \(M\) 是最小上界，即 \(M = \sup S \in S\)。
+
+    反之设 \(\beta = \sup S \in S\)。\(\beta\) 是上界故 \(x \le \beta\)
+    对一切 \(x \in S\) 成立，加上 \(\beta \in S\)，即 \(\beta = \max S\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
   \label{exr:sup-sum}
   设 \(A, B \subseteq \R\) 非空且均有上界，令
   \(A + B = \setst{a + b}{a \in A,\ b \in B}\)。证明 \(\sup(A + B) = \sup A + \sup B\)。
-  \answerspace[4cm]
   \begin{solution}
     记 \(\alpha = \sup A\)，\(\beta = \sup B\)。任取 \(a \in A\)、\(b \in B\)，
     有 \(a + b \le \alpha + \beta\)，故 \(\sup(A+B) \le \alpha + \beta\)。
@@ -615,15 +1001,89 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   \label{exr:sup-scalar}
   设 \(S \subseteq \R\) 非空有上界，\(c > 0\)。求 \(\sup(cS)\) 与 \(\sup(-S)\)，
   其中 \(cS = \setst{cx}{x \in S}\)，\(-S = \setst{-x}{x \in S}\)。
-  \answerspace[3cm]
   \begin{solution}
     \(\sup(cS) = c\sup S\)：\(c\sup S\) 显然是上界；若 \(M\) 是 \(cS\) 的上界，
     则 \(M/c\) 是 \(S\) 的上界，故 \(M/c \ge \sup S\)，即 \(M \ge c\sup S\)。
 
-    \(\sup(-S) = -\inf S\)：\(x \le \beta\) 对一切 \(x \in S\) 成立当且仅当
-    \(-\beta \le -x\) 对一切 \(x \in S\) 成立，即 \(S\) 的上界与 \(-S\) 的下界
-    一一对应且反序，取最小者对应取最大者。注意本题用到了\cref{def:ordered-field}
+    \(\sup(-S) = -\inf S\)：\(x \ge m\) 对一切 \(x \in S\) 成立当且仅当
+    \(-x \le -m\) 对一切 \(x \in S\) 成立，即 \(S\) 的下界与 \(-S\) 的上界
+    一一对应且反序，取最大者对应取最小者。注意本题用到了\cref{def:ordered-field}
     的相容性条件，纯全序集上无此结论。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:sup-monotone-set}
+  设 \(\varnothing \neq A \subseteq B\) 且 \(B\) 有上界。证明 \(\sup A \le \sup B\)。
+  再举例说明等号可以成立而 \(A \neq B\)。
+  \begin{solution}
+    \(\sup B\) 是 \(B\) 的上界，因而也是 \(A\) 的上界；\(\sup A\) 是 \(A\)
+    的最小上界，故 \(\sup A \le \sup B\)。
+
+    例：\(A = (0,1)\)，\(B = [0,1]\)，两者上确界均为 \(1\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:sup-union}
+  设 \(A, B\) 非空且均有上界。证明 \(\sup(A \cup B) = \max\set{\sup A,\ \sup B}\)。
+  \begin{solution}
+    记 \(M = \max\set{\sup A, \sup B}\)。\(M\) 是 \(A\) 与 \(B\) 的公共上界，
+    故是 \(A \cup B\) 的上界。反之由\cref{exr:sup-monotone-set}，
+    \(\sup A \le \sup(A\cup B)\) 且 \(\sup B \le \sup(A \cup B)\)，
+    故 \(M \le \sup(A \cup B)\)。两式合并即得。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:sup-sqrt2-value}
+  设 \(S = \setst{x \in \R}{x > 0,\ x^{2} < 2}\)，\(\beta = \sup S\)（由\cref{ex:sup-sqrt2} 存在）。
+  证明 \(\beta^{2} = 2\)。
+  \begin{solution}
+    用\cref{prop:q-cut-fails} 中的构造。令 \(\xi = (2\beta+2)/(\beta+2)\)，
+    则\cref{eq:xi-construction} 的两个恒等式对实数同样成立。
+
+    若 \(\beta^{2} < 2\)，则 \(\xi > \beta\) 且 \(\xi^{2} < 2\)，
+    即 \(\xi \in S\) 却大于上界 \(\beta\)，矛盾。
+    若 \(\beta^{2} > 2\)，则 \(\xi < \beta\) 且 \(\xi^{2} > 2\)；
+    此时对一切 \(x \in S\) 有 \(x^{2} < 2 < \xi^{2}\)，故 \(x < \xi\)，
+    即 \(\xi\) 是比 \(\beta\) 更小的上界，与 \(\beta\) 是最小上界矛盾。
+    故 \(\beta^{2} = 2\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:monotone-apply}
+  设 \(x_{1} = 1\)，\(x_{n+1} = \dfrac{1}{2}\left(x_{n} + \dfrac{2}{x_{n}}\right)\)。
+  证明 \(\seq{x_{n}}\) 收敛，并求其极限。
+  \begin{solution}
+    先证 \(x_{n} > 0\)（归纳显然）与 \(x_{n}^{2} \ge 2\)（\(n \ge 2\)）：
+    由均值不等式 \(x_{n+1} = \frac{1}{2}(x_{n} + 2/x_{n}) \ge \sqrt{2}\)。
+
+    再证递减（\(n \ge 2\)）：\(x_{n} - x_{n+1} = \frac{1}{2}(x_{n} - 2/x_{n})
+    = \frac{x_{n}^{2}-2}{2x_{n}} \ge 0\)。
+
+    于是 \(\seq{x_{n}}_{n \ge 2}\) 单调递减且有下界 \(\sqrt{2}\)，
+    由\cref{thm:monotone-convergence} 的对偶形式收敛，设极限为 \(L \ge \sqrt2\)。
+    对递推式取极限得 \(L = \frac{1}{2}(L + 2/L)\)，解出 \(L^{2} = 2\)，
+    故 \(L = \sqrt{2}\)。这正是\cref{eq:sqrt2-decimal} 的一个更快的版本。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:countable-examples}
+  证明：(a) 两个可数集之积可数；(b) 可数集的任一子集可数；
+  (c) 全体有限长的 \(0\)--\(1\) 串构成可数集。
+  \begin{solution}
+    (a) 由\cref{ex:countable}(b)，\(\N \times \N\) 可数；一般情形取满射
+    \(\N \to A\)、\(\N \to B\) 复合即得。
+
+    (b) 设 \(S\) 可数、\(T \subseteq S\) 非空。取 \(f \mapsdef \N \to S\) 满射，
+    固定 \(t_{0} \in T\)，令 \(g(n) = f(n)\) 若 \(f(n) \in T\)，否则 \(g(n) = t_{0}\)。
+    则 \(g \mapsdef \N \to T\) 是满射。
+
+    (c) 长度为 \(k\) 的串共 \(2^{k}\) 个，是有限集；全体串是可数多个有限集之并，
+    由\cref{ex:countable}(d) 可数。
   \end{solution}
 \end{exercise}
 
@@ -631,7 +1091,6 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   \label{exr:cut-vs-sup}
   \Cref{thm:order-complete-equiv} 的证明中，三步各自用到了全序的哪些性质？
   特别地，指出何处用到了「任意两元素可比较」这一条。
-  \answerspace[3.5cm]
   \begin{solution}
     三步都只用到序关系的自反、反对称、传递以及上界与下界的定义。
     可比较性用在「\(A\) 的每个元素都是 \(B\) 的上界」一类断言中：
@@ -642,21 +1101,56 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \end{exercise}
 
 \begin{exercise}[结构]
+  \label{exr:which-axiom}
+  设 \(K\) 为阿基米德有序域，且其中每个单调递增有上界的数列都收敛。
+  证明 \(K\) 满足确界原理。
+  （这说明单调有界定理也可以充当完备性公理。）
+  \begin{solution}
+    设 \(S\) 非空有上界。仿\cref{thm:completeness-split} 的二分法：
+    取 \(a_{0}\) 不是上界、\(b_{0}\) 是上界，反复二等分，
+    保持不变量「\(a_{n}\) 不是上界而 \(b_{n}\) 是上界」。
+    则 \(\seq{a_{n}}\) 单调递增且以 \(b_{0}\) 为上界，由假设收敛于某 \(\beta\)；
+    \(\seq{b_{n}}\) 单调递减且收敛于同一 \(\beta\)（因 \(b_{n}-a_{n} \to 0\)，
+    此处用到阿基米德性）。
+
+    \(\beta\) 是上界：若某 \(x \in S\) 满足 \(x > \beta\)，则由 \(b_{n} \to \beta\)
+    有某 \(b_{n} < x\)，与 \(b_{n}\) 是上界矛盾。
+    \(\beta\) 最小：任一上界 \(c\) 满足 \(c \ge a_{n}\)（否则 \(a_{n}\) 是上界），
+    取极限得 \(c \ge \beta\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:q-not-complete}
+  不借助\cref{prop:q-cut-fails}，直接证明 \(\Q\) 不满足确界原理。即证集合
+  \[
+    A = \setst{x \in \Q}{x > 0,\ x^{2} < 2}
+  \]
+  在 \(\Q\) 中没有上确界。
+  \begin{solution}
+    设 \(\beta \in \Q\) 为 \(A\) 在 \(\Q\) 中的上确界。由\cref{prop:sqrt2-irrational}
+    有 \(\beta^{2} \neq 2\)。取 \(\xi = (2\beta+2)/(\beta+2) \in \Q\)。
+    若 \(\beta^{2} < 2\)，则 \(\xi \in A\) 且 \(\xi > \beta\)，与 \(\beta\) 是上界矛盾；
+    若 \(\beta^{2} > 2\)，则 \(\xi < \beta\) 且 \(\xi\) 仍是 \(A\) 的上界
+    （因 \(x \in A \Rightarrow x^{2} < 2 < \xi^{2} \Rightarrow x < \xi\)），
+    与最小性矛盾。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
   \label{exr:archimedean-fails}
   在\cref{ex:non-archimedean} 的有序域 \(\R(t)\) 中，考察元素 \(1/t\)。
   证明 \(0 < 1/t < 1/n\) 对一切 \(n \in \N\) 成立，并由此说明数列
   \(\seq{1/n}\) 在 \(\R(t)\) 中不以 \(0\) 为极限。这与
   \cref{thm:complete-implies-arch}(i) 有何关系？
-  \answerspace[4cm]
   \begin{solution}
     \(1/t > 0\) 因分子分母最高次系数同为正。\(1/n - 1/t = (t - n)/(nt)\)，
     分子最高次系数为 \(1\)，分母为 \(n > 0\)，故该差为正，即 \(1/t < 1/n\)。
 
     于是取 \(\varepsilon = 1/t > 0\)，对一切 \(n\) 都有 \(1/n > \varepsilon\)，
-    故 \(\seq{1/n}\) 不收敛于 \(0\)。这正说明
+    故 \(\seq{1/n}\) 不收敛于 \(0\)。这说明
     \cref{thm:complete-implies-arch}(i) 的结论依赖完备性：
-    在非阿基米德的有序域中它不成立，因而 \(\inf\setst{1/n}{n \in \N}\)
-    即便存在也不等于 \(0\)。
+    在非阿基米德的有序域中它不成立。
   \end{solution}
 \end{exercise}
 
@@ -664,16 +1158,15 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
   \label{exr:bw}
   证明 Bolzano--Weierstrass 定理：\(\R\) 中每个有界数列都有收敛子列。
   指出证明中确界原理用在何处。
-  \answerspace[5cm]
   \begin{solution}
     设 \(\seq{a_{n}}\) 有界，取 \([\alpha_{0}, \beta_{0}]\) 含全部项。
     反复二等分：两半之中至少有一半含 \(\seq{a_{n}}\) 的无穷多项，取之为
     \([\alpha_{1}, \beta_{1}]\)，如此得闭区间套，长度为 \(2^{-k}(\beta_{0}-\alpha_{0})\)。
     在第 \(k\) 个区间中取一项 \(a_{n_{k}}\) 且 \(n_{k} > n_{k-1}\)，得子列。
 
-    确界原理用在两处：一是断言 \(\seq{\alpha_{k}}\) 单调有界故有上确界
-    \(\alpha = \sup_{k}\alpha_{k}\)；二是断言区间长度趋于零，
-    这依赖\cref{thm:complete-implies-arch}(i)，而后者又由确界原理推出。
+    确界原理用在两处：一是\cref{thm:nested-intervals} 断言区间套有公共点
+    \(\alpha\)，其证明用了上确界；二是断言区间长度趋于零，
+    这依赖\cref{thm:complete-implies-arch}(i)，而后者也由确界原理推出。
     子列收敛于 \(\alpha\)。
   \end{solution}
 \end{exercise}
@@ -681,7 +1174,6 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \begin{exercise}[结构]
   \label{exr:cauchy-bounded}
   证明 Cauchy 列必有界。这个证明用到了序吗？
-  \answerspace[3.5cm]
   \begin{solution}
     取 \(\varepsilon = 1\)，存在 \(N\) 使 \(m, n \ge N\) 时 \(d(a_{m}, a_{n}) < 1\)。
     于是对 \(n \ge N\) 有 \(d(a_{n}, a_{N}) < 1\)，全部项落在有限个数
@@ -695,17 +1187,17 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \end{exercise}
 
 \begin{exercise}[结构]
-  \label{exr:nested}
-  证明闭区间套定理：若 \([a_{n}, b_{n}]\) 递减且 \(b_{n} - a_{n} \to 0\)，
-  则交集恰含一点。再说明：若去掉「闭」或去掉「有界」，结论如何失效，各给一反例。
-  \answerspace[5cm]
+  \label{exr:nested-fail}
+  \Cref{thm:nested-intervals} 中，若把闭区间换成开区间，或换成无界闭集，
+  结论如何失效？各给一个反例，并指出证明中哪一步断了。
   \begin{solution}
-    存在性：\(\seq{a_{n}}\) 单调递增有上界 \(b_{1}\)，令 \(c = \sup_{n} a_{n}\)，
-    则 \(a_{n} \le c \le b_{n}\) 对一切 \(n\) 成立。唯一性：若 \(c, c'\) 均在交集中，
-    则 \(\abs{c - c'} \le b_{n} - a_{n} \to 0\)，故 \(c = c'\)。
+    换成开区间：\((0, 1/n)\) 递减，交集为空。断在最后一步：
+    \(c = \sup \alpha_{n} = 0\) 存在，但 \(0 \notin (0,1/n)\)，
+    因为开区间不含其端点。
 
-    换成开区间：\((0, 1/n)\) 递减，交集为空。
-    换成无界闭集：\([n, +\infty)\) 递减，交集为空。
+    换成无界闭集：\([n, +\infty)\) 递减，交集为空。断在第一步：
+    \(\seq{\alpha_{n}} = \seq{n}\) 没有上界，上确界不存在。
+
     两个反例说明「闭」与「有界」缺一不可，这一对条件在第 4 章
     将被统一为紧性。
   \end{solution}
@@ -714,12 +1206,12 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \begin{exercise}[延伸]
   \label{exr:sup-not-metric}
   举出一个集合与其上的度量，使得该集合上无法定义与度量相容的全序。
-  由此说明为什么 第 2 章 起不再谈确界。
-  \answerspace[4cm]
+  由此说明为什么第 2 章起不再谈确界。
   \begin{solution}
     取平面 \(\R^{2}\) 及欧氏距离。设有全序 \(\preceq\) 与之相容
     （意即序区间构成的族生成同一拓扑）。去掉一点后 \(\R^{2}\) 仍连通，
-    而全序集去掉一个非端点必分成两个非空的开集之并，矛盾。
+    而全序集去掉一个非端点必分成两个非空的开集之并，矛盾；
+    由于全序至多有两个端点，这样的点总能取到。
 
     注意结论不是「\(\R^{2}\) 上没有全序」——由良序定理它有全序——
     而是\emph{没有与度量相容的全序}。距离则始终存在。
@@ -728,10 +1220,44 @@ Cauchy 判别法，这些结论在 \(\Q\) 上全部不成立。
 \end{exercise}
 
 \begin{exercise}[延伸]
+  \label{exr:cauchy-vs-sup}
+  写出「\(S\) 有上确界」与「\(\seq{a_{n}}\) 是 Cauchy 列」两个陈述的形式表达，
+  逐一指出其中出现的每个符号属于哪一类结构（序、距离、域运算）。
+  由此解释为何前者不能推广到一般度量空间。
+  \begin{solution}
+    前者：\(\exists \beta\,[\forall x \in S\,(x \le \beta) \wedge
+    \forall b\,(\forall x \in S\,(x \le b) \to \beta \le b)]\)，
+    只出现 \(\le\)，属序结构。
+
+    后者：\(\forall \varepsilon > 0\,\exists N\,\forall m,n \ge N\,
+    (d(a_{m},a_{n}) < \varepsilon)\)，出现 \(d\) 与 \(\varepsilon\) 上的 \(<\)。
+    后一个 \(<\) 比较的是实数（距离的取值），不是空间中的元素。
+
+    一般度量空间的元素之间没有 \(\le\)，故前者的陈述根本写不出来；
+    后者只需要 \(d\)，因而照搬即可。这正是\cref{sec:cauchy} 末尾「本章的核心」一节所论。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:sup-lattice}
+  称偏序集 \(P\) 为\emph{完备格}，若其\emph{任一}子集（包括空集）
+  都有上确界。证明：完备格必有最大元与最小元。
+  这与\cref{thm:order-complete-equiv} 的 (i) 有何差别？
+  \begin{solution}
+    取 \(S = P\)，得 \(\sup P\) 存在，它是最大元。
+    取 \(S = \varnothing\)：任何元素都是空集的上界，故 \(\sup \varnothing\)
+    是全体元素的最小者，即最小元。
+
+    差别有二：\cref{thm:order-complete-equiv}(i) 只要求\emph{非空且有上界}的
+    子集有上确界，且设在全序集上。\(\R\) 不是完备格——它没有最大元，
+    \(\R\) 的子集 \(\Z\) 就没有上确界。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
   \label{exr:construction}
   阅读附录 A 中戴德金分割的构造，说明为什么按该构造得到的 \(\R\)
   自动满足\cref{thm:order-complete-equiv} 的 (iii)，而验证域公理反倒麻烦。
-  \answerspace[4cm]
   \begin{solution}
     分割性质是构造方式本身的直接推论：一个分割就是一个实数，
     分点按定义即属于新构造的集合。而域公理需要逐条验证分割的
