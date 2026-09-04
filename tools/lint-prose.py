@@ -50,6 +50,19 @@ def check(path):
                 print(f"        …{ctx}…")
                 if kind == "禁用": bad += 1
                 else: warn += 1
+    # \cref 指向未编号环境（remark/intuition/strategy）会产生
+    # 「cref reference format for label type thmt@dummyctr undefined」警告。
+    # 这一错误在第 1、2、3 章各犯过一次，故加入机械检查。
+    unnum = set()
+    for env in ("remark", "intuition", "strategy", "pitfall"):
+        for m in re.finditer(r"\\begin\{" + env + r"\}(\[[^\]]*\])?\s*\\label\{([^}]+)\}", raw):
+            unnum.add(m.group(2))
+    for m in re.finditer(r"\\[Cc]ref\{([^}]+)\}", raw):
+        if m.group(1) in unnum:
+            print(f"  禁用  {path}  \\cref 指向未编号环境的标签 {m.group(1)}，"
+                  f"编译会报 thmt@dummyctr 警告；改为指向邻近的编号对象或直接用文字")
+            bad += 1
+
     dash = flat.count("——")
     if dash > 10:
         print(f"  应改  {path}  破折号 {dash} 处，style-guide 三节建议全篇不超过十处")

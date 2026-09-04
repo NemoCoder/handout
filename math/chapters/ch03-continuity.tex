@@ -1,0 +1,647 @@
+%%% ==========================================================================
+%%%  第三章：连续性
+%%%  设计说明与逐条依据见 math/notes/ch03-continuity.md。
+%%%  编排取 Pugh 的次序（2026-09-04 定）：先用「保持序列收敛」定义连续，
+%%%  再把 ε-δ 作为等价定理证出，最后给开集判据。三副面孔依次是
+%%%  「最好用」「最能算」「最能推广」，每引入一副都要说明它多买到什么。
+%%%  TODO：第 4、5、8 章与卷二、卷四建立后，把「第 N 章」改回 \cref{ch:...}。
+%%% ==========================================================================
+\chapter{连续性}
+\label{ch:continuity}
+
+\begin{keypoint}[本章要点]
+  \begin{itemize}
+    \item 连续有三种等价说法：保持序列收敛、\(\varepsilon\)-\(\delta\) 条件、
+          开集的原像是开集。三者依次\emph{最便于使用}、\emph{最便于计算}、\emph{最便于推广}。
+    \item 开集判据的陈述里没有距离，因而是三者中唯一能原样移植到拓扑空间的。
+          卷四将直接取它作为连续的定义。
+    \item 一致连续要求 \(\delta\) 不随点变化。它与连续的差别，
+          正是第 2 章「依赖度量」与「依赖拓扑」之别的又一个实例。
+    \item 收敛是拓扑概念而 Cauchy 性不是。这一句解释了第 2 章的定理 2.20：
+          同胚为什么保持收敛却不保持完备性。
+  \end{itemize}
+\end{keypoint}
+
+\section{为什么单独讲连续性}
+\label{sec:why-continuity}
+
+第 2 章造好了度量空间这个工作场所，本章开始在其中做事。要做的第一件事是
+把「连续」讲清楚，理由有两条。
+
+其一，连续函数是分析学真正的研究对象。第 1、2 两章处理的是数与点，
+而微分、积分、级数都是关于函数的运算，且这些运算几乎都要求函数连续。
+
+其二，也是更要紧的一条：\emph{「连续」这个概念本身要经历三次改写}，
+而这三次改写恰好演示了本书的主线。中学里的说法是「图像不断开」，
+这依赖于能把图像画出来，只对 \(\R\) 上的函数说得通。本章将依次给出三种
+精确表述，每一种都比前一种适用面更广，而所要求的结构更少：
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  说法 & 所用的结构 & 长处 \\
+  \midrule
+  保持序列收敛（\cref{sec:seq-continuity}） & 收敛 & 证「是连续的」最省力 \\
+  \(\varepsilon\)-\(\delta\) 条件（\cref{sec:eps-delta}） & 度量 & 能算，能证「不连续」 \\
+  开集的原像是开集（\cref{sec:open-continuity}） & 拓扑 & 能推广到没有距离的空间 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+三者在度量空间中彼此等价。但它们所依赖的结构不同，因而离开度量空间之后
+命运也不同：前两种到卷四就失效，第三种活了下来，成为拓扑空间中连续的定义。
+
+\begin{table}[htbp]
+  \centering
+  \caption{本章各条结论在后续章节中的用途。}
+  \label{tab:ch3-where-used}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    本章结论 & 首次使用 & 用途 \\
+    \midrule
+    序列判据       & 第 4 章 & 证明紧集的连续像仍紧 \\
+    \(\varepsilon\)-\(\delta\) 条件 & 第 6 章 & 导数定义中的极限估计 \\
+    开集判据       & 卷四     & 取作拓扑空间中连续的定义 \\
+    一致连续       & 第 4 章 & 紧集上连续必一致连续；第 7 章可积性 \\
+    同胚           & 第 5 章 & 连通性作为拓扑不变量 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{remark}[读法建议]
+  \cref{sec:seq-continuity} 与\cref{sec:eps-delta} 必须掌握，
+  两者的分工要能说清楚。\cref{sec:open-continuity} 的开集判据初读时
+  记住结论即可，它的真正用处到卷四才显现。\cref{sec:uniform} 的一致连续
+  是本章最容易被轻视也最容易考砸的一节，务必把 \(1/x\) 那个反例算过一遍。
+\end{remark}
+
+\section{用序列定义连续}
+\label{sec:seq-continuity}
+
+\begin{concept}{连续}
+  \cwhy{分析学的运算几乎都作用在函数上，而这些运算要求函数不出现「跳跃」。
+    中学里靠图像说这件事，只对 \(\R\) 上的函数管用；要在 \(C[a,b]\) 或
+    \(\R^{n}\) 上谈，须有不依赖图像的表述。}
+  \crel{它是「保持极限」的映射。第 2 章的收敛是本章的原料；
+    本章的连续又是第 4 章紧性、第 5 章连通性中一切结论的前提。}
+  \cwhere{分析学的核心概念，也是拓扑学的出发点。范畴论中以「对象加保结构映射」
+    组织一切，度量空间与连续映射正是最早的范例之一。}
+  \cdo{由它可证复合映射连续、紧集的连续像仍紧、连通集的连续像仍连通，
+    以及闭区间上连续函数取到最值与介值定理。}
+\end{concept}
+
+第 2 章已把收敛讲透，序列是此刻手上最熟的工具。就用它来定义连续。
+
+\begin{definition}[连续]
+  \label{def:continuous}
+  设 \((X,d)\)、\((Y,\rho)\) 为度量空间。映射 \(f \mapsdef X \to Y\) 称为
+  \term{连续的}{continuous}，若它\emph{保持序列收敛}：对 \(X\) 中每个
+  收敛数列 \(\seq{x_{n}}\)，若 \(x_{n} \to x\)，则 \(f(x_{n}) \to f(x)\)。
+\end{definition}
+
+\begin{intuition}
+  不妨把 \(f\) 看作一台机器：输入一个点，输出一个点。连续的意思是这台机器
+  \emph{不制造跳跃}：输入端一列点越挨越近地趋向某处，输出端也必须
+  越挨越近地趋向对应的那一处。若输入端平稳靠近而输出端突然蹦开，
+  机器就在那里断了。
+\end{intuition}
+
+这个定义的好处立刻显现。下面两条结论若用后文的 \(\varepsilon\)-\(\delta\) 条件去证，
+要追两层 \(\delta\)，占去大半页；用序列则各两行。
+
+\begin{theorem}[复合]
+  \label{thm:composite-continuous}
+  设 \(f \mapsdef X \to Y\) 与 \(g \mapsdef Y \to Z\) 连续，则
+  \(g \circ f \mapsdef X \to Z\) 连续。
+\end{theorem}
+
+\begin{proof}
+  设 \(x_{n} \to x\) 于 \(X\)。因 \(f\) 连续，\(f(x_{n}) \to f(x)\)。
+  这是 \(Y\) 中的收敛数列，因 \(g\) 连续，\(g(f(x_{n})) \to g(f(x))\)。
+  按\cref{def:continuous}，\(g \circ f\) 连续。
+\end{proof}
+
+\begin{proposition}
+  \label{prop:id-const-continuous}
+  恒等映射 \(\mathrm{id} \mapsdef X \to X\) 连续；任一常值映射
+  \(f \equiv q\) 连续。
+\end{proposition}
+
+\begin{proof}
+  设 \(x_{n} \to x\)。则 \(\mathrm{id}(x_{n}) = x_{n} \to x = \mathrm{id}(x)\)。
+  对常值映射，\(f(x_{n}) = q\) 对一切 \(n\) 成立，而 \(f(x) = q\)，
+  故 \(f(x_{n}) \to f(x)\)。
+\end{proof}
+
+\begin{remark}
+  \label{rem:seq-moral}
+  记住这一条：\emph{要判断一个映射是否连续，序列判据是最省力的路子}。
+  凡结论形如「某某映射连续」，先试序列。
+  \cref{thm:composite-continuous} 的证明是最好的示范：它把两次「保持收敛」
+  接在一起，中间不需要任何估计。
+\end{remark}
+
+\section{\texorpdfstring{\(\varepsilon\)-\(\delta\)}{ε-δ} 判据}
+\label{sec:eps-delta}
+
+序列判据便于证明「是连续的」。但要证明「不连续」，或者要定量地知道
+「输入偏差多小才能保证输出偏差不超过给定值」，就需要另一副面孔。
+
+\begin{theorem}[\(\varepsilon\)-\(\delta\) 判据]
+  \label{thm:eps-delta}
+  \(f \mapsdef X \to Y\) 连续，当且仅当下述条件成立：
+  \begin{equation}
+    \label{eq:eps-delta}
+    \text{对每个 } p \in X \text{ 与每个 } \varepsilon > 0,\
+    \text{存在 } \delta > 0,\ \text{使 } d(x,p) < \delta
+    \implies \rho\bigl(f(x), f(p)\bigr) < \varepsilon .
+  \end{equation}
+\end{theorem}
+
+\begin{strategy}
+  反向（由\cref{eq:eps-delta} 推出保持收敛）是直接的：给定 \(\varepsilon\) 取出 \(\delta\)，
+  再由 \(x_{n} \to p\) 取出下标，两步接上即可。
+
+  正向要用反证，其中有一个手法值得单独记住。
+  \cref{eq:eps-delta} 失效意味着「\emph{存在} \(\varepsilon\)，使\emph{对每个} \(\delta\)
+  都有坏点」。这里的「对每个 \(\delta\)」是不可数多个条件，无法逐一处理；
+  但只需\emph{取 \(\delta = 1/n\)}，就把它变成了一列坏点 \(x_{1}, x_{2}, \dots\)，
+  而数列正是我们已经会处理的对象。
+  这个「取 \(\delta = 1/n\) 把任意性化为序列」的手法在全书反复出现。
+\end{strategy}
+
+\begin{proof}
+  \emph{充分性}。设\cref{eq:eps-delta} 成立，\(x_{n} \to p\)。给定 \(\varepsilon>0\)，
+  取 \(\delta>0\) 使 \(d(x,p)<\delta\) 蕴含 \(\rho(f(x),f(p))<\varepsilon\)。
+  由 \(x_{n} \to p\)，存在 \(K\) 使 \(n \ge K\) 时 \(d(x_{n},p)<\delta\)，
+  于是 \(\rho(f(x_{n}),f(p))<\varepsilon\)。故 \(f(x_{n}) \to f(p)\)。
+
+  \emph{必要性}。设 \(f\) 连续而\cref{eq:eps-delta} 在某点 \(p\) 处失效。
+  则存在 \(\varepsilon_{0}>0\)，使对每个 \(\delta>0\) 都存在 \(x\) 满足
+  \(d(x,p)<\delta\) 而 \(\rho(f(x),f(p)) \ge \varepsilon_{0}\)。
+  对每个 \(n\) 取 \(\delta = 1/n\)，得点 \(x_{n}\) 满足
+  \begin{equation}
+    \label{eq:bad-sequence}
+    d(x_{n},p) < \frac{1}{n}, \qquad
+    \rho\bigl(f(x_{n}), f(p)\bigr) \ge \varepsilon_{0}.
+  \end{equation}
+  由左式 \(x_{n} \to p\)；由右式 \(f(x_{n})\) 不收敛于 \(f(p)\)。
+  这与 \(f\) 保持序列收敛矛盾。
+\end{proof}
+
+\begin{remark}[两副面孔的分工]
+  \label{rem:two-faces}
+  \cref{def:continuous} 与\cref{eq:eps-delta} 逻辑上等价，用途却不同：
+  \begin{itemize}
+    \item 证\emph{连续}用序列，如\cref{thm:composite-continuous}；
+    \item 证\emph{不连续}用序列的否定，即找一个 \(x_{n} \to p\) 使
+          \(f(x_{n}) \not\to f(p)\)，这比否定 \(\varepsilon\)-\(\delta\) 的两层量词容易得多；
+    \item 要\emph{定量}结论，如「输入误差不超过多少才保证输出误差不超过 \(\varepsilon\)」，
+          只能用\cref{eq:eps-delta}，因为只有它给出了 \(\delta\) 这个数。
+  \end{itemize}
+  \(\varepsilon\)-\(\delta\) 不是历史包袱。\cref{sec:uniform} 的一致连续
+  根本无法用序列表述，因为它谈的是 \(\delta\) 与点的关系。
+\end{remark}
+
+\begin{example}[判定不连续]
+  \label{ex:discontinuous}
+  设 \(f \mapsdef \R \to \R\) 定义为：\(x\) 为有理数时 \(f(x)=1\)，
+  \(x\) 为无理数时 \(f(x)=0\)（狄利克雷函数）。证明 \(f\) 处处不连续。
+  \begin{worked}
+    取任一 \(p \in \R\)。由第 1 章的稠密性，\(p\) 的每个邻域中既有有理数
+    又有无理数，故可取有理数列 \(r_{n} \to p\) 与无理数列 \(s_{n} \to p\)。
+    则 \(f(r_{n}) = 1 \to 1\) 而 \(f(s_{n}) = 0 \to 0\)。
+
+    若 \(f\) 在 \(p\) 处连续，则两列的像都应收敛于同一个数 \(f(p)\)，
+    而 \(1 \neq 0\)。故 \(f\) 在 \(p\) 处不连续。因 \(p\) 任意，\(f\) 处处不连续。
+
+    注意本证明只用了序列，未出现 \(\varepsilon\) 与 \(\delta\)。
+    这正是\cref{thm:eps-delta} 之后关于两副面孔分工的第二条所说的情形。
+  \end{worked}
+\end{example}
+
+\section{开集判据}
+\label{sec:open-continuity}
+
+前两副面孔都用到了距离：序列判据经由收敛，\(\varepsilon\)-\(\delta\) 直接摆出 \(d\) 与 \(\rho\)。
+本节给出第三副，它的陈述里一个距离也没有。
+
+\begin{theorem}[开集判据]
+  \label{thm:open-preimage}
+  \(f \mapsdef X \to Y\) 连续，当且仅当对 \(Y\) 中每个开集 \(V\)，
+  原像 \(f^{-1}(V)\) 是 \(X\) 中的开集。
+\end{theorem}
+
+\begin{proof}
+  \emph{必要性}。设 \(f\) 连续，\(V \subseteq Y\) 开，\(p \in f^{-1}(V)\)。
+  因 \(f(p) \in V\) 而 \(V\) 开，存在 \(\varepsilon>0\) 使 \(B(f(p),\varepsilon) \subseteq V\)。
+  由\cref{eq:eps-delta} 取 \(\delta>0\) 使 \(d(x,p)<\delta\) 蕴含
+  \(\rho(f(x),f(p))<\varepsilon\)，即 \(f\bigl(B(p,\delta)\bigr) \subseteq B(f(p),\varepsilon) \subseteq V\)。
+  于是 \(B(p,\delta) \subseteq f^{-1}(V)\)，故 \(f^{-1}(V)\) 开。
+
+  \emph{充分性}。设开集的原像总是开集，取 \(p \in X\) 与 \(\varepsilon>0\)。
+  球 \(B(f(p),\varepsilon)\) 是 \(Y\) 中的开集，故 \(U = f^{-1}\bigl(B(f(p),\varepsilon)\bigr)\)
+  是 \(X\) 中的开集，且含 \(p\)。于是存在 \(\delta>0\) 使 \(B(p,\delta) \subseteq U\)，
+  这正是\cref{eq:eps-delta}。
+\end{proof}
+
+\begin{corollary}
+  \label{cor:closed-preimage}
+  \(f\) 连续当且仅当对 \(Y\) 中每个闭集 \(F\)，原像 \(f^{-1}(F)\) 在 \(X\) 中闭。
+\end{corollary}
+
+\begin{proof}
+  由 \(f^{-1}(Y \setminus F) = X \setminus f^{-1}(F)\) 与\cref{thm:open-preimage}，
+  再用「闭集即开集之补」。
+\end{proof}
+
+\begin{pitfall}
+  \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
+    \item \textbf{把原像换成像。} \cref{thm:open-preimage} 说的是\emph{原像}。
+          连续映射未必把开集映成开集：\(f(x)=x^{2}\) 把开区间 \((-1,1)\)
+          映成 \([0,1)\)，后者不开。
+    \item \textbf{以为闭集的像仍闭。} 同样不成立：\(f(x)=1/(1+x^{2})\)
+          把闭集 \(\R\) 映成 \((0,1]\)，不闭。像的性质要到第 4 章由紧性才有保证。
+    \item \textbf{忘记原像可以是空集。} 若 \(V\) 与 \(f\) 的像不交，
+          则 \(f^{-1}(V)=\emptyset\)，而空集是开集，判据仍然成立。
+  \end{enumerate}
+\end{pitfall}
+
+\begin{remark}[通往卷四的门]
+  \label{rem:door-to-topology}
+  \cref{thm:open-preimage} 的陈述中只出现「开集」二字，没有距离。
+  由第 2 章的定理 2.15，开集族满足三条性质，卷四把那三条取作
+  \term{拓扑}{topology}的公理；相应地，卷四把\cref{thm:open-preimage} 的
+  结论取作连续的\emph{定义}。
+
+  于是本章的三副面孔在卷四的命运不同：序列判据与 \(\varepsilon\)-\(\delta\) 条件
+  都提到了距离，移植不过去；开集判据移植得过去，并且反客为主。
+  这是本书「用得越少，走得越远」这条主线的又一个实例。
+\end{remark}
+
+\subsection*{哪些概念是拓扑的}
+
+既然连续可以只用开集说清楚，自然要问还有哪些概念如此。答案对理解
+第 2 章的定理 2.20 至关重要。
+
+\begin{proposition}
+  \label{prop:convergence-topological}
+  \(x_{n} \to x\) 当且仅当对 \(x\) 的每个开邻域 \(U\)（即含 \(x\) 的开集），
+  存在 \(N\) 使 \(n \ge N\) 时 \(x_{n} \in U\)。
+\end{proposition}
+
+\begin{proof}
+  若 \(x_{n} \to x\) 而 \(U\) 是含 \(x\) 的开集，取 \(\varepsilon\) 使
+  \(B(x,\varepsilon) \subseteq U\)，再取 \(N\) 使 \(n \ge N\) 时 \(d(x_{n},x)<\varepsilon\)。
+  反之取 \(U = B(x,\varepsilon)\) 即得。
+\end{proof}
+
+\begin{remark}[对第 2 章定理 2.20 的解释]
+  \label{rem:explain-ch2}
+  \cref{prop:convergence-topological} 表明\emph{收敛是拓扑概念}：
+  它可以只用开集说清楚，与具体的度量无关。同理，闭包、闭集、稠密、
+  内部、边界、聚点也都是拓扑概念。
+
+  而 \emph{Cauchy 性不是}。「\(\seq{x_{n}}\) 是 Cauchy 列」要求
+  \(d(x_{m},x_{n})\) 随 \(m,n\) 同时增大而变小——两个下标都在动，
+  没有一个固定的点可以充当「邻域」的中心，因而无法用开集表述。
+
+  这一句话解释了第 2 章的定理 2.20：那里在 \((0,1)\) 上造了两个度量，
+  给出相同的开集而完备性不同。既然收敛是拓扑概念，两个度量下收敛的数列
+  完全相同；但 Cauchy 列不同，于是「Cauchy 列是否都收敛」这个问题
+  有不同的答案。当时只举出了反例，现在能说出原因。
+\end{remark}
+
+\section{一致连续}
+\label{sec:uniform}
+
+\cref{eq:eps-delta} 中的 \(\delta\) 一般依赖两者：\(\varepsilon\) 与点 \(p\)。
+若能选出一个 \(\delta\) 对所有点通用，函数就具有更强的性质。
+
+\begin{definition}[一致连续]
+  \label{def:uniform-continuous}
+  \(f \mapsdef X \to Y\) 称为\term{一致连续的}{uniformly continuous}，
+  若对每个 \(\varepsilon>0\) 存在 \(\delta>0\)，使得对\emph{一切} \(x, p \in X\)，
+  \begin{equation}
+    \label{eq:uniform}
+    d(x,p) < \delta \implies \rho\bigl(f(x),f(p)\bigr) < \varepsilon .
+  \end{equation}
+\end{definition}
+
+比较\cref{eq:eps-delta} 与\cref{eq:uniform}：差别只在量词的次序。
+连续是「先给点，再给 \(\varepsilon\)，然后找 \(\delta\)」，一致连续是
+「先给 \(\varepsilon\)，找出一个 \(\delta\) 管住所有点」。
+
+\begin{intuition}
+  设想沿着函数图像行走，要求每走一步高度变化不超过 \(\varepsilon\)。
+  连续的意思是：在每一处，只要步子迈得够小就能做到；但在陡的地方
+  步子要迈得更小。一致连续的意思是：存在一个统一的步长，
+  在图像的任何地方都够用。函数若在某处越来越陡，就找不到这样的统一步长。
+\end{intuition}
+
+\begin{example}[连续但不一致连续]
+  \label{ex:not-uniform}
+  \(f(x) = 1/x\) 在 \((0,1]\) 上连续，但不一致连续。
+  \begin{worked}
+    连续性由四则运算即得（分母不为零）。
+
+    设它一致连续。取 \(\varepsilon = 1\)，则存在 \(\delta>0\) 使
+    \(\abs{x-p}<\delta\) 蕴含 \(\abs{1/x - 1/p} < 1\)。
+    取 \(n\) 充分大使 \(1/n < \delta\)，令 \(p = 1/n\)、\(x = 1/(2n)\)。
+    则 \(\abs{x-p} = 1/(2n) < \delta\)，而
+    \begin{equation}
+      \label{eq:one-over-x}
+      \abs{\frac{1}{x} - \frac{1}{p}} = \abs{2n - n} = n \ge 1 ,
+    \end{equation}
+    当 \(n \ge 1\) 时与 \(<1\) 矛盾。故 \(f\) 不一致连续。
+
+    根源在于 \(f\) 越靠近 \(0\) 越陡：在 \(p\) 附近要保证输出偏差小于 \(1\)，
+    所需的 \(\delta\) 大致与 \(p^{2}\) 同阶，而 \(p\) 可以任意接近 \(0\)，
+    于是没有统一的 \(\delta\)。
+  \end{worked}
+\end{example}
+
+\begin{example}[Lipschitz 蕴含一致连续]
+  \label{ex:lipschitz}
+  若存在 \(L>0\) 使 \(\rho(f(x),f(y)) \le L\,d(x,y)\) 对一切 \(x,y\) 成立
+  （称 \(f\) 为 \term{Lipschitz 映射}{Lipschitz map}），则 \(f\) 一致连续。
+  \begin{worked}
+    给定 \(\varepsilon>0\)，取 \(\delta = \varepsilon/L\)。
+    若 \(d(x,p)<\delta\)，则 \(\rho(f(x),f(p)) \le L\,d(x,p) < L\delta = \varepsilon\)。
+    这个 \(\delta\) 与点无关，故一致连续。
+
+    第 2 章的压缩映射（定义 2.24）是 \(L<1\) 的 Lipschitz 映射，
+    因而一致连续。反之不成立：\(f(x)=\sqrt{x}\) 在 \([0,1]\) 上一致连续
+    （见\cref{exr:sqrt-uniform}）却不是 Lipschitz 的。
+  \end{worked}
+\end{example}
+
+\begin{remark}
+  \label{rem:uniform-not-topological}
+  一致连续\emph{不是}拓扑性质。\cref{eq:uniform} 中要拿不同点处的
+  \(\delta\) 作比较，用到的是度量本身而非开集族。
+  这与第 2 章完备性的情形完全同类：两者都落在「依赖度量」那一层。
+
+  证据是现成的：第 2 章定理 2.20 中的 \(\varphi\) 是 \((0,1)\) 到 \(\R\) 的同胚，
+  故 \(\varphi\) 与 \(\varphi^{-1}\) 都连续；但 \(\varphi\) 不一致连续
+  （它在端点附近陡得没有上限），而恒等映射一致连续。
+  同一个拓扑，一致连续与否可以不同。
+\end{remark}
+
+\section{同胚}
+\label{sec:homeomorphism}
+
+线性代数中两个向量空间「本质相同」是指存在线性双射。度量空间的对应概念如下。
+
+\begin{definition}[同胚]
+  \label{def:homeomorphism}
+  设 \(f \mapsdef X \to Y\) 为双射，且 \(f\) 与 \(f^{-1}\) 都连续，
+  则称 \(f\) 为\term{同胚}{homeomorphism}，称 \(X\) 与 \(Y\) \term{同胚}{homeomorphic}。
+\end{definition}
+
+\begin{intuition}
+  同胚即「橡皮变形」：允许拉伸、压缩、弯曲，不许撕开，也不许粘合。
+  字母 \(\mathrm{Y}\) 与 \(\mathrm{T}\) 同胚，把 \(\mathrm{Y}\) 的两条上臂
+  掰直即可；它们都不与字母 \(\mathrm{O}\) 同胚，因为要把 \(\mathrm{O}\)
+  变成 \(\mathrm{Y}\) 必须剪开那个圈。
+\end{intuition}
+
+\begin{definition}[拓扑不变量]
+  \label{def:topological-invariant}
+  在同胚下保持不变的性质称为\term{拓扑不变量}{topological invariant}。
+\end{definition}
+
+由\cref{prop:convergence-topological} 及其后的讨论，收敛、闭包、闭集、稠密、
+可分都是拓扑不变量；
+而完备性、有界、一致连续不是。
+
+\begin{example}
+  \label{ex:homeo-not-complete}
+  \((0,1)\) 与 \(\R\) 同胚（第 2 章定理 2.20 中的 \(\varphi\) 即为一例），
+  但 \(\R\) 完备而 \((0,1)\) 不完备。
+  \begin{worked}
+    \(\varphi(x) = \tan(\pi x - \pi/2)\) 是 \((0,1)\) 到 \(\R\) 的双射，
+    \(\varphi\) 与 \(\varphi^{-1}\) 都由初等函数的连续性得出。
+
+    完备性的差别已在第 2 章验证。现在能说出原因：完备性不是拓扑不变量，
+    而同胚只保证两个空间的拓扑相同。
+
+    这个例子还说明「有界」也不是拓扑不变量：\((0,1)\) 有界而 \(\R\) 无界。
+  \end{worked}
+\end{example}
+
+\section{本章结论在更一般框架下的地位}
+\label{sec:ch3-outlook}
+
+把第 2 章的层次表按本章所得补全，得到\cref{tab:ch3-structure}。
+
+\begin{table}[htbp]
+  \centering
+  \caption{连续性相关概念所依赖的结构层次。同胚保持拓扑层的一切，
+    不保持度量层的任何性质。}
+  \label{tab:ch3-structure}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    层次 & 概念 & 同胚下 \\
+    \midrule
+    拓扑 & 开集、闭集、闭包、\emph{收敛}、连续、稠密、可分 & 保持 \\
+    度量 & \emph{Cauchy 性}、完备性、有界、一致连续、Lipschitz & 不保持 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+第 2 章曾说完备性依赖度量而非拓扑，当时只有反例。本章给出了理由：
+收敛是拓扑概念而 Cauchy 性不是，而完备性正是拿这两者作比较的产物
+（「每个 Cauchy 列都收敛」）。一个前提在拓扑层，另一个在度量层，
+合起来的性质自然落在较低的那一层。
+
+两条向前的接口：
+
+\emph{其一}，\cref{thm:open-preimage} 在卷四取作拓扑空间中连续的定义。
+届时序列判据将不再等价于它——在一般拓扑空间中，保持序列收敛的映射未必连续，
+须把序列换成网。这是收敛阶梯的第三级。
+
+\emph{其二}，第 4 章将证明紧集上的连续函数必一致连续。
+届时\cref{ex:not-uniform} 中 \(1/x\) 的反例会得到解释：
+\((0,1]\) 不紧，所以那里的连续推不出一致连续。
+
+\section*{习题}
+\addcontentsline{toc}{section}{习题}
+
+同前两章，习题分三档。
+
+\begin{exercise}[例行]
+  \label{exr:seq-continuity-basic}
+  用\cref{def:continuous} 证明：若 \(f, g \mapsdef X \to \R\) 连续，
+  则 \(f+g\) 与 \(fg\) 连续。
+  \begin{solution}
+    设 \(x_{n} \to x\)。由 \(f\)、\(g\) 连续得 \(f(x_{n}) \to f(x)\)、
+    \(g(x_{n}) \to g(x)\)。由 \(\R\) 中数列极限的四则运算法则，
+    \(f(x_{n})+g(x_{n}) \to f(x)+g(x)\)，\(f(x_{n})g(x_{n}) \to f(x)g(x)\)。
+    按定义 \(f+g\) 与 \(fg\) 连续。
+
+    注意整个证明把工作转嫁给了 \(\R\) 中已知的法则，未出现 \(\varepsilon\) 与 \(\delta\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:distance-continuous}
+  设 \((X,d)\) 为度量空间，\(a \in X\) 固定。证明 \(x \mapsto d(x,a)\)
+  是 \(X\) 到 \(\R\) 的连续映射，且是 Lipschitz 的。
+  \begin{solution}
+    由第 2 章的四点不等式（式 2.16）取 \(b=y\)、\(x=y=a\) 的特例，得
+    \(\abs{d(x,a)-d(y,a)} \le d(x,y)\)。这正是 Lipschitz 常数为 \(1\) 的条件，
+    由\cref{ex:lipschitz} 即得一致连续，从而连续。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:discrete-continuous}
+  设 \(X\) 配离散度量，\(Y\) 为任一度量空间。证明每个映射
+  \(f \mapsdef X \to Y\) 都连续。
+  \begin{solution}
+    由第 2 章习题，离散度量下收敛的数列恰是最终为常数的数列。
+    若 \(x_{n} \to x\)，则存在 \(N\) 使 \(n \ge N\) 时 \(x_{n}=x\)，
+    于是 \(f(x_{n})=f(x)\) 对一切 \(n \ge N\) 成立，故 \(f(x_{n}) \to f(x)\)。
+
+    也可用\cref{thm:open-preimage}：离散度量下 \(X\) 的每个子集都是开集，
+    故任何原像都开。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:sqrt-uniform}
+  证明 \(f(x)=\sqrt{x}\) 在 \([0,1]\) 上一致连续，但不是 Lipschitz 的。
+  \begin{solution}
+    一致连续：对 \(x,y \ge 0\) 有 \(\abs{\sqrt{x}-\sqrt{y}} \le \sqrt{\abs{x-y}}\)
+    （两端平方比较即得）。给定 \(\varepsilon>0\) 取 \(\delta=\varepsilon^{2}\)，
+    则 \(\abs{x-y}<\delta\) 蕴含 \(\abs{\sqrt{x}-\sqrt{y}} < \varepsilon\)。
+
+    非 Lipschitz：取 \(y=0\)，则 \(\abs{f(x)-f(0)}/\abs{x-0} = 1/\sqrt{x}\)，
+    当 \(x \to 0^{+}\) 时无上界，故不存在统一的 \(L\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:discontinuous-point}
+  设 \(f \mapsdef \R \to \R\) 定义为 \(x \neq 0\) 时 \(f(x)=\sin(1/x)\)，
+  \(f(0)=0\)。证明 \(f\) 在 \(0\) 处不连续。
+  \begin{solution}
+    取 \(x_{n} = 1/\bigl(2n\pi + \pi/2\bigr)\)，则 \(x_{n} \to 0\)
+    而 \(f(x_{n}) = \sin(2n\pi+\pi/2) = 1\) 对一切 \(n\) 成立，
+    故 \(f(x_{n}) \to 1 \neq 0 = f(0)\)。按\cref{def:continuous}，\(f\) 在 \(0\) 处不连续。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:which-face}
+  下列三个命题各应当用哪一副面孔证明最省力？说明理由。
+  （a）两个连续映射之复合连续；（b）狄利克雷函数处处不连续；
+  （c）连续映射把开集的原像映成开集。
+  \begin{solution}
+    （a）序列判据。两次「保持收敛」直接接上，无须任何估计，
+    见\cref{thm:composite-continuous}。
+
+    （b）序列判据的否定。只需造两列趋于同一点而像趋于不同值的数列，
+    见\cref{ex:discontinuous}。若用 \(\varepsilon\)-\(\delta\) 的否定，要处理两层量词。
+
+    （c）这是开集判据本身（\cref{thm:open-preimage}），
+    其证明须经由 \(\varepsilon\)-\(\delta\)，因为要把「开」翻译成球的语言。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:delta-1-over-n}
+  \cref{thm:eps-delta} 必要性的证明中用了「取 \(\delta=1/n\)」这一手法。
+  说明它把什么样的陈述化成了什么，并在第 2 章中另找一处用了同样手法的地方。
+  \begin{solution}
+    它把「对每个 \(\delta>0\) 都存在坏点」这一不可数多个条件，
+    化成了一列坏点 \(x_{1},x_{2},\dots\)，即化成了一个数列——
+    而数列是我们已经会处理的对象。
+
+    第 2 章中同样的手法出现在「\(b \in \overline{A}\) 当且仅当存在
+    \(A\) 中数列收敛于 \(b\)」的证明里：对每个 \(n\) 取
+    \(a_{n} \in A \cap B(b,1/n)\)。两处都依赖球的半径可以取成 \(1/n\)，
+    即依赖一个可数的递减基；一般拓扑空间没有这一条，所以那里数列不够用。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:image-not-open}
+  举例说明连续映射未必把开集映成开集、未必把闭集映成闭集、
+  未必把有界集映成有界集。
+  \begin{solution}
+    开：\(f(x)=x^{2}\) 把 \((-1,1)\) 映成 \([0,1)\)。
+    闭：\(f(x)=1/(1+x^{2})\) 把闭集 \(\R\) 映成 \((0,1]\)。
+    有界：\(f(x)=1/x\) 把有界集 \((0,1]\) 映成无界集 \([1,\infty)\)。
+
+    三者说明「像」的性质不受连续性保护。第 4 章将说明，
+    若定义域紧，则像必紧，从而闭且有界；上面三个例子的定义域都不紧。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:uniform-not-topological}
+  证明\cref{sec:uniform} 末尾一条注的断言：第 2 章定理 2.20 中的
+  \(\varphi \mapsdef (0,1) \to \R\) 连续但不一致连续。
+  \begin{solution}
+    连续性由初等函数的性质得出。设它一致连续，取 \(\varepsilon=1\)，
+    则有 \(\delta>0\) 使 \(\abs{x-y}<\delta\) 蕴含 \(\abs{\varphi(x)-\varphi(y)}<1\)。
+    但 \(\varphi(x) \to +\infty\)（\(x \to 1^{-}\)），故可取 \(x<y\) 充分接近 \(1\)
+    使 \(\abs{x-y}<\delta\) 而 \(\abs{\varphi(x)-\varphi(y)}\) 任意大，矛盾。
+
+    于是同一对空间之间可以有连续的双射而非一致连续的双射：
+    一致连续落在度量层，同胚只管拓扑层。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:closure-criterion}
+  证明：\(f\) 连续当且仅当对一切 \(A \subseteq X\) 有
+  \(f(\overline{A}) \subseteq \overline{f(A)}\)。用一句话说明这个判据的直观含义。
+  \begin{solution}
+    设 \(f\) 连续，\(b \in \overline{A}\)。取 \(A\) 中数列 \(a_{n} \to b\)
+    （第 2 章习题），则 \(f(a_{n}) \to f(b)\) 而 \(f(a_{n}) \in f(A)\)，
+    故 \(f(b) \in \overline{f(A)}\)。
+
+    反之设该包含关系成立，\(F \subseteq Y\) 闭，令 \(A=f^{-1}(F)\)。
+    则 \(f(\overline{A}) \subseteq \overline{f(A)} \subseteq \overline{F}=F\)，
+    故 \(\overline{A} \subseteq f^{-1}(F)=A\)，即 \(A\) 闭。
+    由\cref{cor:closed-preimage} 得 \(f\) 连续。
+
+    直观含义：\(f\) 不把点甩离它原来所贴着的集合。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:seq-not-enough}
+  在度量空间中，保持序列收敛与连续等价。查阅资料或自行思考：
+  为什么在一般拓扑空间中这个等价会失效？失效的是哪一个方向？
+  \begin{solution}
+    失效的是「保持序列收敛 \(\Rightarrow\) 连续」这个方向。
+    \cref{thm:eps-delta} 必要性的证明用了「取 \(\delta=1/n\)」，
+    它依赖每点有一个可数的邻域基（球的半径可取 \(1/n\)）。
+    一般拓扑空间没有这一条，于是无法从「\(\varepsilon\)-\(\delta\) 失效」造出反例数列。
+
+    补救办法是把序列换成\term{网}{net}，即指标集不必可数的「广义数列」。
+    卷四将说明：在任意拓扑空间中，\(f\) 连续当且仅当 \(f\) 保持网的收敛。
+    这是收敛阶梯的第三级。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:isometry}
+  称 \(f \mapsdef X \to Y\) 为\term{等距映射}{isometry}，若
+  \(\rho(f(x),f(y)) = d(x,y)\) 对一切 \(x,y\) 成立。
+  证明等距映射必为单射且一致连续；举例说明同胚未必等距。
+  \begin{solution}
+    单射：\(f(x)=f(y)\) 蕴含 \(d(x,y)=\rho(f(x),f(y))=0\)，故 \(x=y\)。
+    一致连续：取 \(\delta=\varepsilon\) 即可（Lipschitz 常数为 \(1\)）。
+
+    同胚未必等距：\(x \mapsto 2x\) 是 \(\R\) 到自身的同胚，但把距离放大一倍。
+    更极端的是\cref{ex:homeo-not-complete} 中的 \(\varphi\)，它甚至不保持有界。
+
+    等距映射保持度量层的一切（完备性、一致连续、有界），
+    同胚只保持拓扑层。这一对比是\cref{tab:ch3-structure} 的另一种读法。
+  \end{solution}
+\end{exercise}
