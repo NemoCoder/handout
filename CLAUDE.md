@@ -78,7 +78,8 @@ make clean                 # 只删 build/；distclean 连 dist/ 一起删
   `remark` `intuition` 不编号。定理正文自动排楷体。
 - **交叉引用一律 `\cref`/`\Cref`**，cls 已配好中文名（「定理 1.2」「第 3 章」「式 (1.3)」），
   不要手写「见定理 1.2」。标签前缀：`ch: sec: def: thm: prop: lem: cor: ax: ex: exr: eq: fig: tab:`。
-- **习题解答**写在题目内的 `solution` 环境里；需要作答空白用 `\answerspace[3cm]`（仅学生版排出）。
+- **习题解答**写在题目内的 `solution` 环境里（仅教师版排出）；**例题**的解写在 `worked` 环境里（两版都排出——
+  例题的价值在于示范做法，学生版必须看得到）。`\answerspace` 宏保留但正文不调用，本讲义不留作答空白。
 - **要点框**：每章开头 `keypoint` 环境列 3~5 条。
 - **图**优先 TikZ/pgfplots 直接写在正文中，`figures/` 只放扫描件与照片。
 - `\todo{…}` 仅在 `draft` 类选项下显示，正式编译静默。

@@ -24,6 +24,11 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{ctexbook}}
 \ProcessOptions\relax
 
+%% 正文小四（12pt）。中文教材通行做法是五号 10.5pt，本讲义不从：
+%% 数学正文中行内公式密集，字号过小时 \(\sup S\)、\(\varepsilon\) 一类符号显得局促。
+%% 已比对过五号版，观感更差。（2026-09-04 定）
+%% 字体保持 Fandol：随 TeX Live 发行，任何机器都能编译；
+%% 试过思源宋体（Noto Serif CJK SC），观感未见更优，且需依赖系统字体，故不采用。
 \LoadClass[UTF8,a4paper,zihao=-4,twoside,fontset=fandol,linespread=1.3]{ctexbook}
 
 %% -------------------------------------------------------------------------
@@ -190,6 +195,10 @@
   {10pt}{10pt}{\songti}{}{\sffamily\bfseries\color{htRule}}{.}{0.6em}{}
 \newtheoremstyle{htremark}%
   {8pt}{8pt}{\small}{}{\sffamily\bfseries\color{htGray}}{.}{0.6em}{}
+%% 习题单独一档：题下无间距。学生版的分隔由 \answerspace 提供，
+%% 教师版由 solution 方框提供，环境本身不必再加，否则版面浪费。
+\newtheoremstyle{htexercise}%
+  {8pt}{0pt}{\songti}{}{\sffamily\bfseries\color{htRule}}{.}{0.6em}{}
 
 \theoremstyle{htplain}
 \newtheorem{theorem}{定理}[chapter]
@@ -202,11 +211,14 @@
 \newtheorem{assumption}[theorem]{假设}
 \newtheorem{property}[theorem]{性质}
 \newtheorem{example}[theorem]{例}
+
+\theoremstyle{htexercise}
 \newtheorem{exercise}{习题}[chapter]
 
 \theoremstyle{htremark}
 \newtheorem*{remark}{注}
 \newtheorem*{intuition}{直觉}
+\newtheorem*{strategy}{思路}      %% 证明前交代要构造什么、往哪个方向走
 
 \renewcommand{\proofname}{\sffamily\bfseries 证明}
 %% 证毕符号用实心方块。此处画一个矩形而非取字体中的 \blacksquare，
@@ -235,6 +247,12 @@
   \newcommand{\teacheronly}[1]{}
   \newcommand{\studentonly}[1]{#1}
 \fi
+
+%% 例题的解答：两版都排出。例题的价值在于示范做法，学生版必须看得到。
+%% 只有习题的解答才用 solution 环境（仅教师版）。
+\newenvironment{worked}%
+  {\par\addvspace{5pt}\noindent{\sffamily\bfseries\color{htAccent}解.}\ \ignorespaces}%
+  {\par\addvspace{5pt}}
 
 %% 供讲义正文使用的「留白作答区」（仅学生版排出空白）
 \newcommand{\answerspace}[1][3cm]{\studentonly{\par\vspace{#1}}}
@@ -295,6 +313,16 @@
 \newcommand{\crel}[1]{\ht@cslot{与谁相关}{#1}}
 \newcommand{\cwhere}[1]{\ht@cslot{位于何处}{#1}}
 \newcommand{\cdo}[1]{\ht@cslot{能做什么}{#1}}
+
+%% 常见错误框：只放学生真会犯的错，每条给出错误陈述与一句反例，不写泛泛的告诫
+\newtcolorbox{pitfall}[1][常见错误]{%
+  enhanced, breakable,
+  colback=htLight!60!white, colframe=htGray, boxrule=0.5pt, arc=2pt,
+  left=9pt, right=9pt, top=6pt, bottom=6pt,
+  title={\sffamily\bfseries #1}, fonttitle=\small,
+  coltitle=white, colbacktitle=htGray,
+  before skip=8pt, after skip=8pt,
+}
 
 %% 草稿期待办标记：draft 选项下显示，正式编译时静默
 \ifht@draft
