@@ -61,7 +61,8 @@ $(DIST)/%-teacher.pdf: %/main.tex $(wildcard %/chapters/*.tex) common/handout.cl
 S ?= economics
 C ?= ch01
 V ?= student
-ch:
+#  单章入口用 xr 从全书 aux 读跨章标签，故须先有全书 aux，否则单章 PDF 里印出 ??。
+ch: | $(DIST)/$(S)-$(V).pdf
 	@test -f $(S)/standalone/$(C).tex || \
 	  { echo "找不到 $(S)/standalone/$(C).tex"; exit 1; }
 	@mkdir -p $(BUILD)/aux-$(S)-$(C)-$(V) $(DIST)

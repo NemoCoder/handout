@@ -1,8 +1,18 @@
 %%% 单章独立编译入口：第四章
-%%% 编译：make math-ch CH=ch01     或     latexmk -pdfxe -cd math/standalone/ch01.tex
-%%% 新增一章时复制本文件，改动下面两处：\setcounter 的章号、\input 的文件名。
+%%% 编译：make ch S=math C=ch04 [V=teacher]
+%%% 新增一章时复制本文件，改动三处：\setcounter 的章号、\input 的文件名、
+%%% 以及 \externaldocument 所指的全书 aux（学生版/教师版各一份）。
+%%% xr 宏包从全书的 aux 读入前几章的标签，否则单章 PDF 里会印出 ??。
+%%% 因此 make ch 之前必须先 make math，Makefile 已加此依赖。
 \ifdefined\HTTEACHER \PassOptionsToClass{teacher}{handout}\fi
 \documentclass{handout}
+
+\usepackage{xr}
+\ifdefined\HTTEACHER
+  \externaldocument{../../build/aux-math-teacher/math-teacher}
+\else
+  \externaldocument{../../build/aux-math-student/math-student}
+\fi
 
 \input{../../common/macros-math.tex}
 \addbibresource{../refs.bib}

@@ -20,10 +20,11 @@
     \item 紧性同样有三副面孔：序列紧、全有界加完备、开覆盖紧。
           与\cref{ch:continuity} 的连续性一样，只有不提距离的那一副
           活到卷四，并在那里反客为主。
-    \item 「闭且有界」等价于紧，这只在欧氏空间中成立。
-          一般度量空间中两个方向的反例都有。
+    \item 在任何度量空间中，紧集必闭且有界；逆命题在欧氏空间中成立，
+          在一般度量空间中不成立（两个反例，成因各异）。
     \item 第 1 章说紧性是确界原理在拓扑层面的接替者。本章把这句话坐实：
-          \([a,b]\) 紧要用确界原理来证，而紧集上的最值定理反过来不用。
+          \([a,b]\) 紧要用确界原理来证，此后凡涉及一般度量空间的论证都改用紧性。
+          （实值函数的最值仍要用到 \(\R\) 的确界性质，见\cref{thm:extreme-value}。）
   \end{itemize}
 \end{keypoint}
 
@@ -72,14 +73,16 @@
   \toprule
   面孔 & 长处 & 到卷四 \\
   \midrule
-  序列紧（\cref{sec:seq-compact}） & 承接第 3 章，证明最省力 & 与紧不再等价 \\
+  序列紧（\cref{sec:seq-compact}） & 承接第 3 章，证明最省力 & 仍有定义，与紧不再等价 \\
   全有界加完备（\cref{sec:totally-bounded}） & 最便于检验，可具体估算 & 依赖度量，无从谈起 \\
-  开覆盖紧（\cref{sec:open-cover}） & 只用开集 & 取作定义 \\
+  开覆盖紧（\cref{sec:open-cover}） & 只用开集 & 取作定义，与序列紧不再等价 \\
   \bottomrule
 \end{tabular}
 \end{center}
 
-两章的平行不是巧合：两次都是\emph{只用开集说得清的那一副活到了最后}。
+两章的平行不是巧合。但要把话说准：到一般拓扑空间中，开覆盖紧与序列紧
+\emph{都}仍有定义（收敛是拓扑概念，见\cref{prop:convergence-topological}），
+变的是两者不再普遍等价；全有界与完备性则需要度量，无从谈起。
 这是全书「用得越少，走得越远」这条主线的第二次出现。
 
 \subsection*{本章要还的账}
@@ -103,7 +106,7 @@
   \label{rem:sufficient-not-necessary}
   这张表要先看明白，否则容易把\cref{thm:uniform-on-compact} 记反。
   该定理说的是：\emph{定义域紧}是「连续蕴含一致连续」的\emph{充分}条件。
-  它不说定义域不紧就没有一致连续的映射——\cref{ex:one-over-x-uniform}
+  它不说定义域不紧就没有一致连续的映射，\cref{ex:one-over-x-uniform}
   正是反例；也不说定义域不紧就必有连续而不一致连续的映射，
   尽管\cref{ex:not-uniform} 确实找到了一个。
 \end{remark}
@@ -129,13 +132,14 @@
   \cref{sec:seq-compact} 与\cref{sec:consequences} 必须掌握。
   \cref{sec:open-cover} 的三者等价性证明初读可略，记住结论即可；
   其中的 Lebesgue 数引理值得单独看一遍，它的手法在后文反复出现。
-  \cref{sec:totally-bounded} 的全有界是通往卷五的门，本卷只在一处用到。
+  \cref{sec:totally-bounded} 的全有界在本卷用于第 9 章的 Arzelà--Ascoli 定理
+  （见\cref{tab:ch4-where-used}），到卷五则是通往紧算子理论的门。
 \end{remark}
 
 \section{序列紧}
 \label{sec:seq-compact}
 
-依\cref{ch:continuity} 的先例，先用序列作定义——它是此刻手上最熟的工具。
+依\cref{ch:continuity} 的先例，先用序列作定义，因为序列是此刻手上最熟的工具。
 
 \begin{definition}[序列紧]
   \label{def:seq-compact}
@@ -161,14 +165,16 @@
 \end{theorem}
 
 \begin{proof}
-  \emph{闭}。设 \(p \in \overline{A}\)。由第 2 章的习题，存在 \(A\) 中数列
-  \(a_{n} \to p\)。由序列紧，某子列 \(a_{n_{k}} \to q \in A\)。
-  而收敛数列的子列收敛于同一极限（\cref{ch:metric} 的推论），
-  故 \(q = p\)，于是 \(p \in A\)。故 \(A = \overline{A}\)。
+  \emph{闭}。设 \(p \in \overline{A}\)。由\cref{exr:sequential-closure}，
+  存在 \(A\) 中数列 \(a_{n} \to p\)。由序列紧，某子列 \(a_{n_{k}} \to q \in A\)。
+  而子列的下标满足 \(n_{k} \ge k\)，故 \(a_{n} \to p\) 蕴含 \(a_{n_{k}} \to p\)；
+  极限唯一给出 \(q = p\)，于是 \(p \in A\)。故 \(A = \overline{A}\)。
 
   \emph{有界}。固定 \(p \in X\)。若 \(A\) 无界，则对每个 \(n\) 存在
   \(a_{n} \in A\) 使 \(d(p,a_{n}) \ge n\)。由序列紧取收敛子列 \(a_{n_{k}} \to q\)，
-  则 \(\seq{a_{n_{k}}}\) 有界（第 2 章的命题），与 \(d(p,a_{n_{k}}) \ge n_{k} \to \infty\) 矛盾。
+  则 \(\seq{a_{n_{k}}}\) 收敛故为 Cauchy 列、故有界
+  （\cref{prop:cauchy-basics} 之 (i)(ii)），
+  与 \(d(p,a_{n_{k}}) \ge n_{k} \to \infty\) 矛盾。
 \end{proof}
 
 逆命题一般不成立。这是本章最该防的误解，两个反例的成因不同。
@@ -212,12 +218,13 @@
   \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
     \item \textbf{以为「闭且有界」就是紧。} 上面两个反例说明不然。
           这条等价只在欧氏空间中成立（\cref{thm:heine-borel}）。
-    \item \textbf{用 \(f_{n}(x)=x^{n}\) 充当\cref{ex:ball-not-compact} 的反例。}
-          这一列并非彼此分离：\(\norm{x-x^{2}}_{\infty} = 1/4\)，
-          而 \(\norm{x^{100}-x^{101}}_{\infty} \approx 0.0037\)，下标相邻时距离趋于零。
-          它确实没有一致收敛的子列（子列的逐点极限在 \([0,1)\) 上为 \(0\)、
-          在 \(1\) 处为 \(1\)，不连续），但那证的是\emph{不序列紧}，
-          不是\emph{不全有界}。两者的论据不可混用。
+    \item \textbf{误称 \(f_{n}(x)=x^{n}\) 的各项一致分离。}
+          \(\norm{x-x^{2}}_{\infty} = 1/4\)，而 \(\norm{x^{100}-x^{101}}_{\infty} \approx 0.0037\)，
+          下标相邻时距离趋于零，故整列并非一致分离。
+          \(f_{n}\) 本身\emph{可以}用来证闭单位球不序列紧——任一子列的逐点极限
+          在 \([0,1)\) 上为 \(0\)、在 \(1\) 处为 \(1\)，不连续，故不一致收敛。
+          要证\emph{不全有界}则须找出一致分离的无限子族，
+          \cref{ex:ball-not-compact} 所取的 \(x^{2^{n}}\) 正是 \(x^{n}\) 的一个这样的子列。
     \item \textbf{把\cref{ex:ball-not-compact} 说成「有限维特有」而不加限定。}
           准确的陈述是：在\emph{赋范线性空间}中，闭单位球紧当且仅当空间有限维
           （卷五的 Riesz 引理）。一般度量空间没有维数可言。
@@ -240,15 +247,91 @@
     X = \bigcup_{j=1}^{N} B(x_{j},\varepsilon),
   \end{equation}
   则称 \(X\) 为\term{全有界的}{totally bounded}，
-  称 \(\set{x_{1},\dots,x_{N}}\) 为一个 \(\varepsilon\)-\term{网}{net}。
+  称 \(\set{x_{1},\dots,x_{N}}\) 为一个 \term{\(\varepsilon\)-网}{epsilon-net}。
+  这里的「网」指有限的逼近点集，与\cref{ch:continuity} 中以有向集为指标的
+  拓扑网是两个不同的概念，只是中译名相同。
 \end{definition}
 
 \begin{intuition}
   有界是「装得进一个大球」，全有界是「用有限多个\emph{任意小}的球盖得住」。
   后者严格更强。在 \(\R^{n}\) 中两者一致，因为一个大方块总能切成有限多个小方块；
-  维数一高就不然——\cref{ex:ball-not-compact} 中诸 \(g_{n}\) 两两相距 \(1/4\)，
+  在无穷维空间中则不然：\cref{ex:ball-not-compact} 中诸 \(g_{n}\) 两两相距 \(1/4\)，
   半径 \(1/8\) 的球每个至多装一个，而它们有无穷多个。
+  （这说的是\emph{整个}闭单位球；无穷维空间中当然也有全有界的子集，
+  例如任一有限集。）
 \end{intuition}
+
+\cref{def:totally-bounded} 要求网点落在空间自身之内。
+把它用到子空间 \(A \subseteq X\) 上时，网点就得落在 \(A\) 里，
+而现成的覆盖往往是用 \(X\) 中的点作球心造出来的。下面这条引理补上这一步，
+代价只是把半径放大一倍。
+
+\begin{lemma}[网点可移入子集]
+  \label{lem:net-into-subset}
+  设 \(A \subseteq X\)。若对每个 \(\varepsilon>0\) 都存在有限多个
+  \(x_{1},\dots,x_{N} \in X\) 使 \(A \subseteq \bigcup_{j} B(x_{j},\varepsilon)\)，
+  则 \(A\) 作为度量子空间全有界。
+\end{lemma}
+
+\begin{proof}
+  给定 \(\varepsilon>0\)，先取球心在 \(X\) 中的 \(\varepsilon/2\)-覆盖
+  \(A \subseteq \bigcup_{j=1}^{N} B(x_{j},\varepsilon/2)\)。
+  丢掉那些与 \(A\) 不交的球；对余下的每个 \(j\) 取一点
+  \(a_{j} \in A \cap B(x_{j},\varepsilon/2)\)。
+
+  任给 \(a \in A\)，它落在某个保留下来的 \(B(x_{j},\varepsilon/2)\) 中，于是
+  \[
+    d(a,a_{j}) \le d(a,x_{j}) + d(x_{j},a_{j}) < \varepsilon/2 + \varepsilon/2 = \varepsilon .
+  \]
+  故诸 \(a_{j}\) 构成 \(A\) 中的有限 \(\varepsilon\)-网。
+\end{proof}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=0.86]
+    \def\blob{plot[smooth cycle, tension=0.7] coordinates
+      {(-1.0,0.1) (-0.4,0.9) (0.25,0.5) (0.95,0.8) (0.8,-0.3) (0.1,-0.4) (-0.35,-0.9)}}
+    \foreach \dx/\ttl in {0/{有界}, 4.9/{全有界}, 9.8/{有界而不全有界}} {
+      \node[below] at (\dx,-2.35) {\small \ttl};
+    }
+    % (甲) 装得进一个大球
+    \draw[htGray, dashed] (0,0) circle (1.9);
+    \draw[htRule, very thick] \blob;
+    \draw[htGray, -{Stealth[length=4pt]}] (0,0) -- (135:1.9);
+    \node[htGray, font=\scriptsize, above right] at (135:1.1) {\(R\)};
+    \fill[htGray] (0,0) circle (0.04);
+    % (乙) 有限多个小球盖得住
+    \begin{scope}[xshift=4.9cm]
+      \foreach \cx/\cy in {-0.78/0.05, -0.3/0.62, 0.2/0.42, 0.72/0.62,
+                           0.72/-0.12, 0.24/-0.22, -0.22/-0.66, -0.1/0.1} {
+        \fill[htGray, opacity=0.18] (\cx,\cy) circle (0.52);
+        \draw[htGray, thin] (\cx,\cy) circle (0.52);
+      }
+      \draw[htRule, very thick] \blob;
+      \draw[htGray, -{Stealth[length=4pt]}] (0.72,-0.12) -- ++(-35:0.52);
+      \fill[htGray] (0.72,-0.12) circle (0.035);
+      \node[htGray, font=\scriptsize, below right=-1pt and -2pt] at (0.95,-0.3) {\(\varepsilon\)};
+    \end{scope}
+    % (丙) 两两分离，有限多个小球盖不住
+    \begin{scope}[xshift=9.8cm]
+      \draw[htGray, dashed] (0,0) circle (1.9);
+      \foreach \ang in {40, 90, 140, 190, 240, 290} {
+        \draw[htGray, thin] (\ang:1.25) circle (0.34);
+        \fill[htRule] (\ang:1.25) circle (0.055);
+      }
+      \node[font=\footnotesize, htGray] at (335:1.25) {\(\cdots\)};
+      \draw[htRule, {Stealth[length=4pt]}-{Stealth[length=4pt]}] (90:1.25) -- (140:1.25);
+      \node[htRule, font=\scriptsize] at (115:0.72) {\(\ge \tfrac{1}{4}\)};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{有界与全有界。左：整个集合装得进一个半径 \(R\) 的球。
+    中：对每个 \(\varepsilon>0\)，都能用\emph{有限}多个半径 \(\varepsilon\) 的球盖住。
+    右：\cref{ex:ball-not-compact} 的情形——集合有界，但其中有无穷多个点两两相距
+    至少 \(1/4\)，半径 \(1/8\) 的球每个至多装一个，于是有限多个盖不住。
+    在 \(\R^{n}\) 中左、中两栏等价（\cref{exr:bounded-vs-tb}），
+    在一般度量空间中不等价。}
+  \label{fig:bounded-vs-tb}
+\end{figure}
 
 \begin{proposition}
   \label{prop:tb-implies-bounded}
@@ -281,7 +364,7 @@
 
 \begin{proof}
   \emph{必要性}。设 \(X\) 序列紧。若 \(\seq{a_{n}}\) 是 Cauchy 列，
-  由序列紧它有收敛子列，再由第 2 章的命题（有收敛子列的 Cauchy 列必收敛）
+  由序列紧它有收敛子列，再由\cref{prop:cauchy-basics} 之 (iii)
   知它收敛，故 \(X\) 完备。
 
   设 \(X\) 不全有界，则存在 \(\varepsilon_{0}>0\) 使 \(X\) 没有有限 \(\varepsilon_{0}\)-网。
@@ -345,6 +428,51 @@
 
 下面这条引理是本节的技术核心，也是「从序列控制转向有限覆盖」的关口。
 
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=8.2cm, y=1cm]
+    % 上：有限 ε-网
+    \draw[htGray, thick] (0,2.9) -- (1,2.9);
+    \foreach \j/\lb in {0/{0}, 1/{\frac{1}{5}}, 2/{\frac{2}{5}}, 3/{\frac{3}{5}}, 4/{\frac{4}{5}}, 5/{1}} {
+      \pgfmathsetmacro\xj{\j/5}
+      \pgfmathsetmacro\yj{3.24 + 0.28*mod(\j,2)}
+      \fill[htRule] (\xj,2.9) circle (0.6pt);
+      \draw[htGray, thin, dotted] (\xj,2.9) -- (\xj,\yj);
+      \draw[htRule, {|[width=3.2pt]}-{|[width=3.2pt]}] (\xj-0.1,\yj) -- (\xj+0.1,\yj);
+      \node[below, font=\scriptsize, htGray] at (\xj,2.84) {\(\lb\)};
+    }
+    \node[left, font=\scriptsize] at (-0.012,2.9) {\([0,1]\)};
+    \node[right, font=\scriptsize, align=left] at (1.015,3.5)
+      {\(N+1=6\) 个网点\\ 每段半宽 \(\varepsilon>\tfrac{1}{10}\)};
+
+    % 下：Lebesgue 数
+    \fill[htGray, opacity=0.15] (0.4,0.7) rectangle (0.6,1.66);
+    \draw[htRule, very thick] (0,1.54) -- (0.6,1.54);
+    \node[right, font=\scriptsize] at (0.615,1.54) {\(U_{1}=[0,\,0.6)\)};
+    \draw[htRule, very thick] (0.4,1.18) -- (1,1.18);
+    \node[right, font=\scriptsize] at (1.015,1.18) {\(U_{2}=(0.4,\,1]\)};
+    \draw[htGray, thick] (0,0.82) -- (1,0.82);
+    \foreach \x/\lb in {0/{0}, 0.4/{0.4}, 0.5/{0.5}, 0.6/{0.6}, 1/{1}} {
+      \draw[htGray] (\x,0.76) -- (\x,0.88);
+      \node[below, font=\scriptsize, htGray] at (\x,0.74) {\(\lb\)};
+    }
+    \draw[htRule, {|[width=3.2pt]}-{|[width=3.2pt]}, very thick] (0.4,0.2) -- (0.6,0.2);
+    \fill[htRule] (0.5,0.2) circle (0.6pt);
+    \node[below, font=\scriptsize] at (0.5,0.13) {\(B(0.5,\,\delta)\)，\(\delta=0.1\)};
+    \node[right, font=\scriptsize, align=left] at (1.015,0.2)
+      {重叠区 \((0.4,0.6)\)\\ 定出最大的 \(\delta\)};
+  \end{tikzpicture}
+  \caption{上：\([0,1]\) 的有限 \(\varepsilon\)-网（\cref{exr:eps-net-count}），
+    \(N+1\) 个点的 \(\varepsilon\)-球盖住整个区间。
+    下：覆盖 \(\set{U_{1},U_{2}}\) 的 Lebesgue 数（\cref{lem:lebesgue}）。
+    最坏的点是 \(x=0.5\)：往右要留在 \(U_{1}\) 内需 \(\delta \le 0.1\)，
+    往左要留在 \(U_{2}\) 内也需 \(\delta \le 0.1\)。可用的 \(\delta\)
+    由两片开集的\emph{重叠}宽度定，而非由单片的长度定。
+    这也是\cref{lem:lebesgue} 的证明为何要在极限点处取球的原因。}
+  \label{fig:net-and-lebesgue}
+\end{figure}
+
+
 \begin{lemma}[Lebesgue 数]
   \label{lem:lebesgue}
   设 \((X,d)\) 序列紧，\(\set{U_{i}}_{i \in I}\) 为 \(X\) 的开覆盖。
@@ -393,8 +521,14 @@
   (i) \(\Rightarrow\) (ii) \(\Rightarrow\) (i)。
 
   \emph{(i) \(\Rightarrow\) (ii)}。设 \(X\) 紧而 \(\seq{a_{n}}\) 没有收敛子列。
-  则每个 \(x \in X\) 都不是该数列的聚点，故存在 \(r_{x}>0\) 使
-  \(B(x,r_{x})\) 只含 \(\seq{a_{n}}\) 的有限多项。
+  此处要用的是\emph{数列}的聚点：称 \(x\) 为 \(\seq{a_{n}}\) 的聚点，
+  若每个 \(B(x,r)\) 都含有无穷多个下标 \(n\) 所对应的项 \(a_{n}\)。
+  这与\cref{ch:metric} 中\emph{集合}的聚点（用去心球定义）不是一回事：
+  常值数列 \(a_{n}=x\) 以 \(x\) 为数列的聚点，而单点集 \(\set{x}\) 没有集合聚点。
+  \(x\) 是数列聚点当且仅当有子列收敛于 \(x\)（取 \(r=1/k\) 逐次抽取即可）。
+
+  于是由反设，每个 \(x \in X\) 都不是 \(\seq{a_{n}}\) 的聚点，
+  故存在 \(r_{x}>0\) 使 \(B(x,r_{x})\) 只含 \(\seq{a_{n}}\) 的有限多项。
   诸 \(B(x,r_{x})\) 构成开覆盖，由紧性取有限子覆盖
   \(B(x_{1},r_{x_{1}}),\dots,B(x_{N},r_{x_{N}})\)。
   它们各含有限多项而并为 \(X\)，故数列总共只有有限多项，矛盾。
@@ -412,8 +546,9 @@
   \cref{def:compact} 的陈述中只出现「开集」，没有距离。
   卷四把它取作拓扑空间中紧性的定义。届时\cref{thm:compact-equiv} 不再成立：
   一般拓扑空间中紧与序列紧互不蕴含，全有界更是无从谈起（那里没有度量）。
-  这与\cref{ch:continuity} 的情形完全一致——三副面孔中，
-  只有不提距离的那一副活了下来。
+  这与\cref{ch:continuity} 的情形一致：三副面孔中，提到距离的那一副
+  （全有界）离开度量空间即无从谈起，而序列紧虽仍有定义，
+  却不再与紧等价。只有开覆盖紧原封不动地活了下来并反客为主。
 
   文献中还有第四种刻画，称为可数紧：每个\emph{可数}开覆盖有有限子覆盖。
   在度量空间中它与上述三条等价，本讲义不用，故不展开。
@@ -439,22 +574,29 @@
   \(a \in C\)（无 \(x_{n} < a\)），故 \(C\) 非空；\(b\) 是 \(C\) 的上界。
   由第 1 章的确界原理，\(c = \sup C\) 存在且 \(c \in [a,b]\)。
 
-  往证有子列收敛于 \(c\)。设不然，则存在 \(r>0\) 使 \(x_{n} \in (c-r,c+r)\)
-  只对有限多个 \(n\) 成立。因 \(c = \sup C\)，存在 \(c' \in C\) 满足 \(c' > c - r\)，
-  故 \(x_{n} < c-r\) 只有限多次；与前一句合起来，\(x_{n} < c+r\) 只有限多次，
-  即 \(c + r \in C\)。这与 \(c\) 是上界矛盾。
+  往证对每个 \(\varepsilon>0\)，\((c-\varepsilon,\,c+\varepsilon)\) 中含有 \(\seq{x_{n}}\) 的无穷多项。
 
-  故对每个 \(r>0\)，\(x_{n}\) 落在 \((c-r,c+r)\) 中无穷多次；
-  依次取 \(r = 1, 1/2, 1/3, \dots\) 并保证下标递增，即得收敛于 \(c\) 的子列。
+  \emph{下侧}。由 \(c=\sup C\)，取 \(c' \in C\) 满足 \(c'>c-\varepsilon\)。
+  按 \(C\) 的定义，\(x_{n}<c'\) 只有限多次，故 \(x_{n} \le c-\varepsilon\) 也只有限多次，
+  即最终 \(x_{n} > c-\varepsilon\)。
+
+  \emph{上侧}分两种情形。若 \(c+\varepsilon>b\)，则一切 \(x_{n} \le b < c+\varepsilon\)。
+  若 \(c+\varepsilon \le b\)，则 \(c+\varepsilon \in [a,b]\) 而 \(c+\varepsilon>c=\sup C\)，
+  故 \(c+\varepsilon \notin C\)，按定义即有无穷多个 \(n\) 使 \(x_{n}<c+\varepsilon\)。
+
+  两侧合起来：\((c-\varepsilon,\,c+\varepsilon)\) 中有无穷多项。
+  依次取 \(\varepsilon = 1, 1/2, 1/3, \dots\) 并保证下标递增，即得收敛于 \(c\) 的子列。
+  这个写法同时覆盖了 \(c=a\)、\(c=b\) 与退化区间的情形。
 \end{proof}
 
 \begin{remark}
   \label{rem:sup-to-compact}
   这个证明兑现了第 1 章那句话：紧性是确界原理的接替者。
-  \cref{thm:interval-compact} 用确界原理证出，而此后紧集上的
-  最值定理、一致连续定理都只用紧性，不再回头用确界原理。
-  交接就在这里完成：确界原理只在 \(\R\) 上可说，
-  而紧性可以带着这些结论走到任何度量空间。
+  交接的确切含义是：\emph{定义域}的那一侧从此改用紧性——
+  \cref{thm:uniform-on-compact} 对任意紧度量空间成立，不必是实区间。
+  但\emph{值域}若为 \(\R\)，其确界性质仍要用到：
+  \cref{thm:extreme-value} 的证明里就构造了 \(\sup f(X)\)。
+  紧性接管的是定义域，不是实数系本身。
 \end{remark}
 
 \begin{theorem}[Heine--Borel]
@@ -480,11 +622,12 @@
 \end{proof}
 
 \begin{remark}
-  逐坐标抽取只能做\emph{有限}次，这正是本定理对 \(\R^{n}\) 成立
-  而对无穷维空间失效的原因。\cref{ex:ball-not-compact} 中的
-  \(C[0,1]\) 没有有限多个坐标可抽。请回看\cref{ex:q-closed-bounded}
-  与\cref{ex:ball-not-compact}：本定理对欧氏空间成立，
-  对一般度量空间不成立。
+要点不在「只能抽有限次」——可数多个坐标也可以用对角线抽取同时处理
+  （\cref{thm:seq-compact-iff} 的证明就是这么做的）。要点在于：
+  有限维时，\emph{有限}多个坐标的收敛足以控制范数；无穷维时不然。
+  \(\ell^{2}\) 中的标准基 \(e_{n}\) 逐坐标趋于 \(0\)，而 \(\norm{e_{n}}_{2}=1\) 恒不变。
+  请回看\cref{ex:q-closed-bounded} 与\cref{ex:ball-not-compact}：
+  本定理对欧氏空间成立，对一般度量空间不成立。
 \end{remark}
 
 \section{紧性的三条推论}
@@ -534,13 +677,13 @@
 \end{theorem}
 
 \begin{strategy}
-  用\cref{ch:continuity} 的两列判据反证最省力：若不一致连续，
+  用\cref{thm:uniform-seq} 的两列判据反证最省力：若不一致连续，
   就有两列点彼此越挨越近而像不接近；紧性给出收敛子列，
   连续性再逼出矛盾。这条路只用序列，不必碰 \(\varepsilon\)-\(\delta\) 的两层量词。
 \end{strategy}
 
 \begin{proof}
-  设 \(f\) 不一致连续。由\cref{ch:continuity} 的一致连续序列判据，
+  设 \(f\) 不一致连续。由\cref{thm:uniform-seq}，
   存在两列 \(\seq{x_{n}}\)、\(\seq{y_{n}}\) 与 \(\varepsilon_{0}>0\)，使
   \begin{equation}
     \label{eq:uc-contradiction}
@@ -566,12 +709,14 @@
           不一致连续——但这是由两列点算出来的，\emph{不能}仅凭「不紧」推出。
           本定理只有一个方向。
   \end{itemize}
-  第二、三笔账至此结清。它们并非本定理的推论，其作用是划出这条定理的边界。
+  这两条都不是本定理的推论；列在此处是为了划出它的边界。
 \end{remark}
 
 另有一条推论留作习题：紧集上的连续双射必为同胚（\cref{exr:compact-homeo}）。
-它与\cref{ch:continuity} 中「连续双射未必同胚」恰成对照，
-差别正在于定义域紧与否。
+一般而言连续双射未必同胚——由\cref{exr:discrete-continuous}，
+从 \(([0,1],\,\text{离散度量})\) 到 \(([0,1],\,\text{通常度量})\) 的恒等映射
+连续且是双射，而其逆不连续。差别正在于定义域紧与否：离散度量下的
+\([0,1]\) 不紧（其中收敛列必最终为常数，而 \(\seq{1/n}\) 无收敛子列）。
 
 \section{本章结论在更一般框架下的地位}
 \label{sec:ch4-outlook}
@@ -580,7 +725,7 @@
   \centering
   \caption{紧性相关概念所依赖的结构。须区分两件事：一个概念\emph{依赖}什么结构，
     与两个概念在何处\emph{等价}。序列紧只涉及序列收敛，而收敛由拓扑决定
-    （\cref{ch:continuity} 的命题），故它属拓扑层；但它与开覆盖紧的等价
+    （\cref{prop:convergence-topological}），故它属拓扑层；但它与开覆盖紧的等价
     只在度量空间中成立。}
   \label{tab:ch4-structure}
   \begin{tabular}{@{}lll@{}}
@@ -602,8 +747,11 @@
 Tychonoff 定理断言任意多个紧空间之积仍紧，本讲义在卷四证明。
 
 \emph{其二}，\cref{def:totally-bounded} 的全有界在第 9 章与卷五重现。
-Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界加等度连续」，
-而证明的核心是本章的对角线抽取（\cref{thm:seq-compact-iff} 之后一条注所述的对角线抽取）。
+Arzelà--Ascoli 定理以「有界加等度连续」刻画 \(C(K)\) 中的\emph{相对紧}子集，
+即闭包紧者；要断言集合自身紧，还须加上闭性。
+（反例：\(K=[0,1]\) 上全体常值函数 \(f_{c} \equiv c\)，\(0<c<1\)。
+该族一致有界且等度连续，但 \(f_{1/n}\) 趋于不属于该族的零函数，故不闭、不紧。）
+其证明的核心是本章的对角线抽取（见\cref{thm:seq-compact-iff} 之后的注）。
 
 \emph{其三}，\cref{thm:uniform-on-compact} 在第 7 章用来证明
 闭区间上的连续函数 Riemann 可积。那里需要把区间分割得足够细，
@@ -643,14 +791,19 @@ Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界
   \label{exr:eps-net-count}
   为 \([0,1]\) 构造 \(\varepsilon\)-网并估算所需点数；再对 \([0,1]^{n}\) 做同样的事。
   \begin{solution}
-    取 \(N > 1/(2\varepsilon)\)，令 \(x_{j} = j/N\)（\(j=0,\dots,N\)）。
+    取整数 \(N > 1/(2\varepsilon)\)，令 \(x_{j} = j/N\)（\(j=0,\dots,N\)）。
     任一 \(x \in [0,1]\) 与最近的 \(x_{j}\) 相距不超过 \(1/(2N) < \varepsilon\)，
-    故这是 \(\varepsilon\)-网，用了约 \(1/(2\varepsilon)\) 个点。
+    故这 \(N+1\) 个点构成 \(\varepsilon\)-网。
 
-    \([0,1]^{n}\)（取 \(d_{\infty}\)）：取上述各坐标网格点的乘积，
-    共约 \((1/(2\varepsilon))^{n}\) 个点。点数随维数指数增长——
-    这个现象在高维数值计算中称为维数灾难，也解释了
-    \cref{ex:ball-not-compact}：维数趋于无穷时全有界性彻底失效。
+    \([0,1]^{n}\)（取 \(d_{\infty}(x,y)=\max_{i}\abs{x_{i}-y_{i}}\)）：
+    取各坐标网格点的乘积 \(\setst{(j_{1}/N,\dots,j_{n}/N)}{0 \le j_{i} \le N}\)，
+    共 \((N+1)^{n}\) 个点。任一 \(x\) 的每个坐标与最近的 \(j_{i}/N\) 相距不超过
+    \(1/(2N)\)，取最大值仍不超过 \(1/(2N)<\varepsilon\)，故这是 \(\varepsilon\)-网。
+
+    点数随维数指数增长，这个现象在高维数值计算中称为维数灾难。
+    但它说明的只是网点数会爆炸：每个\emph{有限}维立方体仍然全有界。
+    \cref{ex:ball-not-compact} 中失效的是无穷维空间的整个闭单位球，
+    并非那里的每个有界子集都不全有界。
   \end{solution}
 \end{exercise}
 
@@ -659,12 +812,14 @@ Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界
   设 \(X = [0,1]\)，开覆盖取 \(U_{1} = [0,\,0.6)\)、\(U_{2} = (0.4,\,1]\)。
   求一个可用的 Lebesgue 数。
   \begin{solution}
-    取 \(\delta = 0.2\)。任一 \(x \in [0,1]\)：若 \(x < 0.5\)，
-    则 \(B(x,0.2) \subseteq [0,0.7) \cap X\)，而 \(x+0.2 < 0.7\)，
-    须再收紧——取 \(\delta = 0.1\)。此时 \(x<0.5\) 给 \(B(x,0.1) \subseteq [0,0.6)=U_{1}\)；
-    \(x \ge 0.5\) 给 \(B(x,0.1) \subseteq (0.4,1] = U_{2}\)。故 \(\delta = 0.1\) 可用。
+    取 \(\delta = 0.1\)。若 \(x < 0.5\)，则 \(B(x,\delta) \cap X \subseteq [0,\,x+0.1)
+    \subseteq [0,0.6) = U_{1}\)；若 \(x \ge 0.5\)，则 \(B(x,\delta) \cap X
+    \subseteq (x-0.1,\,1] \subseteq (0.4,1] = U_{2}\)。故 \(\delta=0.1\) 可用。
 
-    本题说明 Lebesgue 数不唯一，且须逐点验证，不能凭覆盖成员的长度估计。
+    它还是最大的可用值：在 \(x=0.5\) 处，\(B(0.5,\delta) \subseteq U_{1}\) 要求
+    \(\delta \le 0.1\)，\(B(0.5,\delta) \subseteq U_{2}\) 也要求 \(\delta \le 0.1\)。
+    可用的 \(\delta\) 由两片开集的\emph{重叠区间} \((0.4,0.6)\) 定，
+    而非由单个成员的长度定。
   \end{solution}
 \end{exercise}
 
@@ -673,9 +828,11 @@ Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界
   证明 \(\arctan\) 在 \(\R\) 上连续、有界，却取不到上确界。
   这与\cref{thm:extreme-value} 矛盾吗？
   \begin{solution}
-    连续性与有界性（\(\abs{\arctan x} < \pi/2\)）为已知。
-    设 \(\arctan x_{0} = \pi/2\)，则 \(\tan(\pi/2)\) 有定义，不成立。
-    故上确界 \(\pi/2\) 取不到。
+    \(\arctan\) 是 \(\R\) 到 \((-\pi/2,\,\pi/2)\) 上的双射，故连续且
+    \(\abs{\arctan x} < \pi/2\) 恒成立，即 \(\pi/2\) 是上界而取不到。
+    它还是\emph{最小}的上界：任给 \(t<\pi/2\)，因 \(\arctan\) 满射到
+    \((-\pi/2,\pi/2)\)，存在 \(x\) 使 \(\arctan x \in (t,\,\pi/2)\)，
+    故 \(t\) 不是上界。于是 \(\sup_{\R}\arctan = \pi/2\)，而它不在值域内。
 
     不矛盾：\(\R\) 不紧（无界，由\cref{thm:compact-closed-bounded}）。
     \cref{thm:extreme-value} 的前提不满足。
@@ -705,10 +862,11 @@ Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界
     无限集配离散度量：全体含于半径 \(2\) 的球内故有界；
     而 \(\varepsilon=1/2\) 的球只含一点，需无穷多个，故不全有界。
 
-    \(\R^{n}\) 中有界集含于某个立方体 \([-M,M]^{n}\)，
-    由\cref{exr:eps-net-count} 该立方体有有限 \(\varepsilon\)-网，
-    故有界集全有界。关键在于\emph{有限}维：坐标只有 \(n\) 个，
-    网格点数才是有限的。
+    设 \(A \subseteq \R^{n}\) 有界，则 \(A \subseteq [-M,M]^{n}\)。
+    由\cref{exr:eps-net-count}（把 \([0,1]^{n}\) 伸缩平移到 \([-M,M]^{n}\)），
+    该立方体有有限 \(\varepsilon\)-网，其点未必在 \(A\) 中；
+    由\cref{lem:net-into-subset}，\(A\) 自身全有界。
+    关键在于\emph{有限}维：坐标只有 \(n\) 个，网格点数才是有限的。
   \end{solution}
 \end{exercise}
 
@@ -758,7 +916,7 @@ Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界
 \begin{exercise}[延伸]
   \label{exr:compact-homeo}
   设 \(X\) 紧，\(f \mapsdef X \to Y\) 为连续双射，\(Y\) 为度量空间。
-  证明 \(f\) 是同胚。与\cref{ch:continuity} 中「连续双射未必同胚」对照。
+  证明 \(f\) 是同胚。再与\cref{sec:consequences} 末尾的反例对照。
   \begin{solution}
     只需证 \(f^{-1}\) 连续，等价于 \(f\) 把闭集映成闭集
     （\(f\) 双射时 \((f^{-1})^{-1}(F) = f(F)\)）。
@@ -766,8 +924,8 @@ Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界
     由\cref{thm:continuous-image-compact}，\(f(F)\) 紧；
     由\cref{thm:compact-closed-bounded}，\(f(F)\) 闭。
 
-    对照：\cref{ch:continuity} 中恒等映射从离散拓扑到通常拓扑是连续双射
-    而非同胚，那里的定义域不紧。紧性正是补上这个缺口的条件。
+    对照：\([0,1]\) 从离散度量到通常度量的恒等映射是连续双射而非同胚，
+    那里的定义域不紧。紧性正是补上这个缺口的条件。
     （在一般拓扑空间中，本题须要求陪域为 Hausdorff 空间。）
   \end{solution}
 \end{exercise}
