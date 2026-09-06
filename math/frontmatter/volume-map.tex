@@ -1,0 +1,95 @@
+%%% ==========================================================================
+%%%  卷一地图。依 docs/style-guide.md 第八节的三级机制，卷级须有此页：
+%%%  说明本卷在基础数学中的位置、与前后卷的接口、读完之后能进入哪些领域。
+%%%  新增章节后须同步此处的依赖图与去向表。
+%%% ==========================================================================
+\chapter*{本卷地图}
+\addcontentsline{toc}{chapter}{本卷地图}
+\markboth{本卷地图}{}
+
+本卷从实数系出发，走到函数空间。读之前先看清三件事：这些内容彼此如何依赖、
+它们在基础数学的版图上处在哪里、以及读完之后能走向何方。
+
+\section*{一、各章如何依赖}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+    node distance=6mm,
+    box/.style={draw=htRule, fill=htLight, rounded corners=2pt,
+                minimum height=7mm, inner xsep=4pt, font=\small},
+    done/.style={box, fill=htRule!15},
+    todo/.style={box, fill=white, draw=htGray, text=htGray},
+    ar/.style={-{Latex[length=4pt]}, htGray, thick}]
+
+    \node[done] (c1) {1 实数系};
+    \node[done, right=14mm of c1] (c2) {2 度量空间};
+    \node[done, right=14mm of c2] (c3) {3 连续性};
+    \node[todo, right=14mm of c3] (c4) {4 紧性};
+
+    \node[todo, below=9mm of c3] (c5) {5 连通性};
+    \node[todo, below=9mm of c4] (c6) {6 一元微分学};
+    \node[todo, below=9mm of c6] (c7) {7 一元积分学};
+    \node[todo, left=14mm of c7] (c8) {8 无穷级数};
+    \node[todo, left=14mm of c8] (c9) {9 函数空间};
+
+    \node[box, draw=htAccent, fill=white, below=9mm of c1] (a) {附录 A 实数的构造};
+
+    \draw[ar] (c1) -- (c2);  \draw[ar] (c2) -- (c3);  \draw[ar] (c3) -- (c4);
+    \draw[ar] (c3) -- (c5);  \draw[ar] (c4) -- (c6);  \draw[ar] (c6) -- (c7);
+    \draw[ar] (c7) -- (c8);  \draw[ar] (c8) -- (c9);  \draw[ar] (c4) to[bend right=18] (c9);
+    \draw[ar, htAccent, dashed] (a) -- (c1);
+  \end{tikzpicture}
+  \caption{卷一各章的依赖关系。深色为已完稿，浅色为待写。
+    箭头表示「后者要用到前者」。附录 A 补上第 1 章的存在性，
+    虚线表示它可以最后读，也可以整章跳过。}
+  \label{fig:vol1-map}
+\end{figure}
+
+主干是一条直线：实数系给出唯一的非平凡假设（完备性），
+度量空间把它推广到没有序的场合，连续性与紧性则是在这个场合中做事的工具。
+从第 6 章起转入微积分本身。
+
+\section*{二、本卷在基础数学中的位置}
+
+数学分析、代数、几何与拓扑常被列为基础数学的四大块。本卷处在分析这一块的
+入口，但它同时也是通往另外两块的必经之路：
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  本卷提供的工具 & 何处接手 & 属于哪一块 \\
+  \midrule
+  度量空间、开集、连续     & 卷四：一般拓扑空间       & 拓扑 \\
+  完备性、压缩映射         & 卷二：微分方程与反函数定理 & 分析 \\
+  零测集（第 7 章）        & 卷五：Lebesgue 测度      & 分析 \\
+  向量空间上的范数与内积   & 卷五：Banach 与 Hilbert 空间 & 分析 \\
+  同胚与拓扑不变量         & 卷四、卷六：代数拓扑     & 拓扑 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+代数那一块本卷基本不涉及，只在第 1 章借用了域与全序两个概念。
+几何要到卷二讲流形时才进入。
+
+\section*{三、贯穿全卷的一条线}
+
+本卷反复出现一个问题：\emph{这条定理究竟用到了什么？}
+
+第 1 章末的对照表把实数系的各条性质按所依赖的结构分类；
+第 2 章指出完备性依赖度量本身而非它诱导的拓扑；
+第 3 章说明收敛是拓扑概念而 Cauchy 性不是，由此解释了前一条。
+每章末尾都有一节「本章结论在更一般框架下的地位」，做同样的清点。
+
+这样做不是为了追求一般性。用得越少的定理，可推广的范围越广；
+知道一条结论依赖什么，就知道它在哪里还成立、在哪里会失效。
+卷四把度量换成拓扑、卷五把有限维换成无限维时，这份清单就是行李清单。
+
+\section*{四、读法}
+
+各章开篇都有一段动机、一份任务清单、一张「本章结论在后续何处用到」的表，
+以及一条读法建议。核心概念之前有「概念定位」框，四格分别回答
+为何需要、与谁相关、位于何处、能做什么。习题分例行、结构、延伸三档，
+例行档必做，结构档要求指出所用到的结构，延伸档可选。
+
+初读时可以略过所有标「选读」的段落、附录 A、以及各章读法建议中点名的部分。

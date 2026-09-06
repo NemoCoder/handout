@@ -209,6 +209,56 @@
   它确有序列判据（\cref{thm:uniform-seq}），但要同时用\emph{两列}点。
 \end{remark}
 
+\begin{example}[实际选出一个 \(\delta\)]
+  \label{ex:choose-delta}
+  设 \(f(x)=x^{2}\)，\(p \in \R\) 固定。给定 \(\varepsilon>0\)，具体地写出一个可用的 \(\delta\)。
+  \begin{worked}
+    先估计。\(\abs{x^{2}-p^{2}} = \abs{x-p}\,\abs{x+p}\)，
+    第一个因子正是我们能控制的量，第二个因子却随 \(x\) 变化，须先把它框住。
+
+    办法是\emph{先给 \(\delta\) 加一个上限}。若已要求 \(\abs{x-p}<1\)，
+    则 \(\abs{x} < \abs{p}+1\)，于是
+    \begin{equation}
+      \label{eq:bound-sum}
+      \abs{x+p} \le \abs{x}+\abs{p} < 2\abs{p}+1 .
+    \end{equation}
+    此时 \(\abs{x^{2}-p^{2}} < \abs{x-p}\,(2\abs{p}+1)\)。
+    要它小于 \(\varepsilon\)，只需 \(\abs{x-p} < \varepsilon/(2\abs{p}+1)\)。
+
+    两个要求合并，取
+    \begin{equation}
+      \label{eq:delta-choice}
+      \delta = \min\Bigl\{1,\ \frac{\varepsilon}{2\abs{p}+1}\Bigr\} .
+    \end{equation}
+    则 \(\abs{x-p}<\delta\) 时两条估计同时成立，故 \(\abs{f(x)-f(p)}<\varepsilon\)。
+
+    两点值得记住。其一，\(\delta\) 依赖 \(p\)：\(p\) 越大 \(\delta\) 越小，
+    这正是 \(f\) 连续却不一致连续的迹象（见\cref{exr:x2-not-uniform}）。
+    其二，\(\min\) 的手法在这类估计中反复出现——一个约束用来框住
+    不好控制的因子，另一个用来达到所需的精度。
+  \end{worked}
+\end{example}
+
+\begin{example}[在什么范围上一致连续]
+  \label{ex:one-over-x-uniform}
+  设 \(a>0\)。证明 \(f(x)=1/x\) 在 \([a,\infty)\) 上一致连续。
+  \begin{worked}
+    对 \(x,y \ge a\)，
+    \begin{equation}
+      \label{eq:one-over-x-lip}
+      \Bigl\lvert\frac{1}{x}-\frac{1}{y}\Bigr\rvert
+        = \frac{\abs{y-x}}{xy} \le \frac{\abs{x-y}}{a^{2}} .
+    \end{equation}
+    取 \(\delta = a^{2}\varepsilon\)，则 \(\abs{x-y}<\delta\) 蕴含
+    \(\abs{f(x)-f(y)}<\varepsilon\)。这个 \(\delta\) 与点无关，故一致连续。
+
+    对照\cref{ex:not-uniform}：同一个函数在 \((0,1]\) 上\emph{不}一致连续。
+    差别在于分母 \(xy\) 有没有正的下界。把定义域从 \(0\) 处切开一段，
+    一致连续性就恢复了。这个现象在第 4 章会得到解释：
+    \([a,b]\) 紧而 \((0,1]\) 不紧。
+  \end{worked}
+\end{example}
+
 \begin{example}[判定不连续]
   \label{ex:discontinuous}
   设 \(f \mapsdef \R \to \R\) 定义为：\(x\) 为有理数时 \(f(x)=1\)，
@@ -575,6 +625,22 @@
     取 \(x_{n} = 1/\bigl(2n\pi + \pi/2\bigr)\)，则 \(x_{n} \to 0\)
     而 \(f(x_{n}) = \sin(2n\pi+\pi/2) = 1\) 对一切 \(n\) 成立，
     故 \(f(x_{n}) \to 1 \neq 0 = f(0)\)。按\cref{def:continuous}，\(f\) 在 \(0\) 处不连续。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:x2-not-uniform}
+  证明 \(f(x)=x^{2}\) 在 \(\R\) 上连续但不一致连续。
+  （提示：用\cref{thm:uniform-seq}，取两列点 \(x_{n}=n+1/n\)、\(y_{n}=n\)。）
+  \begin{solution}
+    连续性由\cref{ex:choose-delta} 得出。
+
+    非一致连续：取 \(x_{n}=n+1/n\)、\(y_{n}=n\)，则 \(d(x_{n},y_{n})=1/n \to 0\)，
+    而 \(x_{n}^{2}-y_{n}^{2} = 2 + 1/n^{2} \ge 2\) 不趋于零。
+    由\cref{thm:uniform-seq}，\(f\) 不一致连续。
+
+    与\cref{eq:delta-choice} 对照：那里的 \(\delta\) 含因子 \(1/(2\abs{p}+1)\)，
+    随 \(\abs{p}\) 增大而趋于零，故取不到统一的 \(\delta\)。
   \end{solution}
 \end{exercise}
 

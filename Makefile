@@ -40,7 +40,7 @@ teacher: $(foreach s,$(SUBJECTS),$(DIST)/$(s)-teacher.pdf)
 
 # ---- 学生版 --------------------------------------------------------------
 $(DIST)/%-student.pdf: %/main.tex $(wildcard %/chapters/*.tex) common/handout.cls
-	@mkdir -p $(BUILD)/aux-$*-student $(DIST)
+	@mkdir -p $(BUILD)/aux-$*-student/chapters $(DIST)
 	$(LATEXMK) -cd -outdir=../$(BUILD)/aux-$*-student \
 	           -jobname=$*-student $*/main.tex
 	@cp $(BUILD)/aux-$*-student/$*-student.pdf $@
@@ -48,7 +48,7 @@ $(DIST)/%-student.pdf: %/main.tex $(wildcard %/chapters/*.tex) common/handout.cl
 
 # ---- 教师版（含解答）-----------------------------------------------------
 $(DIST)/%-teacher.pdf: %/main.tex $(wildcard %/chapters/*.tex) common/handout.cls
-	@mkdir -p $(BUILD)/aux-$*-teacher $(DIST)
+	@mkdir -p $(BUILD)/aux-$*-teacher/chapters $(DIST)
 	$(LATEXMK) -cd -outdir=../$(BUILD)/aux-$*-teacher \
 	           -jobname=$*-teacher \
 	           -pdfxelatex="xelatex -shell-escape %O '\def\HTTEACHER{1}\input{%S}'" \
@@ -79,7 +79,7 @@ endif
 
 # ---- 监视模式 ------------------------------------------------------------
 watch:
-	@mkdir -p $(BUILD)/aux-$(S)-student
+	@mkdir -p $(BUILD)/aux-$(S)-student/chapters
 	$(LATEXMK) -pvc -cd -outdir=../$(BUILD)/aux-$(S)-student \
 	           -jobname=$(S)-student $(S)/main.tex
 
