@@ -1,0 +1,15 @@
+name = "iahmath"
+defaultTargets = ["IahMath"]
+
+# 形式化练习。与讲义章节一一对应，每章一个文件。
+# 卷一各章的题目刻意写在抽象结构上（三条度量公理作为假设等），
+# 不直接调用 Mathlib 的现成引理——否则一行 exact 即可秒掉，起不到练习作用。
+# Mathlib 仍然引入，供卷四卷五的重型工具备用。
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.33.1"   # 与 lean-toolchain 的 v4.33.1 严格对应，否则用不了预编译缓存
+
+[[lean_lib]]
+name = "IahMath"
