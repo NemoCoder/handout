@@ -422,7 +422,8 @@ Makefile 的 `SUBJECTS` 相应改为 `<学科>/<卷>` 的两级路径。
 | 5 | 连通性 | 连通与道路连通；\(\R\) 的连通子集即区间；**介值定理作为连通性在连续映射下保持的推论** | Garling II |
 | 6 | 一元微分学 | **导数作为线性逼近**（为 Fréchet 导数埋线）；中值定理族；Taylor 定理；凸性 | Garling I；Cartan |
 | 7 | 一元积分学 | Darboux 与 Riemann 积分；Lebesgue 可积判据（不连续点集零测），**首次引入零测集**；微积分基本定理；Riemann 积分的局限与反例 | Garling I；Pugh 第 3 章 |
-| 8 | 函数空间 | 一致收敛；\(C(X)\) 的完备性；Dini 定理；Arzelà–Ascoli；Stone–Weierstrass；幂级数 | Garling II；Amann & Escher II |
+| 8 | 无穷级数 | 收敛与绝对收敛；正项级数判别法；交错级数；重排定理；Cauchy 乘积。**本章是 2026-09-06 审阅时补入的**：原大纲卷一无级数章，而单调有界定理最自然的用武之地正在此处 | Garling I 第 4 章 |
+| 9 | 函数空间 | 一致收敛；\(C(X)\) 的完备性；Dini 定理；Arzelà--Ascoli；Stone--Weierstrass；幂级数 | Garling II；Amann & Escher II |
 | A | 附录：实数的构造 | Dedekind 分割与 Cauchy 完备化两种构造，证唯一性 | Tao I；Zorich I |
 | B | 附录：一般拓扑速览 | 拓扑空间、子空间与积与商拓扑、分离公理；**并指出数列在此已不足以刻画闭包**，作为通往卷四网与滤子的接口 | Sutherland；Munkres；Kelley 第 2 章 |
 

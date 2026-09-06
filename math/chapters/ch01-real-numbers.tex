@@ -109,10 +109,10 @@
     本章结论 & 首次使用 & 用途 \\
     \midrule
     确界原理     & 第 4 章 & 证明紧集上的连续函数取到最值 \\
-    单调有界定理 & 第 3 章 & 判别正项级数收敛 \\
+    单调有界定理 & 第 8 章 & 判别正项级数收敛 \\
     闭区间套定理 & 第 4 章 & 证明 Heine--Borel 定理 \\
     Cauchy 完备性 & 第 2 章 & 度量空间的完备性；压缩映射原理 \\
-    阿基米德性   & 第 8 章 & 多项式逼近中区间的等分 \\
+    阿基米德性   & 第 9 章 & 多项式逼近中区间的等分 \\
     \(\R\) 不可数 & 第 7 章 & Riemann 可积的判别准则 \\
     \bottomrule
   \end{tabular}
@@ -782,10 +782,17 @@
   可见「是否 Cauchy」是数列自身的性质，「是否收敛」则取决于它所在的数系。
 \end{intuition}
 
+在陈述本章的核心定理之前，须先说明一件事。\cref{def:cauchy} 中的
+\(\varepsilon\) 取自 \(\R\)，而下面要讨论的是任意有序域 \(K\)。
+在 \(K\) 中，「\(\seq{a_{n}}\) 是 Cauchy 列」应理解为：对 \(K\) 的\emph{每个}
+正元素 \(\varepsilon\)，存在 \(N\) 使 \(m,n \ge N\) 时 \(\abs{a_{m}-a_{n}} < \varepsilon\)；
+这里的绝对值取值于 \(K\)，不是实数。两个框架的形式相同，取值范围不同——
+非阿基米德域中的 \(\abs{x-y}\) 可以是无穷小，它并不构成第 2 章所要求的实值度量。
+
 \begin{theorem}[完备性的分解]
   \label{thm:completeness-split}
-  设 \(K\) 为有序域。则 \(K\) 序完备，当且仅当 \(K\) 既是阿基米德的、
-  又是 Cauchy 完备的。
+  设 \(K\) 为有序域，其中的收敛与 Cauchy 条件按上段理解。
+  则 \(K\) 序完备，当且仅当 \(K\) 既是阿基米德的、又是 Cauchy 完备的。
 \end{theorem}
 
 \begin{proof}[证明思路]
@@ -964,7 +971,7 @@
   设 \(S = \setst{m/n}{m, n \in \N,\ m < n}\)。求 \(\sup S\) 与 \(\inf S\)。
   \begin{solution}
     \(\sup S = 1\)：由 \(m < n\) 得 \(m/n < 1\)，故 \(1\) 是上界。
-    任取 \(\varepsilon > 0\)，取 \(n > 1/\varepsilon\) 与 \(m = n - 1\)，
+    任取 \(\varepsilon > 0\)，取 \(n > \max\set{1/\varepsilon,\,2}\) 与 \(m = n - 1\)（故 \(m \ge 1\)），
     则 \(m/n = 1 - 1/n > 1 - \varepsilon\)。故 \(\sup S = 1 \notin S\)。
 
     \(\inf S = 0\)：\(m/n > 0\) 故 \(0\) 是下界。取 \(m = 1\)、\(n\) 充分大，
@@ -1003,16 +1010,24 @@
 
 \begin{exercise}[例行]
   \label{exr:sup-scalar}
-  设 \(S \subseteq \R\) 非空有上界，\(c > 0\)。求 \(\sup(cS)\) 与 \(\sup(-S)\)，
-  其中 \(cS = \setst{cx}{x \in S}\)，\(-S = \setst{-x}{x \in S}\)。
+  设 \(S \subseteq \R\) 非空，\(c > 0\)，记
+  \(cS = \setst{cx}{x \in S}\)，\(-S = \setst{-x}{x \in S}\)。
+  （a）设 \(S\) 有上界，求 \(\sup(cS)\)。
+  （b）\(\sup(-S)\) 在什么条件下存在？此时它等于什么？
   \begin{solution}
     \(\sup(cS) = c\sup S\)：\(c\sup S\) 显然是上界；若 \(M\) 是 \(cS\) 的上界，
     则 \(M/c\) 是 \(S\) 的上界，故 \(M/c \ge \sup S\)，即 \(M \ge c\sup S\)。
 
-    \(\sup(-S) = -\inf S\)：\(x \ge m\) 对一切 \(x \in S\) 成立当且仅当
+    （b）\(\sup(-S)\) 存在当且仅当 \(-S\) 有上界，即当且仅当 \(S\) 有\emph{下界}。
+    此时 \(\sup(-S) = -\inf S\)：\(x \ge m\) 对一切 \(x \in S\) 成立当且仅当
     \(-x \le -m\) 对一切 \(x \in S\) 成立，即 \(S\) 的下界与 \(-S\) 的上界
-    一一对应且反序，取最大者对应取最小者。注意本题用到了\cref{def:ordered-field}
-    的相容性条件，纯全序集上无此结论。
+    一一对应且反序，取最大者对应取最小者。
+
+    仅设 \(S\) 有上界并不够。取 \(S = \setst{x \in \R}{x \le 0}\)，
+    它有上界 \(0\)，而 \(-S = \setst{x}{x \ge 0}\) 无上界，
+    \(\sup(-S)\) 不是实数，\(\inf S\) 也不存在。
+
+    本题用到了\cref{def:ordered-field} 的相容性条件，纯全序集上无此结论。
   \end{solution}
 \end{exercise}
 
@@ -1093,14 +1108,20 @@
 
 \begin{exercise}[结构]
   \label{exr:cut-vs-sup}
-  \Cref{thm:order-complete-equiv} 的证明中，三步各自用到了全序的哪些性质？
-  特别地，指出何处用到了「任意两元素可比较」这一条。
+  检查\cref{thm:order-complete-equiv} 的证明是否用到了「任意两元素可比较」
+  这一条。若没有用到，说明该定理在任意\emph{偏序集}上是否仍然成立。
   \begin{solution}
-    三步都只用到序关系的自反、反对称、传递以及上界与下界的定义。
-    可比较性用在「\(A\) 的每个元素都是 \(B\) 的上界」一类断言中：
-    要断定 \(a \le b\) 对一切 \(a \in A\)、\(b \in B\) 成立，
-    在偏序集中未必能做到。事实上\cref{thm:order-complete-equiv}
-    在偏序集上一般不成立，(i) 与 (iii) 的等价性会失效。
+    三步都只用到序关系的自反、反对称、传递，以及上界与下界的定义，
+    \emph{全序的可比较性一次也没有用到}。因此\cref{thm:order-complete-equiv}
+    在任意偏序集上原样成立，证明一字不改。
+
+    容易误判的一处是「\(A\) 的每个元素都是 \(B\) 的上界」这类断言。
+    它并非来自可比较性，而是来自 \(B\) 的\emph{定义}——我们把 \(B\) 取作 \(A\) 的
+    全体下界之集，故按定义就有 \(b \le a\) 对一切 \(a \in A\)、\(b \in B\) 成立。
+    在 (ii)\(\Rightarrow\)(iii) 一步中，这一关系则由题设直接给出。
+
+    这个结果说明本章的完备性理论并不需要全序：它是纯粹的序理论结论。
+    全序在别处才真正用到，例如\cref{thm:complete-implies-arch} 的三分律。
   \end{solution}
 \end{exercise}
 

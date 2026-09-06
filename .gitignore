@@ -34,3 +34,8 @@ build/
 *~
 .DS_Store
 
+
+# Lean 4：依赖与编译产物约 5 GB，不入库。
+# 但 lean-toolchain、lakefile.toml 与 lake-manifest.json 必须入库——
+# 前两者指定工具链与依赖，后者锁定依赖的确切版本，缺了无法复现构建。
+.lake/
