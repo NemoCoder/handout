@@ -126,6 +126,104 @@
   可以先跳过，读完第 2 章的度量空间再回看。
 \end{remark}
 
+\section{预备：本章要用到的记号与事实}
+\label{sec:prelim}
+
+本章的论证会用到一些中学阶段已经接触、但尚未精确陈述的概念与事实。
+本节把它们集中列出，只作约定与陈述，不展开。读者若已熟悉可直接跳到
+\cref{sec:rational-gap}；遇到不确定的记号再回来查。
+
+\subsection*{集合与映射}
+
+\(\N = \set{1,2,3,\dots}\)（本讲义的自然数从 \(1\) 起），\(\Z\) 为整数集，
+\(\Q\) 为有理数集。集合的构造记法写作 \(\setst{x \in A}{P(x)}\)，
+读作「\(A\) 中满足 \(P\) 的那些 \(x\) 所成之集」。
+
+映射 \(f \mapsdef A \to B\) 由定义域 \(A\)、陪域 \(B\) 与对应法则确定。
+对 \(S \subseteq A\)，\(f(S) = \setst{f(x)}{x \in S}\) 称为 \(S\) 的\term{像}{image}；
+对 \(T \subseteq B\)，
+\begin{equation}
+  \label{eq:preimage}
+  f^{-1}(T) = \setst{x \in A}{f(x) \in T}
+\end{equation}
+称为 \(T\) 的\term{原像}{preimage}。注意 \(f^{-1}(T)\) 这个记号不要求 \(f\) 可逆，
+它只是「被映进 \(T\) 里的那些点」的简写。原像与并、交、补都可交换，
+像则一般不然；这一差别在第 3 章刻画连续性时是关键。
+
+\subsection*{域与全序}
+
+\term{域}{field}指这样的集合：其上给定加法与乘法，使得加减乘除（除数非零）
+都能施行且满足通常的运算律：两种运算各自结合、交换、有单位元与逆元
+（加法逆元对一切元素存在，乘法逆元对非零元素存在），且乘法对加法分配。
+\(\Q\) 与 \(\R\) 都是域，\(\Z\) 不是（\(2\) 没有乘法逆元）。
+
+集合 \(X\) 上的\term{全序}{total order}是一个关系 \(\le\)，满足自反
+（\(x \le x\)）、反对称（\(x \le y\) 且 \(y \le x\) 蕴含 \(x=y\)）、传递
+（\(x \le y\) 且 \(y \le z\) 蕴含 \(x \le z\)），并且\emph{任意两元素可比较}：
+对一切 \(x,y\) 有 \(x \le y\) 或 \(y \le x\)。去掉最后一条得到的是
+\term{偏序}{partial order}——集合的包含关系就是偏序而非全序，
+因为两个集合可以互不包含。
+
+\subsection*{实数列的收敛}
+
+\begin{definition}[数列收敛]
+  \label{def:seq-limit-R}
+  设 \(\seq{a_{n}}\) 为实数列，\(a \in \R\)。称 \(\seq{a_{n}}\) \term{收敛}{converge}
+  于 \(a\)，记作 \(a_{n} \to a\) 或 \(\lim_{n \to \infty} a_{n} = a\)，
+  若对任意 \(\varepsilon > 0\) 存在 \(N\)，使 \(n \ge N\) 时 \(\abs{a_{n}-a} < \varepsilon\)。
+\end{definition}
+
+第 2 章将把这条定义原样推广到度量空间，届时只需把 \(\abs{a_{n}-a}\)
+换成 \(d(a_{n},a)\)。下面两条事实本章会反复用到，证明留到第 2 章
+（\cref{cor:limit-unique} 与相应习题）以更一般的形式给出。
+
+\begin{proposition}[极限唯一与四则运算]
+  \label{prop:limit-basics}
+  设 \(a_{n} \to a\)，\(b_{n} \to b\)。则
+  \begin{enumerate}[label=(\roman*)]
+    \item 极限唯一：若同时 \(a_{n} \to a'\)，则 \(a = a'\)；
+    \item \(a_{n} + b_{n} \to a + b\)，\(a_{n}b_{n} \to ab\)；
+          若 \(b \neq 0\) 且各 \(b_{n} \neq 0\)，则 \(a_{n}/b_{n} \to a/b\)；
+    \item 保序性：若 \(a_{n} \le b_{n}\) 对一切 \(n\) 成立，则 \(a \le b\)。
+  \end{enumerate}
+\end{proposition}
+
+\begin{pitfall}
+  (iii) 中的不等号不能改为严格：\(1/n > 0\) 对一切 \(n\) 成立，
+  而极限 \(0\) 并不大于 \(0\)。取极限会把严格不等号\emph{磨平}成不严格的，
+  这是初学时最常见的错误之一。
+\end{pitfall}
+
+\subsection*{量词及其否定}
+
+「对一切」记作 \(\forall\)，「存在」记作 \(\exists\)。本章大量证明用反证法，
+因而要能准确写出一个陈述的否定。规则只有两条，反复套用即可：
+\begin{equation}
+  \label{eq:quantifier-negation}
+  \lnot\bigl(\forall x,\ P(x)\bigr) \iff \exists x,\ \lnot P(x),
+  \qquad
+  \lnot\bigl(\exists x,\ P(x)\bigr) \iff \forall x,\ \lnot P(x).
+\end{equation}
+即：否定穿过量词时，\(\forall\) 与 \(\exists\) 互换，否定落到最里面的命题上。
+
+\begin{example}
+  \label{ex:negate-convergence}
+  写出「\(a_{n} \to a\)」的否定。
+  \begin{worked}
+    原陈述是 \(\forall \varepsilon>0,\ \exists N,\ \forall n \ge N,\
+    \abs{a_{n}-a} < \varepsilon\)。逐层套用\cref{eq:quantifier-negation}：
+    \[
+      \exists \varepsilon>0,\ \forall N,\ \exists n \ge N,\
+      \abs{a_{n}-a} \ge \varepsilon .
+    \]
+    读作：存在一个正数 \(\varepsilon\)，使得无论走到多远，
+    后面总还有项与 \(a\) 相差不小于 \(\varepsilon\)。
+
+    注意三个量词全部翻转，且最后的严格不等号变为不严格。
+    这两处是最常出错的地方。
+  \end{worked}
+\end{example}
+
 \section{有理数系的缺陷}
 \label{sec:rational-gap}
 
