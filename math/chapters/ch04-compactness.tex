@@ -1,0 +1,806 @@
+%%% ==========================================================================
+%%%  第四章：紧性
+%%%  提纲与两轮审阅意见见 temp/ch04-outline.md，读书笔记见
+%%%  math/notes/ch04-compactness.md。写作时须守住的几条（均为审阅指出）：
+%%%   - 闭单位球不紧的反例用 g_n = x^(2^n)，不可用 x^n（后者下标相邻时
+%%%     距离趋于零，不是 ε-分离的）；
+%%%   - 序列紧属拓扑层，不可与全有界并列在度量层；
+%%%   - Lebesgue 数引理须由序列紧证出，不得借道最值定理，否则循环论证；
+%%%   - 最值定理须写「非空」紧集；
+%%%   - 「闭且有界即紧」只对欧氏空间成立，「有限维」的说法只在赋范空间中才准确。
+%%%  TODO：第 7、9 章与卷四、卷五建立后，把「第 N 章」改回 \cref{ch:...}。
+%%% ==========================================================================
+\chapter{紧性}
+\label{ch:compactness}
+
+\begin{keypoint}[本章要点]
+  \begin{itemize}
+    \item 连续性本身推不出「取到最值」。缺的那条性质是定义域的紧性，
+          它把无限的覆盖化为有限的覆盖。
+    \item 紧性同样有三副面孔：序列紧、全有界加完备、开覆盖紧。
+          与\cref{ch:continuity} 的连续性一样，只有不提距离的那一副
+          活到卷四，并在那里反客为主。
+    \item 「闭且有界」等价于紧，这只在欧氏空间中成立。
+          一般度量空间中两个方向的反例都有。
+    \item 第 1 章说紧性是确界原理在拓扑层面的接替者。本章把这句话坐实：
+          \([a,b]\) 紧要用确界原理来证，而紧集上的最值定理反过来不用。
+  \end{itemize}
+\end{keypoint}
+
+\section{为什么需要紧性}
+\label{sec:why-compact}
+
+第 2 章定义 \(C[a,b]\) 上的一致度量时写的是
+\begin{equation}
+  \label{eq:uniform-metric-recall}
+  d_{\infty}(f,g) = \max_{a \le x \le b} \abs{f(x)-g(x)} ,
+\end{equation}
+当时附了一句：最大值确实存在，这一点将在本章由紧性给出，此处暂且承认
+（\cref{ex:metric-CX}）。现在来还这笔账。
+
+先看清欠的究竟是什么。取 \(f(x)=x\)，它在 \((0,1)\) 上连续，
+上确界为 \(1\) 却取不到；取 \(f(x)=\arctan x\)，它在 \(\R\) 上连续，
+上确界为 \(\pi/2\) 也取不到。两个函数都无可指摘，问题出在定义域：
+一个少了端点，一个伸向无穷。
+
+可见「连续函数取到最值」不是连续性的推论，而依赖定义域的某种性质。
+本章要找出那条性质，它叫紧性。
+
+\begin{concept}{紧性}
+  \cwhy{连续性本身推不出取到最值。上面两个例子表明，缺的是定义域的一条性质；
+    本章要把它找出来并证明它足够。}
+  \crel{它是第 1 章确界原理在拓扑层面的接替者。第 1 章的确界原理依赖序，
+    离开 \(\R\) 就无从谈起；紧性只用开集就能说清，因而走得更远。}
+  \cwhere{分析学与拓扑学的枢纽。凡是要把「局部成立」升格为「整体成立」的地方
+    都用它。}
+  \cdo{把无限化为有限：从局部控制所对应的开覆盖中选出\emph{有限}子覆盖，
+    再对有限多个正数取最小值。最值定理、一致连续定理、
+    以及第 7 章 Riemann 可积性的判别，用的都是这一步。}
+\end{concept}
+
+\begin{pitfall}
+  「化无限为有限」是对开覆盖那一副面孔的说法，不可滥用。
+  无穷多个正数\emph{未必}有最小值，其下确界还可能为 \(0\)；
+  必须先取出有限子覆盖，才谈得上取最小。同样，
+  「无穷数列取收敛子列」也并没有把无限变成有限。
+\end{pitfall}
+
+紧性也有三副面孔，这与\cref{ch:continuity} 的连续性同属一个结构。
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  面孔 & 长处 & 到卷四 \\
+  \midrule
+  序列紧（\cref{sec:seq-compact}） & 承接第 3 章，证明最省力 & 与紧不再等价 \\
+  全有界加完备（\cref{sec:totally-bounded}） & 最便于检验，可具体估算 & 依赖度量，无从谈起 \\
+  开覆盖紧（\cref{sec:open-cover}） & 只用开集 & 取作定义 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+两章的平行不是巧合：两次都是\emph{只用开集说得清的那一副活到了最后}。
+这是全书「用得越少，走得越远」这条主线的第二次出现。
+
+\subsection*{本章要还的账}
+
+前几章有三处写着「第 4 章会解释」，但它们的性质并不相同。
+只有第一处真正靠紧性结清，另两处是用来划定定理边界的。
+
+\begin{center}
+\begin{tabular}{@{}llp{4.4cm}@{}}
+  \toprule
+  出处 & 结论 & 靠什么 \\
+  \midrule
+  \cref{ex:metric-CX} & \(C[a,b]\) 中 \(\max\) 存在 & \textbf{紧性}，\cref{thm:extreme-value} 结清 \\
+  \cref{ex:not-uniform} & \(1/x\) 在 \((0,1]\) 上不一致连续 & 两列反例，并非「不紧」所致 \\
+  \cref{ex:one-over-x-uniform} & \(1/x\) 在 \([a,\infty)\)（\(a>0\)）上一致连续 & Lipschitz 估计；该区间并不紧 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+  \label{rem:sufficient-not-necessary}
+  这张表要先看明白，否则容易把\cref{thm:uniform-on-compact} 记反。
+  该定理说的是：\emph{定义域紧}是「连续蕴含一致连续」的\emph{充分}条件。
+  它不说定义域不紧就没有一致连续的映射——\cref{ex:one-over-x-uniform}
+  正是反例；也不说定义域不紧就必有连续而不一致连续的映射，
+  尽管\cref{ex:not-uniform} 确实找到了一个。
+\end{remark}
+
+\begin{table}[htbp]
+  \centering
+  \caption{本章各条结论在后续章节中的用途。}
+  \label{tab:ch4-where-used}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    本章结论 & 首次使用 & 用途 \\
+    \midrule
+    最值定理       & 第 6 章 & 中值定理族的前提 \\
+    一致连续定理   & 第 7 章 & Riemann 可积性的判别 \\
+    连续像仍紧     & 第 5 章 & 连通性的对应结论 \\
+    全有界         & 第 9 章 & Arzelà--Ascoli 定理 \\
+    开覆盖紧       & 卷四     & 取作拓扑空间中紧性的定义 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{remark}[读法建议]
+  \cref{sec:seq-compact} 与\cref{sec:consequences} 必须掌握。
+  \cref{sec:open-cover} 的三者等价性证明初读可略，记住结论即可；
+  其中的 Lebesgue 数引理值得单独看一遍，它的手法在后文反复出现。
+  \cref{sec:totally-bounded} 的全有界是通往卷五的门，本卷只在一处用到。
+\end{remark}
+
+\section{序列紧}
+\label{sec:seq-compact}
+
+依\cref{ch:continuity} 的先例，先用序列作定义——它是此刻手上最熟的工具。
+
+\begin{definition}[序列紧]
+  \label{def:seq-compact}
+  设 \((X,d)\) 为度量空间，\(A \subseteq X\)。若 \(A\) 中每个数列都有
+  收敛于 \(A\) 中某点的子列，则称 \(A\) 为\term{序列紧的}{sequentially compact}。
+\end{definition}
+
+\begin{example}[平凡的情形]
+  \label{ex:trivial-compact}
+  空集与有限集序列紧。
+  \begin{worked}
+    空集中没有数列，条件空洞地成立。
+
+    设 \(A\) 有限，\(\seq{a_{n}}\) 为 \(A\) 中的数列。由抽屉原理，
+    \(A\) 中至少有一个元素 \(p\) 被取到无穷多次，取这些下标构成子列，
+    则该子列恒为 \(p\)，收敛于 \(p \in A\)。
+  \end{worked}
+\end{example}
+
+\begin{theorem}
+  \label{thm:compact-closed-bounded}
+  序列紧集必闭且有界。
+\end{theorem}
+
+\begin{proof}
+  \emph{闭}。设 \(p \in \overline{A}\)。由第 2 章的习题，存在 \(A\) 中数列
+  \(a_{n} \to p\)。由序列紧，某子列 \(a_{n_{k}} \to q \in A\)。
+  而收敛数列的子列收敛于同一极限（\cref{ch:metric} 的推论），
+  故 \(q = p\)，于是 \(p \in A\)。故 \(A = \overline{A}\)。
+
+  \emph{有界}。固定 \(p \in X\)。若 \(A\) 无界，则对每个 \(n\) 存在
+  \(a_{n} \in A\) 使 \(d(p,a_{n}) \ge n\)。由序列紧取收敛子列 \(a_{n_{k}} \to q\)，
+  则 \(\seq{a_{n_{k}}}\) 有界（第 2 章的命题），与 \(d(p,a_{n_{k}}) \ge n_{k} \to \infty\) 矛盾。
+\end{proof}
+
+逆命题一般不成立。这是本章最该防的误解，两个反例的成因不同。
+
+\begin{example}[闭且有界而不紧，其一：不完备]
+  \label{ex:q-closed-bounded}
+  在度量空间 \(\Q\)（取 \(\R\) 的子空间度量）中，
+  \(A = \setst{x \in \Q}{0 \le x \le 2,\ x^{2} \le 2}\) 闭且有界，但不序列紧。
+  \begin{worked}
+    \(A\) 在 \(\Q\) 中闭：若 \(q \in \Q\) 且 \(q \notin A\)，则 \(q<0\) 或 \(q^{2}>2\)，
+    两种情形都能取到与 \(A\) 不交的球。有界显然。
+
+    取\cref{eq:sqrt2-decimal} 的数列 \(1, 1.4, 1.41, \dots\)，各项都在 \(A\) 中。
+    它在 \(\R\) 中收敛于 \(\sqrt{2}\)，故其任一子列也收敛于 \(\sqrt{2}\)；
+    而 \(\sqrt{2} \notin \Q\)，故没有子列收敛于 \(A\) 中的点。
+
+    毛病出在 \(\Q\) 不完备。
+  \end{worked}
+\end{example}
+
+\begin{example}[闭且有界而不紧，其二：不全有界]
+  \label{ex:ball-not-compact}
+  \(C[0,1]\)（取一致度量）中的闭单位球
+  \(B = \setst{f}{d_{\infty}(f,0) \le 1}\) 闭且有界，但不序列紧。
+  \begin{worked}
+    取 \(g_{n}(x) = x^{2^{n}}\)。各 \(g_{n} \in B\)。设 \(m > n\)，
+    取 \(x_{0}\) 使 \(x_{0}^{2^{n}} = 1/2\)，则
+    \(x_{0}^{2^{m}} = \bigl(x_{0}^{2^{n}}\bigr)^{2^{m-n}} = (1/2)^{2^{m-n}} \le 1/4\)，
+    于是
+    \begin{equation}
+      \label{eq:separated}
+      d_{\infty}(g_{n},g_{m}) \ge \abs{g_{n}(x_{0}) - g_{m}(x_{0})}
+        \ge \frac{1}{2} - \frac{1}{4} = \frac{1}{4}.
+    \end{equation}
+    诸 \(g_{n}\) 两两相距至少 \(1/4\)，故任一子列都不是 Cauchy 列，
+    更不收敛。故 \(B\) 不序列紧。
+  \end{worked}
+\end{example}
+
+\begin{pitfall}
+  \begin{enumerate}[label=(\arabic*), leftmargin=1.6em]
+    \item \textbf{以为「闭且有界」就是紧。} 上面两个反例说明不然。
+          这条等价只在欧氏空间中成立（\cref{thm:heine-borel}）。
+    \item \textbf{用 \(f_{n}(x)=x^{n}\) 充当\cref{ex:ball-not-compact} 的反例。}
+          这一列并非彼此分离：\(\norm{x-x^{2}}_{\infty} = 1/4\)，
+          而 \(\norm{x^{100}-x^{101}}_{\infty} \approx 0.0037\)，下标相邻时距离趋于零。
+          它确实没有一致收敛的子列（子列的逐点极限在 \([0,1)\) 上为 \(0\)、
+          在 \(1\) 处为 \(1\)，不连续），但那证的是\emph{不序列紧}，
+          不是\emph{不全有界}。两者的论据不可混用。
+    \item \textbf{把\cref{ex:ball-not-compact} 说成「有限维特有」而不加限定。}
+          准确的陈述是：在\emph{赋范线性空间}中，闭单位球紧当且仅当空间有限维
+          （卷五的 Riesz 引理）。一般度量空间没有维数可言。
+  \end{enumerate}
+\end{pitfall}
+
+\section{全有界与完备}
+\label{sec:totally-bounded}
+
+\cref{ex:q-closed-bounded} 与\cref{ex:ball-not-compact} 各自缺了一条性质：
+前者缺完备性，后者缺一种「用有限多个小球盖得住」的性质。本节说明
+这两样合起来恰好等于序列紧。
+
+\begin{definition}[全有界]
+  \label{def:totally-bounded}
+  设 \((X,d)\) 为度量空间。若对每个 \(\varepsilon>0\)，存在\emph{有限个}点
+  \(x_{1},\dots,x_{N} \in X\) 使
+  \begin{equation}
+    \label{eq:eps-net}
+    X = \bigcup_{j=1}^{N} B(x_{j},\varepsilon),
+  \end{equation}
+  则称 \(X\) 为\term{全有界的}{totally bounded}，
+  称 \(\set{x_{1},\dots,x_{N}}\) 为一个 \(\varepsilon\)-\term{网}{net}。
+\end{definition}
+
+\begin{intuition}
+  有界是「装得进一个大球」，全有界是「用有限多个\emph{任意小}的球盖得住」。
+  后者严格更强。在 \(\R^{n}\) 中两者一致，因为一个大方块总能切成有限多个小方块；
+  维数一高就不然——\cref{ex:ball-not-compact} 中诸 \(g_{n}\) 两两相距 \(1/4\)，
+  半径 \(1/8\) 的球每个至多装一个，而它们有无穷多个。
+\end{intuition}
+
+\begin{proposition}
+  \label{prop:tb-implies-bounded}
+  全有界蕴含有界，反之不然。
+\end{proposition}
+
+\begin{proof}
+  取 \(\varepsilon=1\) 的有限网 \(x_{1},\dots,x_{N}\)，
+  令 \(R = 1 + \max_{j} d(x_{1},x_{j})\)，则 \(X \subseteq B(x_{1},R)\)。
+
+  反例：无限集配离散度量，有界（全体含于半径 \(2\) 的球内）
+  而不全有界（\(\varepsilon = 1/2\) 时每个球只含一点，需无穷多个）。
+\end{proof}
+
+\begin{theorem}
+  \label{thm:seq-compact-iff}
+  度量空间 \((X,d)\) 序列紧，当且仅当它完备且全有界。
+\end{theorem}
+
+\begin{strategy}
+  必要性的两半分开做：完备性由「Cauchy 列有收敛子列则收敛」立得；
+  全有界则用反证——若某个 \(\varepsilon\) 没有有限网，就能逐点挑出
+  两两相距不小于 \(\varepsilon\) 的一列点，它没有收敛子列。
+
+  充分性要造子列。手法是\emph{逐层加细}：先用 \(1\)-网把数列分到有限多个球里，
+  必有一个球含无穷多项，取出这一段作第一层子列；再用 \(1/2\)-网对这一段
+  重做一次，得第二层；如此下去。最后取\emph{对角线}——第 \(j\) 层的第 \(j\) 项。
+  这个对角线子列的项彼此越挨越近，故为 Cauchy 列，由完备性收敛。
+\end{strategy}
+
+\begin{proof}
+  \emph{必要性}。设 \(X\) 序列紧。若 \(\seq{a_{n}}\) 是 Cauchy 列，
+  由序列紧它有收敛子列，再由第 2 章的命题（有收敛子列的 Cauchy 列必收敛）
+  知它收敛，故 \(X\) 完备。
+
+  设 \(X\) 不全有界，则存在 \(\varepsilon_{0}>0\) 使 \(X\) 没有有限 \(\varepsilon_{0}\)-网。
+  任取 \(x_{1} \in X\)。因 \(B(x_{1},\varepsilon_{0}) \neq X\)，可取 \(x_{2}\) 使
+  \(d(x_{1},x_{2}) \ge \varepsilon_{0}\)。归纳地，已取 \(x_{1},\dots,x_{n}\) 之后，
+  因这 \(n\) 个球不覆盖 \(X\)，可取 \(x_{n+1} \notin \bigcup_{j \le n} B(x_{j},\varepsilon_{0})\)。
+  所得数列满足 \(d(x_{m},x_{n}) \ge \varepsilon_{0}\)（\(m \neq n\)），
+  任一子列都不是 Cauchy 列，故不收敛。这与序列紧矛盾。
+
+  \emph{充分性}。设 \(X\) 完备且全有界，\(\seq{a_{n}}\) 为 \(X\) 中的数列。
+
+  取 \(1\)-网。有限多个球覆盖 \(X\)，故其中至少一个含有 \(\seq{a_{n}}\) 的无穷多项；
+  把落在该球中的那些项按原顺序排出，记作 \(\seq{a^{(1)}_{n}}\)，它是 \(\seq{a_{n}}\)
+  的子列，且任意两项相距小于 \(2\)。
+
+  对 \(\seq{a^{(1)}_{n}}\) 用 \(1/2\)-网重做一次，得子列 \(\seq{a^{(2)}_{n}}\)，
+  任意两项相距小于 \(1\)。如此下去，得一列层层嵌套的子列 \(\seq{a^{(j)}_{n}}\)，
+  第 \(j\) 层中任意两项相距小于 \(2/j\)。
+
+  取\emph{对角线} \(b_{j} = a^{(j)}_{j}\)。因各层嵌套，\(b_{j}\) 在原数列中的下标
+  随 \(j\) 严格递增，故 \(\seq{b_{j}}\) 确是 \(\seq{a_{n}}\) 的子列。
+  又当 \(k \ge j\) 时 \(b_{k}\) 属于第 \(j\) 层，故 \(d(b_{j},b_{k}) < 2/j\)，
+  于是 \(\seq{b_{j}}\) 是 Cauchy 列。由完备性它收敛。
+\end{proof}
+
+\begin{remark}
+  \label{rem:diagonal-new}
+  上面的\emph{对角线抽取}是本书第一次使用这个手法，值得记住：
+  当需要一个同时满足无穷多个条件的子列时，就逐层加细、最后取对角线。
+  它在第 9 章证明 Arzelà--Ascoli 定理时还会出现。
+\end{remark}
+
+\section{开覆盖紧}
+\label{sec:open-cover}
+
+第三副面孔的陈述里没有距离。
+
+\begin{definition}[开覆盖与紧]
+  \label{def:compact}
+  设 \((X,d)\) 为度量空间，\(A \subseteq X\)。称一族开集 \(\set{U_{i}}_{i \in I}\)
+  为 \(A\) 的\term{开覆盖}{open cover}，若 \(A \subseteq \bigcup_{i \in I} U_{i}\)。
+  若 \(A\) 的每个开覆盖都有\emph{有限}子覆盖，即存在有限的
+  \(i_{1},\dots,i_{N} \in I\) 使 \(A \subseteq \bigcup_{k=1}^{N} U_{i_{k}}\)，
+  则称 \(A\) 为\term{紧的}{compact}。
+\end{definition}
+
+\begin{example}
+  \label{ex:not-compact-cover}
+  \((0,1)\) 不紧。
+  \begin{worked}
+    取开覆盖 \(U_{n} = (1/n,\ 1)\)，\(n \ge 2\)。它确实覆盖 \((0,1)\)：
+    每个 \(x \in (0,1)\) 都有 \(n\) 使 \(1/n < x\)。
+    但任取有限多个 \(U_{n_{1}},\dots,U_{n_{k}}\)，
+    令 \(N = \max_{j} n_{j}\)，则它们的并为 \((1/N,1)\)，
+    漏掉了 \(1/(2N)\)。故没有有限子覆盖。
+
+    对比\cref{ex:trivial-compact}：紧与不紧的差别，
+    在这个例子里表现为「能否用有限多块盖住」。
+  \end{worked}
+\end{example}
+
+下面这条引理是本节的技术核心，也是「从序列控制转向有限覆盖」的关口。
+
+\begin{lemma}[Lebesgue 数]
+  \label{lem:lebesgue}
+  设 \((X,d)\) 序列紧，\(\set{U_{i}}_{i \in I}\) 为 \(X\) 的开覆盖。
+  则存在 \(\delta>0\)，使每个半径为 \(\delta\) 的球都含于某一个 \(U_{i}\) 之中。
+  这样的 \(\delta\) 称为该覆盖的 \term{Lebesgue 数}{Lebesgue number}。
+\end{lemma}
+
+\begin{proof}
+  反设不存在。则对每个 \(n\)，\(\delta = 1/n\) 不合用，
+  即存在 \(x_{n} \in X\) 使 \(B(x_{n},1/n)\) 不含于任何一个 \(U_{i}\)。
+
+  由序列紧，取子列 \(x_{n_{k}} \to x\)。因诸 \(U_{i}\) 覆盖 \(X\)，
+  存在 \(i_{0}\) 使 \(x \in U_{i_{0}}\)；又 \(U_{i_{0}}\) 开，
+  存在 \(r>0\) 使 \(B(x,r) \subseteq U_{i_{0}}\)。
+
+  取 \(k\) 充分大，使 \(d(x_{n_{k}},x) < r/2\) 且 \(1/n_{k} < r/2\)。
+  则对任意 \(y \in B(x_{n_{k}},1/n_{k})\)，
+  \begin{equation}
+    \label{eq:lebesgue-est}
+    d(y,x) \le d(y,x_{n_{k}}) + d(x_{n_{k}},x) < \frac{r}{2} + \frac{r}{2} = r ,
+  \end{equation}
+  故 \(B(x_{n_{k}},1/n_{k}) \subseteq B(x,r) \subseteq U_{i_{0}}\)，
+  与 \(x_{n_{k}}\) 的取法矛盾。
+\end{proof}
+
+\begin{pitfall}
+  \cref{lem:lebesgue} 只能由序列紧证出，\emph{不可}借道
+  「紧集上的连续函数取到正的最小值」。后者是\cref{thm:extreme-value}
+  的推论，而\cref{thm:extreme-value} 又要用本节的\cref{thm:compact-equiv}，
+  绕回去就成了循环论证。本书中凡遇到「甲由乙证、乙由甲证」的嫌疑，
+  都应把依赖顺序显式写出来查一遍。
+\end{pitfall}
+
+\begin{theorem}[三者等价]
+  \label{thm:compact-equiv}
+  设 \((X,d)\) 为度量空间。下述三条等价：
+  \begin{enumerate}[label=(\roman*)]
+    \item \(X\) 紧（每个开覆盖有有限子覆盖）；
+    \item \(X\) 序列紧；
+    \item \(X\) 完备且全有界。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  (ii) 与 (iii) 的等价即\cref{thm:seq-compact-iff}。以下证
+  (i) \(\Rightarrow\) (ii) \(\Rightarrow\) (i)。
+
+  \emph{(i) \(\Rightarrow\) (ii)}。设 \(X\) 紧而 \(\seq{a_{n}}\) 没有收敛子列。
+  则每个 \(x \in X\) 都不是该数列的聚点，故存在 \(r_{x}>0\) 使
+  \(B(x,r_{x})\) 只含 \(\seq{a_{n}}\) 的有限多项。
+  诸 \(B(x,r_{x})\) 构成开覆盖，由紧性取有限子覆盖
+  \(B(x_{1},r_{x_{1}}),\dots,B(x_{N},r_{x_{N}})\)。
+  它们各含有限多项而并为 \(X\)，故数列总共只有有限多项，矛盾。
+
+  \emph{(ii) \(\Rightarrow\) (i)}。设 \(X\) 序列紧，\(\set{U_{i}}\) 为开覆盖。
+  由\cref{lem:lebesgue} 取 Lebesgue 数 \(\delta>0\)。
+  由\cref{thm:seq-compact-iff}，\(X\) 全有界，故存在有限的 \(\delta\)-网
+  \(x_{1},\dots,x_{N}\)，即 \(X = \bigcup_{j} B(x_{j},\delta)\)。
+  每个 \(B(x_{j},\delta)\) 含于某个 \(U_{i_{j}}\)，
+  于是 \(X = \bigcup_{j=1}^{N} U_{i_{j}}\)，得有限子覆盖。
+\end{proof}
+
+\begin{remark}[通往卷四的门]
+  \label{rem:compact-to-topology}
+  \cref{def:compact} 的陈述中只出现「开集」，没有距离。
+  卷四把它取作拓扑空间中紧性的定义。届时\cref{thm:compact-equiv} 不再成立：
+  一般拓扑空间中紧与序列紧互不蕴含，全有界更是无从谈起（那里没有度量）。
+  这与\cref{ch:continuity} 的情形完全一致——三副面孔中，
+  只有不提距离的那一副活了下来。
+
+  文献中还有第四种刻画，称为可数紧：每个\emph{可数}开覆盖有有限子覆盖。
+  在度量空间中它与上述三条等价，本讲义不用，故不展开。
+\end{remark}
+
+\section{Heine--Borel 定理}
+\label{sec:heine-borel}
+
+现在回到 \(\R\) 与 \(\R^{n}\)。这里「闭且有界」与紧确实等价，
+而证明的第一步要用到第 1 章的确界原理。
+
+\begin{theorem}
+  \label{thm:interval-compact}
+  闭区间 \([a,b] \subseteq \R\) 序列紧。
+\end{theorem}
+
+\begin{proof}
+  设 \(\seq{x_{n}}\) 为 \([a,b]\) 中的数列。令
+  \begin{equation}
+    \label{eq:pugh-set}
+    C = \setst{x \in [a,b]}{x_{n} < x \text{ 只对有限多个 } n \text{ 成立}} .
+  \end{equation}
+  \(a \in C\)（无 \(x_{n} < a\)），故 \(C\) 非空；\(b\) 是 \(C\) 的上界。
+  由第 1 章的确界原理，\(c = \sup C\) 存在且 \(c \in [a,b]\)。
+
+  往证有子列收敛于 \(c\)。设不然，则存在 \(r>0\) 使 \(x_{n} \in (c-r,c+r)\)
+  只对有限多个 \(n\) 成立。因 \(c = \sup C\)，存在 \(c' \in C\) 满足 \(c' > c - r\)，
+  故 \(x_{n} < c-r\) 只有限多次；与前一句合起来，\(x_{n} < c+r\) 只有限多次，
+  即 \(c + r \in C\)。这与 \(c\) 是上界矛盾。
+
+  故对每个 \(r>0\)，\(x_{n}\) 落在 \((c-r,c+r)\) 中无穷多次；
+  依次取 \(r = 1, 1/2, 1/3, \dots\) 并保证下标递增，即得收敛于 \(c\) 的子列。
+\end{proof}
+
+\begin{remark}
+  \label{rem:sup-to-compact}
+  这个证明兑现了第 1 章那句话：紧性是确界原理的接替者。
+  \cref{thm:interval-compact} 用确界原理证出，而此后紧集上的
+  最值定理、一致连续定理都只用紧性，不再回头用确界原理。
+  交接就在这里完成：确界原理只在 \(\R\) 上可说，
+  而紧性可以带着这些结论走到任何度量空间。
+\end{remark}
+
+\begin{theorem}[Heine--Borel]
+  \label{thm:heine-borel}
+  \(A \subseteq \R^{n}\) 紧，当且仅当 \(A\) 闭且有界。
+\end{theorem}
+
+\begin{proof}
+  必要性即\cref{thm:compact-closed-bounded}。
+
+  充分性。设 \(A\) 闭且有界，\(\seq{a^{(m)}}\) 为 \(A\) 中的数列，
+  记 \(a^{(m)} = \bigl(a^{(m)}_{1},\dots,a^{(m)}_{n}\bigr)\)。
+  由有界性，存在 \(M\) 使各坐标满足 \(\abs{a^{(m)}_{j}} \le M\)。
+
+  逐坐标抽取。第一坐标构成 \([-M,M]\) 中的数列，
+  由\cref{thm:interval-compact} 有收敛子列；在该子列上再看第二坐标，
+  又有收敛子列；如此进行 \(n\) 次。所得的最终子列使\emph{每个}坐标都收敛，
+  由第 2 章关于 \(\R^{n}\) 中收敛的刻画（逐坐标收敛即收敛），
+  该子列在 \(\R^{n}\) 中收敛于某点 \(p\)。
+
+  因 \(A\) 闭而子列各项在 \(A\) 中，故 \(p \in A\)。于是 \(A\) 序列紧，
+  由\cref{thm:compact-equiv} 即紧。
+\end{proof}
+
+\begin{remark}
+  逐坐标抽取只能做\emph{有限}次，这正是本定理对 \(\R^{n}\) 成立
+  而对无穷维空间失效的原因。\cref{ex:ball-not-compact} 中的
+  \(C[0,1]\) 没有有限多个坐标可抽。请回看\cref{ex:q-closed-bounded}
+  与\cref{ex:ball-not-compact}：本定理对欧氏空间成立，
+  对一般度量空间不成立。
+\end{remark}
+
+\section{紧性的三条推论}
+\label{sec:consequences}
+
+第 1 章曾说，闭区间上连续函数的几条经典结论应当统一归因于紧性。
+本节兑现这句话。三条结论的证明都很短，因为力气已经花在\cref{thm:compact-equiv} 上了。
+
+\begin{theorem}[连续像仍紧]
+  \label{thm:continuous-image-compact}
+  设 \(f \mapsdef X \to Y\) 连续，\(X\) 紧，则 \(f(X)\) 紧。
+\end{theorem}
+
+\begin{proof}
+  用序列判据。设 \(\seq{y_{n}}\) 为 \(f(X)\) 中的数列，取 \(x_{n} \in X\) 使
+  \(f(x_{n}) = y_{n}\)。由 \(X\) 序列紧，某子列 \(x_{n_{k}} \to x \in X\)。
+  由 \(f\) 连续（\cref{def:continuous}），\(y_{n_{k}} = f(x_{n_{k}}) \to f(x) \in f(X)\)。
+\end{proof}
+
+\begin{theorem}[最值定理]
+  \label{thm:extreme-value}
+  设 \(X\) 为\emph{非空}紧度量空间，\(f \mapsdef X \to \R\) 连续。
+  则 \(f\) 取到最大值与最小值。
+\end{theorem}
+
+\begin{proof}
+  由\cref{thm:continuous-image-compact}，\(f(X) \subseteq \R\) 紧，
+  由\cref{thm:compact-closed-bounded} 它闭且有界。
+  因 \(X\) 非空，\(f(X)\) 非空，故 \(\beta = \sup f(X)\) 存在（第 1 章确界原理）。
+  由上确界的 \(\varepsilon\) 刻画，存在 \(f(X)\) 中数列趋于 \(\beta\)，
+  故 \(\beta \in \overline{f(X)} = f(X)\)，即存在 \(x^{*} \in X\) 使 \(f(x^{*}) = \beta\)。
+  最小值同理。
+\end{proof}
+
+\begin{remark}
+  「非空」不可省：空集紧（\cref{ex:trivial-compact}），
+  而空集上的函数无最值可言。
+\end{remark}
+
+这就结清了第一笔账：\(C[a,b]\) 中的 \(d_{\infty}\) 之所以能写成 \(\max\)，
+是因为 \([a,b]\) 紧（\cref{thm:interval-compact}）而 \(\abs{f-g}\) 连续，
+由\cref{thm:extreme-value} 最大值确实取到。
+
+\begin{theorem}[一致连续定理]
+  \label{thm:uniform-on-compact}
+  设 \(X\) 紧，\(f \mapsdef X \to Y\) 连续，则 \(f\) 一致连续。
+\end{theorem}
+
+\begin{strategy}
+  用\cref{ch:continuity} 的两列判据反证最省力：若不一致连续，
+  就有两列点彼此越挨越近而像不接近；紧性给出收敛子列，
+  连续性再逼出矛盾。这条路只用序列，不必碰 \(\varepsilon\)-\(\delta\) 的两层量词。
+\end{strategy}
+
+\begin{proof}
+  设 \(f\) 不一致连续。由\cref{ch:continuity} 的一致连续序列判据，
+  存在两列 \(\seq{x_{n}}\)、\(\seq{y_{n}}\) 与 \(\varepsilon_{0}>0\)，使
+  \begin{equation}
+    \label{eq:uc-contradiction}
+    d(x_{n},y_{n}) \to 0, \qquad
+    \rho\bigl(f(x_{n}),f(y_{n})\bigr) \ge \varepsilon_{0} .
+  \end{equation}
+  由 \(X\) 序列紧，取子列 \(x_{n_{k}} \to x\)。
+  由 \(d(x_{n_{k}},y_{n_{k}}) \to 0\) 得 \(y_{n_{k}} \to x\) 亦成立。
+  于是由 \(f\) 连续，\(f(x_{n_{k}}) \to f(x)\) 且 \(f(y_{n_{k}}) \to f(x)\)，
+  故 \(\rho(f(x_{n_{k}}),f(y_{n_{k}})) \to 0\)，与\cref{eq:uc-contradiction} 矛盾。
+\end{proof}
+
+\begin{remark}[边界，务必看清]
+  \label{rem:uc-boundary}
+  \cref{thm:uniform-on-compact} 说的是：\emph{定义域紧}是「连续蕴含一致连续」的
+  \emph{充分}条件。它不说别的。对照\cref{sec:why-compact} 的那张表：
+  \begin{itemize}
+    \item \cref{ex:one-over-x-uniform} 中 \([a,\infty)\)（\(a>0\)）\emph{不紧}
+          （无界），而 \(1/x\) 在其上仍一致连续——靠的是 Lipschitz 估计
+          \(\abs{1/x-1/y} \le \abs{x-y}/a^{2}\)，不是本定理。
+          故定义域紧并非一致连续的必要条件。
+    \item \cref{ex:not-uniform} 中 \((0,1]\) 不紧，而 \(1/x\) 在其上确实
+          不一致连续——但这是由两列点算出来的，\emph{不能}仅凭「不紧」推出。
+          本定理只有一个方向。
+  \end{itemize}
+  第二、三笔账至此结清。它们并非本定理的推论，其作用是划出这条定理的边界。
+\end{remark}
+
+另有一条推论留作习题：紧集上的连续双射必为同胚（\cref{exr:compact-homeo}）。
+它与\cref{ch:continuity} 中「连续双射未必同胚」恰成对照，
+差别正在于定义域紧与否。
+
+\section{本章结论在更一般框架下的地位}
+\label{sec:ch4-outlook}
+
+\begin{table}[htbp]
+  \centering
+  \caption{紧性相关概念所依赖的结构。须区分两件事：一个概念\emph{依赖}什么结构，
+    与两个概念在何处\emph{等价}。序列紧只涉及序列收敛，而收敛由拓扑决定
+    （\cref{ch:continuity} 的命题），故它属拓扑层；但它与开覆盖紧的等价
+    只在度量空间中成立。}
+  \label{tab:ch4-structure}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    层次 & 概念 & 一般拓扑空间中的情况 \\
+    \midrule
+    拓扑 & 开覆盖紧、序列紧 & 两者一般\emph{不}等价 \\
+    度量 & 全有界、完备性   & 不能仅由开集族决定 \\
+    序   & 上确界性质       & 需另行指定序结构 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+三条向前的接口：
+
+\emph{其一}，\cref{def:compact} 在卷四取作拓扑空间中紧性的定义。
+届时会有紧而不序列紧的空间，也有序列紧而不紧的空间；
+把\cref{thm:compact-equiv} 拆开来看，正是那里的主要工作之一。
+Tychonoff 定理断言任意多个紧空间之积仍紧，本讲义在卷四证明。
+
+\emph{其二}，\cref{def:totally-bounded} 的全有界在第 9 章与卷五重现。
+Arzelà--Ascoli 定理刻画 \(C(K)\) 中的紧子集，其条件正是「有界加等度连续」，
+而证明的核心是本章的对角线抽取（\cref{thm:seq-compact-iff} 之后一条注所述的对角线抽取）。
+
+\emph{其三}，\cref{thm:uniform-on-compact} 在第 7 章用来证明
+闭区间上的连续函数 Riemann 可积。那里需要把区间分割得足够细，
+使函数在每个小段上的振幅一致地小；这正是一致连续所保证的。
+
+\section*{习题}
+\addcontentsline{toc}{section}{习题}
+
+\begin{exercise}[例行]
+  \label{exr:discrete-compact}
+  在离散度量空间中，哪些子集紧？
+  \begin{solution}
+    恰是有限子集。有限集紧见\cref{ex:trivial-compact}。
+    反之若 \(A\) 无限，取其中两两不同的一列点，
+    则任意两项距离为 \(1\)，无收敛子列，故不紧。
+
+    对照\cref{prop:tb-implies-bounded}：无限离散空间有界而不全有界，
+    由\cref{thm:seq-compact-iff} 即知不紧。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:closed-subset-compact}
+  证明紧集的闭子集紧；两个紧集之并紧。
+  \begin{solution}
+    设 \(A\) 紧、\(F \subseteq A\) 闭，\(\seq{a_{n}}\) 为 \(F\) 中的数列。
+    由 \(A\) 序列紧取子列 \(a_{n_{k}} \to p \in A\)；因 \(F\) 闭且各项在 \(F\) 中，
+    \(p \in F\)。故 \(F\) 序列紧。
+
+    设 \(A, B\) 紧，\(\seq{c_{n}}\) 为 \(A \cup B\) 中的数列。
+    \(A\) 与 \(B\) 至少有一个含 \(\seq{c_{n}}\) 的无穷多项，
+    对那一段用序列紧即得。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:eps-net-count}
+  为 \([0,1]\) 构造 \(\varepsilon\)-网并估算所需点数；再对 \([0,1]^{n}\) 做同样的事。
+  \begin{solution}
+    取 \(N > 1/(2\varepsilon)\)，令 \(x_{j} = j/N\)（\(j=0,\dots,N\)）。
+    任一 \(x \in [0,1]\) 与最近的 \(x_{j}\) 相距不超过 \(1/(2N) < \varepsilon\)，
+    故这是 \(\varepsilon\)-网，用了约 \(1/(2\varepsilon)\) 个点。
+
+    \([0,1]^{n}\)（取 \(d_{\infty}\)）：取上述各坐标网格点的乘积，
+    共约 \((1/(2\varepsilon))^{n}\) 个点。点数随维数指数增长——
+    这个现象在高维数值计算中称为维数灾难，也解释了
+    \cref{ex:ball-not-compact}：维数趋于无穷时全有界性彻底失效。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:lebesgue-number-concrete}
+  设 \(X = [0,1]\)，开覆盖取 \(U_{1} = [0,\,0.6)\)、\(U_{2} = (0.4,\,1]\)。
+  求一个可用的 Lebesgue 数。
+  \begin{solution}
+    取 \(\delta = 0.2\)。任一 \(x \in [0,1]\)：若 \(x < 0.5\)，
+    则 \(B(x,0.2) \subseteq [0,0.7) \cap X\)，而 \(x+0.2 < 0.7\)，
+    须再收紧——取 \(\delta = 0.1\)。此时 \(x<0.5\) 给 \(B(x,0.1) \subseteq [0,0.6)=U_{1}\)；
+    \(x \ge 0.5\) 给 \(B(x,0.1) \subseteq (0.4,1] = U_{2}\)。故 \(\delta = 0.1\) 可用。
+
+    本题说明 Lebesgue 数不唯一，且须逐点验证，不能凭覆盖成员的长度估计。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:arctan-no-max}
+  证明 \(\arctan\) 在 \(\R\) 上连续、有界，却取不到上确界。
+  这与\cref{thm:extreme-value} 矛盾吗？
+  \begin{solution}
+    连续性与有界性（\(\abs{\arctan x} < \pi/2\)）为已知。
+    设 \(\arctan x_{0} = \pi/2\)，则 \(\tan(\pi/2)\) 有定义，不成立。
+    故上确界 \(\pi/2\) 取不到。
+
+    不矛盾：\(\R\) 不紧（无界，由\cref{thm:compact-closed-bounded}）。
+    \cref{thm:extreme-value} 的前提不满足。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:fip}
+  证明：\(X\) 紧当且仅当任一具有\emph{有限交性质}的闭集族
+  （即其中任意有限多个成员之交非空）其总交非空。
+  \begin{solution}
+    取补集即可。设 \(X\) 紧，\(\mathcal{F}\) 为闭集族且总交为空。
+    则 \(\setst{X \setminus F}{F \in \mathcal{F}}\) 是开覆盖，
+    取有限子覆盖 \(X = \bigcup_{j}(X \setminus F_{j}) = X \setminus \bigcap_{j}F_{j}\)，
+    故 \(\bigcap_{j} F_{j} = \emptyset\)，与有限交性质矛盾。
+    反向同理。
+
+    这个形式在卷四证明 Tychonoff 定理时比开覆盖形式好用。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:bounded-vs-tb}
+  比较有界与全有界。给出一个有界而不全有界的度量空间，
+  并说明在 \(\R^{n}\) 中两者为何一致。
+  \begin{solution}
+    无限集配离散度量：全体含于半径 \(2\) 的球内故有界；
+    而 \(\varepsilon=1/2\) 的球只含一点，需无穷多个，故不全有界。
+
+    \(\R^{n}\) 中有界集含于某个立方体 \([-M,M]^{n}\)，
+    由\cref{exr:eps-net-count} 该立方体有有限 \(\varepsilon\)-网，
+    故有界集全有界。关键在于\emph{有限}维：坐标只有 \(n\) 个，
+    网格点数才是有限的。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:lebesgue-alt}
+  用 Lebesgue 数引理另证\cref{thm:uniform-on-compact}，
+  并比较两种证法各自用到了什么。
+  \begin{solution}
+    给定 \(\varepsilon>0\)。由 \(f\) 连续，每个 \(p \in X\) 有 \(\delta_{p}>0\) 使
+    \(f\bigl(B(p,\delta_{p})\bigr) \subseteq B\bigl(f(p),\varepsilon/2\bigr)\)。
+    诸 \(B(p,\delta_{p}/2)\) 构成开覆盖，取 Lebesgue 数 \(\delta\)。
+    若 \(d(x,y)<\delta\)，则 \(x,y\) 同属某个 \(B(p,\delta_{p}/2)\)，
+    故 \(\rho(f(x),f(y)) \le \rho(f(x),f(p)) + \rho(f(p),f(y)) < \varepsilon\)。
+
+    比较：正文的证法只用序列判据与序列紧，不必碰两层量词；
+    本证法用开覆盖紧与 Lebesgue 数，但给出了 \(\delta\) 的来源，
+    更接近可计算的形式。两条路对应本章的两副面孔。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:compact-separable}
+  证明紧度量空间可分，即含有可数的稠密子集。
+  \begin{solution}
+    对每个 \(n\) 取有限的 \(1/n\)-网 \(G_{n}\)（由\cref{thm:seq-compact-iff}
+    全有界）。令 \(G = \bigcup_{n} G_{n}\)，它是可数多个有限集之并，故可数。
+    任给 \(x\) 与 \(\varepsilon>0\)，取 \(n > 1/\varepsilon\)，
+    则 \(G_{n}\) 中有点与 \(x\) 相距小于 \(1/n < \varepsilon\)。故 \(G\) 稠密。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:why-not-general}
+  \cref{thm:heine-borel} 对 \(\R^{n}\) 成立而对一般度量空间不成立。
+  指出证明中哪一步无法推广。
+  \begin{solution}
+    「逐坐标抽取子列」那一步。它要求坐标只有\emph{有限}个，
+    才能在有限次抽取之后同时控制住全部坐标。
+    \(C[0,1]\) 中没有有限多个坐标可抽，
+    \cref{ex:ball-not-compact} 正是这一失效的具体表现。
+
+    另一处是\cref{ex:q-closed-bounded}：\(\Q\) 中闭且有界推不出完备，
+    而\cref{thm:seq-compact-iff} 要求完备。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:compact-homeo}
+  设 \(X\) 紧，\(f \mapsdef X \to Y\) 为连续双射，\(Y\) 为度量空间。
+  证明 \(f\) 是同胚。与\cref{ch:continuity} 中「连续双射未必同胚」对照。
+  \begin{solution}
+    只需证 \(f^{-1}\) 连续，等价于 \(f\) 把闭集映成闭集
+    （\(f\) 双射时 \((f^{-1})^{-1}(F) = f(F)\)）。
+    设 \(F \subseteq X\) 闭，由\cref{exr:closed-subset-compact} 它紧；
+    由\cref{thm:continuous-image-compact}，\(f(F)\) 紧；
+    由\cref{thm:compact-closed-bounded}，\(f(F)\) 闭。
+
+    对照：\cref{ch:continuity} 中恒等映射从离散拓扑到通常拓扑是连续双射
+    而非同胚，那里的定义域不紧。紧性正是补上这个缺口的条件。
+    （在一般拓扑空间中，本题须要求陪域为 Hausdorff 空间。）
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:riesz-preview}
+  设 \(E\) 为赋范空间，\(\seq{e_{n}}\) 为其中一列满足
+  \(\norm{e_{n}}=1\) 且 \(\norm{e_{m}-e_{n}} \ge 1/2\)（\(m \neq n\)）的元素。
+  证明 \(E\) 的闭单位球不紧。再说明这与\cref{ex:ball-not-compact} 的关系。
+  \begin{solution}
+    诸 \(e_{n}\) 在闭单位球内且两两相距不小于 \(1/2\)，
+    故任一子列都不是 Cauchy 列，闭单位球不序列紧。
+
+    \cref{ex:ball-not-compact} 中的 \(g_{n}(x)=x^{2^{n}}\) 正是这样一列
+    （相距 \(\ge 1/4\)，把 \(1/2\) 换成 \(1/4\) 即可）。
+    卷五的 Riesz 引理断言：在赋范空间中这样的一列存在，
+    当且仅当空间无限维。于是「闭单位球紧」恰好刻画了有限维。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:cantor-compact}
+  Cantor 集 \(K\) 由 \([0,1]\) 反复挖去中间三分之一开区间所得。
+  证明 \(K\) 紧。
+  \begin{solution}
+    记 \(K_{0}=[0,1]\)，\(K_{n+1}\) 为从 \(K_{n}\) 的每个闭区间挖去
+    中间三分之一开区间所得，\(K = \bigcap_{n} K_{n}\)。
+
+    每个 \(K_{n}\) 是有限多个闭区间之并，故闭；可数多个闭集之交仍闭，
+    故 \(K\) 闭。又 \(K \subseteq [0,1]\) 有界。
+    由\cref{thm:heine-borel}，\(K\) 紧。
+
+    \(K\) 将在第 7 章重现：它不可数却是零测集，
+    这个反差是 Riemann 积分与 Lebesgue 积分之别的第一个信号。
+  \end{solution}
+\end{exercise}

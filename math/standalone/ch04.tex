@@ -1,0 +1,16 @@
+%%% 单章独立编译入口：第四章
+%%% 编译：make math-ch CH=ch01     或     latexmk -pdfxe -cd math/standalone/ch01.tex
+%%% 新增一章时复制本文件，改动下面两处：\setcounter 的章号、\input 的文件名。
+\ifdefined\HTTEACHER \PassOptionsToClass{teacher}{handout}\fi
+\documentclass{handout}
+
+\input{../../common/macros-math.tex}
+\addbibresource{../refs.bib}
+\input{../metadata.tex}
+
+\begin{document}
+\mainmatter
+\setcounter{chapter}{3}        % 本章号减一
+\input{../chapters/ch04-compactness.tex}
+\printbibliography[heading=bibintoc,title={参考文献}]
+\end{document}
