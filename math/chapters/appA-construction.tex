@@ -1,0 +1,375 @@
+%%% ==========================================================================
+%%%  附录 A：实数的构造
+%%%  第 1 章把 R 公理化为序完备的有序域，但未证其存在。本附录补上构造。
+%%%  两条路：戴德金分割与康托尔的 Cauchy 列。
+%%%  要害在 A.3 开头那段：康托尔构造不得借道 R 的完备性，否则循环论证。
+%%%  第 2 章的完备化定理正是借了 R 的完备性，故不能用来造 R。
+%%% ==========================================================================
+\chapter{实数的构造}
+\label{app:construction}
+
+\begin{keypoint}[本附录要点]
+  \begin{itemize}
+    \item 第 1 章把 \(\R\) 定义为序完备的有序域，但没有证明这样的对象存在。
+          本附录给出两种构造，从而补上存在性。
+    \item 戴德金的构造使序完备性变得平凡，代价是域公理的验证冗长；
+          康托尔的构造恰好相反。两者互为镜像。
+    \item 康托尔构造\emph{不能}套用第 2 章的完备化定理。后者的证明用到了
+          \(\R\) 已经完备，用它来造 \(\R\) 就是循环论证。
+    \item 构造只做一次。此后全书不再用到 \(\R\) 的任何内部细节，
+          只用第 1 章列出的那几条性质。
+  \end{itemize}
+\end{keypoint}
+
+\section{为什么要构造}
+\label{sec:why-construct}
+
+第 1 章的\cref{def:reals} 说「实数系是序完备的有序域」，
+\cref{thm:uniqueness} 说这样的对象在同构意义下至多有一个。
+两者合起来仍留下一个缺口：这样的对象\emph{存在}吗？
+
+若不存在，第 1 章之后的全部内容都是关于空集的陈述，虽然逻辑上无误，
+却毫无内容。本附录填上这个缺口：从 \(\Q\) 出发造出一个序完备的有序域。
+
+历史上有两条路，分别由戴德金与康托尔在 1872 年前后给出。
+两者造出的对象同构（由\cref{thm:uniqueness}），但走法很不一样：
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  & 戴德金分割 & 康托尔 Cauchy 列 \\
+  \midrule
+  新的「数」是什么 & \(\Q\) 的一个下闭子集 & \(\Q\) 中 Cauchy 列的一个等价类 \\
+  序完备性 & 几乎平凡（取并集） & 需要对角线论证 \\
+  域公理 & 冗长，乘法要分符号讨论 & 几乎自动（逐项运算） \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+  \label{rem:construct-once}
+  本附录的内容\emph{只用一次}。构造完成之后，全书不再用到实数的任何内部细节：
+  不再问「一个实数是什么做的」，只用第 1 章列出的那几条性质。
+  这正是\cref{sec:def-reals} 把构造与公理化分开处理的理由。
+  初读时本附录可以整章跳过，不影响任何后续内容。
+\end{remark}
+
+\section{戴德金分割}
+\label{sec:dedekind}
+
+\begin{definition}[分割]
+  \label{def:cut}
+  称 \(\alpha \subseteq \Q\) 为一个\term{分割}{cut}，若
+  \begin{enumerate}[label=(C\arabic*)]
+    \item \(\alpha \neq \emptyset\) 且 \(\alpha \neq \Q\)；
+    \item \(\alpha\) 下闭：若 \(p \in \alpha\) 且 \(q < p\)，则 \(q \in \alpha\)；
+    \item \(\alpha\) 没有最大元：若 \(p \in \alpha\)，则存在 \(r \in \alpha\) 使 \(r > p\)。
+  \end{enumerate}
+  全体分割之集记作 \(\R\)。
+\end{definition}
+
+\begin{intuition}
+  不妨把 \(\alpha\) 看作数轴上「某点左边的全部有理数」。(C2) 说它确实是一条向左的射线，
+  (C3) 说射线的右端点不算在内。\cref{prop:q-cut-fails} 表明 \(\Q\) 中某些
+  「射线」找不到端点——戴德金的办法是：\emph{既然端点不存在，就把射线本身
+  当作那个端点}。
+\end{intuition}
+
+\begin{definition}[序]
+  \label{def:cut-order}
+  对分割 \(\alpha, \beta\)，规定 \(\alpha \le \beta\) 当且仅当 \(\alpha \subseteq \beta\)。
+\end{definition}
+
+\begin{proposition}
+  \label{prop:cut-total-order}
+  \cref{def:cut-order} 给出 \(\R\) 上的全序。
+\end{proposition}
+
+\begin{proof}
+  自反、反对称、传递由集合包含关系直接得到。要证的是可比较性：
+  设 \(\alpha \not\subseteq \beta\)，取 \(p \in \alpha \setminus \beta\)。
+  对任意 \(q \in \beta\)，若 \(q \ge p\) 则由 (C2) 得 \(p \in \beta\)，矛盾；
+  故 \(q < p\)，再由 (C2) 得 \(q \in \alpha\)。于是 \(\beta \subseteq \alpha\)。
+\end{proof}
+
+序完备性是这条路线的红利，证明只有几行。
+
+\begin{theorem}
+  \label{thm:cut-complete}
+  \((\R, \le)\) 序完备：任一非空有上界的 \(A \subseteq \R\) 有上确界，
+  且 \(\sup A = \bigcup_{\alpha \in A} \alpha\)。
+\end{theorem}
+
+\begin{proof}
+  记 \(\gamma = \bigcup_{\alpha \in A}\alpha\)。先证 \(\gamma\) 是分割。
+  \(\gamma \neq \emptyset\) 因 \(A\) 非空且其元素非空。设 \(\beta\) 是 \(A\) 的上界，
+  则 \(\gamma \subseteq \beta \neq \Q\)，故 \(\gamma \neq \Q\)。
+  (C2) 与 (C3) 对并集显然保持。
+
+  再证它是上确界。对每个 \(\alpha \in A\) 有 \(\alpha \subseteq \gamma\)，故 \(\gamma\) 是上界。
+  若 \(\delta\) 是任一上界，则每个 \(\alpha \subseteq \delta\)，故 \(\gamma \subseteq \delta\)，
+  即 \(\gamma \le \delta\)。
+\end{proof}
+
+\begin{remark}
+  \label{rem:sup-is-union}
+  上确界就是并集——序完备性在这条路线上几乎是定义的直接推论。
+  这正是习题所问的：分割性质是构造方式本身带来的，
+  因为「刀口上的那个对象」按定义就是新集合的元素。
+  代价在下一段。
+\end{remark}
+
+\subsection*{域运算}
+
+加法容易：
+\begin{equation}
+  \label{eq:cut-add}
+  \alpha + \beta = \setst{p + q}{p \in \alpha,\ q \in \beta}.
+\end{equation}
+验证它是分割、满足结合律与交换律都不难；零元是
+\(0^{*} = \setst{p \in \Q}{p < 0}\)；负元是
+\begin{equation}
+  \label{eq:cut-neg}
+  -\alpha = \setst{p \in \Q}{\exists\, r > 0,\ -p - r \notin \alpha},
+\end{equation}
+其中那个 \(r\) 是为了避开 (C3) 所排除的端点。
+
+乘法则须按符号分情形。先对 \(\alpha, \beta \ge 0^{*}\) 定义
+\begin{equation}
+  \label{eq:cut-mult}
+  \alpha\beta = 0^{*} \cup \setst{pq}{p \in \alpha,\ q \in \beta,\ p \ge 0,\ q \ge 0},
+\end{equation}
+再用 \((-\alpha)\beta = -(\alpha\beta)\) 等式延拓到其余情形。
+分配律的验证要按参与者的符号分八种情形讨论。
+乘法逆元的构造与\cref{eq:cut-neg} 类似，同样要小心端点。
+
+\begin{remark}
+  这些验证冗长而无新意，本讲义不逐条写出，完整叙述可参见
+  \textcite{rudin1976} 第一章的附录。要点是：\emph{它们全都做得成}，
+  且过程中不出现任何新的想法。构造法的代价正在这里——
+  完备性变得平凡，代数结构变得琐碎。
+\end{remark}
+
+\begin{proposition}[有理数的嵌入]
+  \label{prop:q-embed}
+  映射 \(q \mapsto q^{*} = \setst{p \in \Q}{p < q}\) 是 \(\Q\) 到 \(\R\) 的单射，
+  且保持加法、乘法与序。
+\end{proposition}
+
+\begin{proof}
+  \(q^{*}\) 满足 (C1)--(C3) 直接验证即得。若 \(q < q'\)，取 \(p\) 满足 \(q < p < q'\)，
+  则 \(p \in (q')^{*} \setminus q^{*}\)，故 \(q^{*} \subsetneq (q')^{*}\)，
+  即映射保序且单。运算的保持由\cref{eq:cut-add} 与\cref{eq:cut-mult} 逐条验证。
+\end{proof}
+
+至此得到一个序完备的有序域，其中含有 \(\Q\) 的一份拷贝。
+第 1 章的\cref{def:reals} 所要求的对象存在。
+
+\section{康托尔的 Cauchy 列构造}
+\label{sec:cantor}
+
+\begin{pitfall}[本节最要紧的一处]
+  读者读过第 2 章之后，容易以为本节可以直接引用那里的完备化定理：
+  取 \(X = \Q\)，补成完备空间即得 \(\R\)。\textbf{这是循环论证。}
+
+  第 2 章完备化定理的证明中，度量定义为
+  \(\widehat{d}(P,Q) = \lim_{n} d(p_{n},q_{n})\)，
+  而这个极限之所以存在，用的是\emph{\(\R\) 已经完备}。
+  在 \(\R\) 尚未造出之前，这一步不成立。
+
+  本节的构造必须全程留在 \(\Q\) 内：\(\varepsilon\) 取有理数，
+  收敛与 Cauchy 性都用有理数的序定义，不出现任何实数。
+  手法与第 2 章相同，地基不同。
+\end{pitfall}
+
+\begin{definition}[有理 Cauchy 列]
+  \label{def:rational-cauchy}
+  称 \(\Q\) 中的数列 \(\seq{a_{n}}\) 为 \term{Cauchy 列}{Cauchy sequence}，
+  若对\emph{每个有理数} \(\varepsilon > 0\) 存在 \(N\)，使 \(m,n \ge N\) 时
+  \(\abs{a_{m}-a_{n}} < \varepsilon\)。此处的绝对值取值于 \(\Q\)。
+
+  记 \(\mathcal{C}\) 为全体这样的数列之集。称 \(\seq{a_{n}} \sim \seq{b_{n}}\)，
+  若对每个有理数 \(\varepsilon>0\) 存在 \(N\) 使 \(n \ge N\) 时
+  \(\abs{a_{n}-b_{n}} < \varepsilon\)。
+\end{definition}
+
+\begin{proposition}
+  \label{prop:cantor-equiv}
+  \(\sim\) 是 \(\mathcal{C}\) 上的等价关系，且 \(\mathcal{C}\) 对逐项加法与乘法封闭。
+\end{proposition}
+
+\begin{proof}
+  自反与对称显然；传递由 \(\abs{a_{n}-c_{n}} \le \abs{a_{n}-b_{n}}+\abs{b_{n}-c_{n}}\)
+  取 \(\varepsilon/2\) 得到。
+
+  加法封闭同理。乘法封闭需先证 Cauchy 列有界（取 \(\varepsilon=1\)，
+  与第 2 章的证明逐字相同，只是全部量取有理数），
+  再用 \(\abs{a_{m}b_{m}-a_{n}b_{n}} \le \abs{a_{m}}\abs{b_{m}-b_{n}} + \abs{b_{n}}\abs{a_{m}-a_{n}}\)。
+\end{proof}
+
+\begin{definition}
+  \label{def:cantor-R}
+  令 \(\R = \mathcal{C}/\!\sim\)，其元素记作 \([\seq{a_{n}}]\)。
+  运算逐项定义：\([\seq{a_{n}}] + [\seq{b_{n}}] = [\seq{a_{n}+b_{n}}]\)，
+  乘法同理。序规定为：\([\seq{a_{n}}] > 0\) 当且仅当存在有理数 \(\varepsilon>0\)
+  与下标 \(N\)，使 \(n \ge N\) 时 \(a_{n} > \varepsilon\)。
+\end{definition}
+
+\begin{remark}
+  序的定义中「存在有理 \(\varepsilon\) 使 \(a_{n}\) 最终\emph{超过} \(\varepsilon\)」
+  这一条不可减弱为「\(a_{n}\) 最终为正」。取 \(a_{n} = 1/n\)：各项都为正，
+  但它与常数列 \(0\) 等价，代表同一个实数 \(0\)。
+  多出的 \(\varepsilon\) 正是为了把这种情形排除掉。
+\end{remark}
+
+\begin{theorem}
+  \label{thm:cantor-field}
+  \cref{def:cantor-R} 给出的 \(\R\) 是有序域，且 \(q \mapsto [\,(q,q,\dots)\,]\)
+  是 \(\Q\) 到 \(\R\) 的保序域嵌入。
+\end{theorem}
+
+\begin{proof}[证明思路]
+  域公理逐项验证即得，因为运算是逐项定义的，\(\Q\) 中成立的恒等式逐项沿用。
+  唯一需要另加论证的是乘法逆元：若 \([\seq{a_{n}}] \neq 0\)，则由序的定义存在
+  有理 \(\varepsilon>0\) 与 \(N\) 使 \(n \ge N\) 时 \(\abs{a_{n}} > \varepsilon\)，
+  于是 \(\seq{1/a_{n}}\)（前 \(N\) 项任意取值）是 Cauchy 列，它给出逆元。
+  序公理的验证与代表元无关性由\cref{prop:cantor-equiv} 保证。
+\end{proof}
+
+\begin{theorem}
+  \label{thm:cantor-complete}
+  \cref{def:cantor-R} 给出的 \(\R\) 序完备。
+\end{theorem}
+
+\begin{strategy}
+  要证任一非空有上界的 \(A \subseteq \R\) 有上确界。手上没有现成的对象可用，
+  只能\emph{造}一个 Cauchy 列出来代表它。造法是二分：
+  取一个不是上界的有理数与一个是上界的有理数，反复取中点，
+  按中点是否为上界决定取哪一半。两个端点列都是 Cauchy 列，且彼此等价，
+  它们代表的那个实数就是上确界。这与第 1 章
+  \cref{thm:completeness-split} 充分性的二分法是同一手法。
+\end{strategy}
+
+\begin{proof}
+  设 \(A\) 非空有上界。取有理数 \(u_{0}\) 为 \(A\) 的上界、\(l_{0}\) 不是上界
+  （由\cref{thm:cantor-field} 中 \(\Q\) 的嵌入与阿基米德性，这样的有理数存在）。
+  归纳地令 \(m_{k} = (l_{k}+u_{k})/2\)：若 \(m_{k}\) 是 \(A\) 的上界，
+  取 \(l_{k+1}=l_{k}\)、\(u_{k+1}=m_{k}\)；否则取 \(l_{k+1}=m_{k}\)、\(u_{k+1}=u_{k}\)。
+  则 \(u_{k}-l_{k} = (u_{0}-l_{0})/2^{k}\)，\(\seq{u_{k}}\) 与 \(\seq{l_{k}}\)
+  都是有理 Cauchy 列且彼此等价。令 \(\beta = [\seq{u_{k}}]\)。
+
+  \(\beta\) 是上界：若某 \(\alpha \in A\) 满足 \(\alpha > \beta\)，
+  取有理 \(\varepsilon>0\) 使 \(\alpha - \beta > \varepsilon\)，
+  再取 \(k\) 使 \(u_{k} - \beta < \varepsilon\)（可行，因 \(u_{k} - l_{k} \to 0\)），
+  则 \(\alpha > u_{k}\)，与 \(u_{k}\) 是上界矛盾。
+
+  \(\beta\) 最小：若 \(\delta < \beta\) 也是上界，取有理 \(\varepsilon>0\) 使
+  \(\beta - \delta > \varepsilon\)，再取 \(k\) 使 \(\beta - l_{k} < \varepsilon\)，
+  则 \(l_{k} > \delta\)，而 \(l_{k}\) 不是上界，故存在 \(\alpha \in A\) 满足
+  \(\alpha > l_{k} > \delta\)，与 \(\delta\) 是上界矛盾。
+\end{proof}
+
+\begin{remark}
+  \label{rem:two-mirrors}
+  比较两条路线。戴德金那边\cref{thm:cut-complete} 只有几行而域运算冗长；
+  康托尔这边\cref{thm:cantor-field} 几乎自动而\cref{thm:cantor-complete}
+  要动手造二分列。两者恰好互为镜像。
+
+  再与第 2 章的完备化定理比较：那里的构造与本节形式相同，
+  但\emph{可以}用 \(\R\) 的完备性，因而\cref{eq:completion-metric} 的极限
+  直接就有。本节没有这个便利，只好用二分法把上确界一步步逼出来。
+  这就是「同一手法、不同地基」的具体含义。
+\end{remark}
+
+\section{唯一性}
+\label{sec:uniqueness-proof}
+
+\cref{thm:uniqueness} 断言序完备的有序域在保序域同构意义下唯一。
+此处给出证明梗概。
+
+设 \(\R_{1}\)、\(\R_{2}\) 都是序完备的有序域。两者各含 \(\Q\) 的一份拷贝
+（先由 \(1\) 生成 \(\N\)，再生成 \(\Z\) 与 \(\Q\)），在其上令 \(j\) 为自然对应，
+显然保运算与序。要把 \(j\) 延拓到全体实数。
+
+对 \(x \in \R_{1}\)，令
+\begin{equation}
+  \label{eq:uniqueness-extend}
+  j(x) = \sup\nolimits_{\R_{2}} \setst{j(q)}{q \in \Q,\ q < x}.
+\end{equation}
+右端的集合非空且有上界（由阿基米德性，\cref{thm:complete-implies-arch}），
+故上确界在 \(\R_{2}\) 中存在。当 \(x\) 本身是有理数时，
+由 \(\Q\) 在 \(\R_{1}\) 中稠密可验证\cref{eq:uniqueness-extend} 与原定义一致。
+
+保序性由稠密性直接得到。保运算性的验证要用到：两个实数之和的有理下逼近，
+等于各自有理下逼近之和的上确界；这一步依赖\cref{thm:complete-implies-arch}(iii)。
+最后，把 \(\R_{1}\) 与 \(\R_{2}\) 的角色互换可得逆映射，故 \(j\) 是双射。
+
+\begin{remark}
+  证明中处处用到阿基米德性与 \(\Q\) 的稠密性，而这两者都是完备性的推论。
+  换言之，唯一性并非「碰巧」成立，它正是完备性把 \(\R\) 卡死的结果：
+  一旦要求序完备，有理数的位置就决定了其余一切。
+\end{remark}
+
+\section*{习题}
+\addcontentsline{toc}{section}{习题}
+
+\begin{exercise}[例行]
+  \label{exr:cut-examples}
+  验证下列 \(\Q\) 的子集哪些是分割：
+  \begin{enumerate}[label=(\alph*), itemsep=0pt]
+    \item \(\setst{p \in \Q}{p < 0}\)；
+    \item \(\setst{p \in \Q}{p \le 0}\)；
+    \item \(\setst{p \in \Q}{p^{2} < 2}\)；
+    \item \(\setst{p \in \Q}{p < 0 \text{ 或 } p^{2} < 2}\)。
+  \end{enumerate}
+  \begin{solution}
+    （a）是，即 \(0^{*}\)。（b）不是，违反 (C3)：它有最大元 \(0\)。
+    （c）不是，违反 (C2)：\(-2\) 不在其中，而 \(-2 < 0\) 且 \(0\) 在其中。
+    （d）是，这正是代表 \(\sqrt{2}\) 的分割：非空、不等于 \(\Q\)（\(2\) 不在其中）、
+    下闭，且无最大元（由\cref{prop:q-cut-fails} 的 \(\xi\) 构造，
+    任一元素之上还有元素）。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:why-C3}
+  条件 (C3)「无最大元」若去掉会怎样？说明此时\cref{def:cut-order}
+  给出的还是不是全序，以及 \(\Q\) 的嵌入是否还是单射。
+  \begin{solution}
+    去掉 (C3) 后，\(\setst{p}{p<0}\) 与 \(\setst{p}{p\le 0}\) 是两个不同的集合，
+    却都「表示」同一个位置 \(0\)。全序仍然成立（\cref{prop:cut-total-order}
+    的证明未用 (C3)），但 \(\Q\) 的每个数会对应两个分割，
+    嵌入不再良定义。(C3) 的作用正是在两者中选定一个。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:cantor-no-circular}
+  第 2 章的完备化定理与\cref{sec:cantor} 的构造形式相同。
+  逐步指出后者在哪些地方必须避开前者用过的工具，以及为什么。
+  \begin{solution}
+    三处。其一，度量的定义：第 2 章令
+    \(\widehat{d}(P,Q)=\lim_{n} d(p_{n},q_{n})\)，极限存在依赖 \(\R\) 完备；
+    本节不定义这样的度量，而直接用\cref{def:cantor-R} 的序。
+    其二，Cauchy 性中的 \(\varepsilon\)：第 2 章取实数，本节必须取有理数。
+    其三，完备性的证明：第 2 章可以取极限，本节只能用二分法把上确界造出来。
+
+    根本原因是循环论证：用 \(\R\) 的完备性去造 \(\R\)，等于把待证的结论当作了前提。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:construction-compare}
+  两种构造中，序完备性与域公理的难易恰好相反。用一句话说明这个现象的来由，
+  并预测：若要构造复数域 \(\C\)，哪一种手法更合适？
+  \begin{solution}
+    来由是两种构造各自把哪一条性质「设计进」了新对象的定义。
+    戴德金用集合的包含关系定义序，故上确界就是并集；
+    康托尔用逐项运算定义加乘，故域公理逐项沿用。
+    设计进去的那一条变平凡，另一条就要另行证明。
+
+    \(\C\) 的构造只需在 \(\R\) 上添一个 \(\iu\)，即取 \(\R[x]/(x^{2}+1)\)，
+    两种手法都用不上——\(\C\) 上没有与运算相容的全序，
+    完备性也不再是序完备性而是度量完备性（第 2 章）。
+  \end{solution}
+\end{exercise}

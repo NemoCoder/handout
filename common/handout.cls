@@ -39,6 +39,7 @@
   inner=3.0cm, outer=2.4cm,
   top=2.8cm,  bottom=2.6cm,
   headsep=0.6cm, footskip=1.1cm,
+  headheight=14pt,   % fancyhdr 要求至少 13.05pt，不给则每页一条警告
 ]{geometry}
 
 \RequirePackage{etoolbox}
