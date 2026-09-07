@@ -1,0 +1,42 @@
+%%% ==========================================================================
+%%%  单章编译时的跨章标签导入。
+%%%
+%%%  单章 PDF 里的 \cref{thm:heine-borel} 之类要指向别章，靠 xr 从全书的 aux
+%%%  读标签。若直接 \externaldocument 整本书的 aux，会连本章自己的标签一起读进来，
+%%%  随后本章正文又定义一遍，日志里出现上百条 multiply defined 警告
+%%%  （第五章初稿两版各 114 条）。输出虽然仍对——后定义的本地标签胜出——
+%%%  但这些噪声会盖住真正的重复标签。
+%%%
+%%%  故改为逐章导入 build/aux-<学科>-<版本>/chapters/ 下的分章 aux，
+%%%  并跳过本章自己那一份。
+%%%
+%%%  用法（入口文件在 \documentclass 之后）：
+%%%      \def\HTSELF{ch05-connectedness}
+%%%      \input{../standalone/xr-others.tex}
+%%%  \HTSELF 写章节源文件的基名，不带路径与 .tex。
+%%%
+%%%  新增一章时，除了建入口文件，还要把新章的基名加进下面的 \ht@chapters。
+%%% ==========================================================================
+\usepackage{xr}
+
+\makeatletter
+\ifdefined\HTTEACHER
+  \def\ht@auxdir{../../build/aux-math-teacher/chapters}
+\else
+  \def\ht@auxdir{../../build/aux-math-student/chapters}
+\fi
+
+%% 全书章节登记表，须与 math/main.tex 的 \include 列表一致
+\def\ht@chapters{%
+  ch01-real-numbers,ch02-metric-spaces,ch03-continuity,%
+  ch04-compactness,ch05-connectedness,appA-construction}
+
+\@for\ht@one:=\ht@chapters\do{%
+  \edef\ht@name{\ht@one}%
+  \ifx\ht@name\HTSELF
+  \else
+    \edef\ht@path{\ht@auxdir/\ht@one}%
+    \expandafter\externaldocument\expandafter{\ht@path}%
+  \fi
+}
+\makeatother

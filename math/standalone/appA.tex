@@ -5,12 +5,8 @@
 \ifdefined\HTTEACHER \PassOptionsToClass{teacher}{handout}\fi
 \documentclass{handout}
 
-\usepackage{xr}
-\ifdefined\HTTEACHER
-  \externaldocument{../../build/aux-math-teacher/math-teacher}
-\else
-  \externaldocument{../../build/aux-math-student/math-student}
-\fi
+\def\HTSELF{appA-construction}
+\input{xr-others.tex}
 
 \input{../../common/macros-math.tex}
 \addbibresource{../refs.bib}

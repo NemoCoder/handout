@@ -1,0 +1,1161 @@
+%%% ==========================================================================
+%%%  第五章：连通性
+%%%  提纲与两轮审阅意见见 temp/ch05-outline.md 与 temp/ch05-outline-review.md，
+%%%  参考 Garling 卷二 §16.1–16.3、Pugh 第 2 章 §5。写作时须守住的几条（均为审阅指出）：
+%%%   - splitting/separation 不译中文，用 \termen 直接排英文原名：「分割」已归
+%%%     戴德金分割与第 7 章的区间划分，「分离」要留给卷四的分离公理；
+%%%   - 区间连通性的证明中，[a,b] ⊆ I 是唯一用到「I 是区间」的一步，不可漏；
+%%%     区间性保证的是 c ∈ I 与 (c,b] ⊆ I，不是「A 非空、有上界」；
+%%%   - 不写「一个不用假设的证明必定是错的」——证明可能在更弱条件下成立；
+%%%   - 介值定理的下游是积分中值定理与反函数，不是中值定理族（后者走最值定理）；
+%%%   - 空集连通是定义的推论，不是约定；
+%%%   - 正弦曲线的介值定理施于横坐标函数 x(t)，不是施于 sin(1/x)。
+%%%  TODO：第 6、7 章与卷三、卷四建立后，把「第 N 章」改回 \cref{ch:...}。
+%%% ==========================================================================
+\chapter{连通性}
+\label{ch:connectedness}
+
+\begin{keypoint}[本章要点]
+  \begin{itemize}
+    \item 连续性本身推不出「取到中间值」。缺的那条性质是定义域的连通性，
+          它拦住函数值从一边跳到另一边。
+    \item 连通性有三副说法：没有 separation、每个既开又闭的子集或为空集或为全空间、
+          不存在到 \(\set{0,1}\) 的连续满射。三者都不提距离，可推广到拓扑空间。
+    \item \(\R\) 的连通子集恰是区间。这条定理把连通性接回第 1 章的确界原理，
+          是本章连接实数的序结构与连通性的核心。
+    \item 道路连通蕴含连通，反之不成立。拓扑学家的正弦曲线既紧又连通，
+          却不道路连通。
+    \item 连通性是拓扑不变量，因而可用来证明两个空间不同胚。
+          \cref{ch:continuity}预告过这件事，\cref{sec:topological-invariant}给出做法。
+  \end{itemize}
+\end{keypoint}
+
+\section{为什么需要连通性}
+\label{sec:why-connected}
+
+\cref{ch:compactness}从「连续函数未必取到最值」出发，找出了定义域的紧性。
+本章从一个形状相同的缺口出发。
+
+在 \([a,b]\) 上连续的函数若一端取负值、另一端取正值，中间必有零点。
+这条经验人人都有，但它凭什么成立？下面的例子说明它不能只靠连续性。
+
+\begin{example}[连续却跳过全部中间值]
+  \label{ex:q-jump}
+  取 \(X = \Q \cap [0,2]\)，配 \(\R\) 的子空间度量，定义
+  \begin{equation}
+    \label{eq:q-jump}
+    f(x) =
+    \begin{cases}
+      0, & x^{2} < 2, \\
+      1, & x^{2} > 2 .
+    \end{cases}
+  \end{equation}
+  则 \(f\) 在 \(X\) 上处处连续，\(f\) 取到 \(0\) 与 \(1\)，
+  而介于两者之间的数一个也取不到。
+  \begin{worked}
+    先说明 \(f\) 确实定义在整个 \(X\) 上。由\cref{prop:sqrt2-irrational}，
+    \(\Q\) 中没有 \(x\) 满足 \(x^{2}=2\)，故 \(X\) 中每一点或者 \(x^{2}<2\)、
+    或者 \(x^{2}>2\)，两个条件已穷尽 \(X\)。
+
+    再验连续。记 \(A = \setst{x \in X}{x^{2}<2}\)。对 \(\R\) 中的开集 \(U\)，
+    原像 \(f^{-1}(U)\) 只有四种可能：\(U\) 不含 \(0\) 也不含 \(1\) 时为 \(\emptyset\)；
+    只含 \(0\) 时为 \(A\)；只含 \(1\) 时为 \(X \setminus A\)；两者都含时为 \(X\)。
+    而 \(A = (-\sqrt2,\,\sqrt2) \cap X\)、\(X \setminus A = (\sqrt2,\,3) \cap X\)，
+    两者都是 \(\R\) 中开集与 \(X\) 之交，故都是 \(X\) 中的开集
+    （\cref{lem:subspace-openclosed}）。四种原像都开，由\cref{thm:open-preimage}，
+    \(f\) 连续。
+
+    函数之所以能连续地跳过去，正因为跳的那一点不在定义域里。
+    \(\sqrt2\) 是 \(f\) 唯一可能出问题的地方，而它不属于 \(\Q\)。
+  \end{worked}
+\end{example}
+
+这个定义域与介值定理里的 \([a,b]\) 外观一致：它有两个端点，它有界，
+它在 \(\Q\) 中还是闭集（\(X = [0,2] \cap \Q\)，由\cref{lem:subspace-openclosed}(ii) 即得）。
+\cref{ex:q-closed-bounded} 中那个不紧的集合与它有同一个无理数缺口。
+差别在于它不是 \(\R\) 的区间——它在 \(\sqrt2\) 处有个窟窿，
+而这个窟窿恰好把它裂成互不相干的两块。本章要把「裂成两块」说清楚。
+
+\begin{concept}{连通性}
+  \cwhy{\cref{ex:q-jump} 中的 \(f\) 处处连续，却取不到任何中间值。
+    可见「取到中间值」不是连续性的推论，缺的是定义域的一条性质。}
+  \crel{它与\cref{ch:compactness}的紧性并列，都是定义域的整体性质，
+    都用来把局部信息升格为整体结论。紧性管两端（最值），连通性管中间（介值）。}
+  \cwhere{拓扑学的基本不变量之一，与紧性并列。凡是要区分两个空间、
+    或要断言某个连续变化过程不会跳跃的地方都用它。}
+  \cdo{证明介值定理，进而证明零点存在；证明两个空间不同胚
+    （\cref{sec:topological-invariant}的割点法）；第 7 章的积分中值定理与
+    第 6 章反函数的连续性也从这里出发。}
+\end{concept}
+
+两章的平行可以写成一张表。
+
+\begin{table}[htbp]
+  \centering
+  \caption{紧性与连通性的对照。两条核心定理都以确界原理为起点，
+    此后凡不涉及实数值的论证便只用开集说话。}
+  \label{tab:compact-vs-connected}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    章 & 定义域的性质 & 换来的结论 & 关键定理靠什么证 \\
+    \midrule
+    \ref{ch:compactness} & 紧性 & 最值定理、一致连续定理 & \([a,b]\) 紧，用确界原理 \\
+    \ref{ch:connectedness} & 连通性 & 介值定理 & 区间连通，用确界原理 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection*{本章要做的四件事}
+
+\begin{enumerate}[label=(\arabic*), leftmargin=1.8em]
+  \item 把「裂成两块」写成定义，并给出三条等价刻画（\cref{sec:connected-def}）。
+  \item 证明 \(\R\) 的连通子集恰是区间（\cref{sec:interval-connected}）。
+        这是本章的核心，也是本章正文中动用确界原理的地方。
+  \item 由「连续像仍连通」推出介值定理（\cref{sec:ivt}）。
+  \item 用连通性区分空间（\cref{sec:topological-invariant}），
+        并给出一个比连通更强的概念（\cref{sec:path-connected}）。
+\end{enumerate}
+
+\begin{remark}[读法建议]
+  \cref{sec:connected-def}与\cref{sec:interval-connected}必须掌握，
+  后者的七步证明值得逐步核对，它把 \(\R\) 的序结构与连通性接在一起。
+  \cref{sec:subspace-openclosed}是前置件，三行结论，但后文五处要用，不可略。
+  \cref{sec:path-connected}的正弦曲线初读可只记结论。
+\end{remark}
+
+\section{子空间的开集与闭集}
+\label{sec:subspace-openclosed}
+
+\cref{ex:metric-subspace} 定义了子空间度量：\(A \subseteq X\) 上直接沿用 \(X\) 的距离。
+从\cref{ex:q-jump} 起，本章处处要判断某个集合在\emph{子空间}中是否开、是否闭，
+而这与它在 \(X\) 中是否开、是否闭是两回事。下面这条引理把两者接上。
+
+\begin{lemma}[相对开闭判据]
+  \label{lem:subspace-openclosed}
+  设 \((X,d)\) 为度量空间，\(A \subseteq X\) 配子空间度量，\(U \subseteq A\)。则
+  \begin{enumerate}[label=(\roman*)]
+    \item \(U\) 在 \(A\) 中开当且仅当存在 \(X\) 中的开集 \(V\) 使 \(U = V \cap A\)；
+    \item \(U\) 在 \(A\) 中闭当且仅当存在 \(X\) 中的闭集 \(F\) 使 \(U = F \cap A\)。
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  子空间中的球就是原球与 \(A\) 之交：对 \(a \in A\)，
+  \(B_{A}(a,\varepsilon) = B_{X}(a,\varepsilon) \cap A\)，因为两处用的是同一个距离。
+
+  (i) 设 \(U\) 在 \(A\) 中开。对每个 \(a \in U\) 取 \(\varepsilon_{a}>0\) 使
+  \(B_{A}(a,\varepsilon_{a}) \subseteq U\)，令 \(V = \bigcup_{a \in U} B_{X}(a,\varepsilon_{a})\)。
+  \(V\) 是 \(X\) 中开集，且
+  \[
+    V \cap A = \bigcup_{a \in U} \bigl(B_{X}(a,\varepsilon_{a}) \cap A\bigr)
+             = \bigcup_{a \in U} B_{A}(a,\varepsilon_{a}) = U ,
+  \]
+  最后一个等号中，\(\subseteq\) 由各球含于 \(U\) 得出，\(\supseteq\) 由每个 \(a\) 落在自己的球里得出。
+
+  反之设 \(U = V \cap A\)，\(V\) 在 \(X\) 中开。对 \(a \in U\) 取 \(\varepsilon>0\) 使
+  \(B_{X}(a,\varepsilon) \subseteq V\)，则 \(B_{A}(a,\varepsilon) = B_{X}(a,\varepsilon) \cap A
+  \subseteq V \cap A = U\)。故 \(U\) 在 \(A\) 中开。
+
+  (ii) 对补集用 (i)：\(U\) 在 \(A\) 中闭当且仅当 \(A \setminus U\) 在 \(A\) 中开，
+  当且仅当 \(A \setminus U = V \cap A\)（\(V\) 在 \(X\) 中开），
+  当且仅当 \(U = (X \setminus V) \cap A\)。取 \(F = X \setminus V\) 即可。
+\end{proof}
+
+\begin{example}[同一个集合，在两处的开闭截然不同]
+  \label{ex:clopen-in-union}
+  取 \(X = (0,1) \cup (1,2)\) 配 \(\R\) 的子空间度量。则 \((0,1)\) 与 \((1,2)\)
+  在 \(X\) 中都既开又闭，而在 \(\R\) 中一个闭的也没有。
+  \begin{worked}
+    开：\((0,1)\) 本身是 \(\R\) 中的开集，与 \(X\) 之交仍是它，由%
+    \cref{lem:subspace-openclosed}(i) 它在 \(X\) 中开。\((1,2)\) 同理。
+
+    闭：\((0,1) = [0,1] \cap X\)，而 \([0,1]\) 在 \(\R\) 中闭，
+    由\cref{lem:subspace-openclosed}(ii) 它在 \(X\) 中闭。\((1,2) = [1,2] \cap X\) 同理。
+
+    在 \(\R\) 中则两者都不闭：\((0,1)\) 的闭包是 \([0,1]\)，多出两点。
+
+    关键在于 \(1 \notin X\)。\((0,1)\) 在 \(\R\) 中缺的那两个闭包点 \(0\) 与 \(1\)
+    都不在 \(X\) 里，于是它在 \(X\) 中的相对闭包就是它自己。
+  \end{worked}
+\end{example}
+
+\begin{pitfall}
+  「开」与「闭」永远是相对于某个空间说的，单说「\((0,1)\) 是开集」并不完整。
+  本章此后凡出现开、闭二字，都要先问清是在哪个空间里。
+  \cref{ex:clopen-in-union} 是全章反复要用的对照：同一个 \((0,1)\)，
+  在 \(\R\) 中不闭，在 \(X\) 中既开又闭。
+\end{pitfall}
+
+\section{连通的定义}
+\label{sec:connected-def}
+
+\cref{ex:clopen-in-union} 里的 \(X\) 裂成了互不相干的两块。把这件事写成定义。
+
+\begin{definition}[separation 与连通]
+  \label{def:separation}
+  设 \((X,d)\) 为度量空间。若 \(X = F_{1} \cup F_{2}\)，其中 \(F_{1},F_{2}\) 非空、
+  不交、且在 \(X\) 中都闭，则称这样的分解为 \(X\) 的%
+  \termen{separation}{隔离}。不存在 separation 的度量空间称为%
+  \term{连通的}{connected}。\(X\) 的子集 \(A\) 称为连通的，若 \(A\) 配子空间度量后连通。
+\end{definition}
+
+\begin{remark}
+  本书对这个词用英文原名。可用的中译在本书内都另有所指：「分割」已归戴德金分割
+  （\cref{ch:reals}与附录 A 的 \term{分割}{cut}），第 7 章讲 Riemann 积分还要用它
+  指区间划分；「分离」要留给卷四的分离公理。
+  \textcite{garling2013b}作 splitting，\textcite{pugh2015}与多数英文教材作
+  separation，本书取后者。
+\end{remark}
+
+\begin{remark}
+  两块互为补集，故「\(F_{1}\) 与 \(F_{2}\) 都闭」与「都开」说的是同一件事：
+  \(F_{2} = X \setminus F_{1}\) 闭等价于 \(F_{1}\) 开。Pugh 即从「都开」出发定义。
+  下面的刻画把这件事写明。
+\end{remark}
+
+\begin{proposition}[连通的三条刻画]
+  \label{prop:connected-equiv}
+  设 \((X,d)\) 为度量空间。下述三条等价：
+  \begin{enumerate}[label=(\roman*)]
+    \item \(X\) 没有 separation；
+    \item \(X\) 中既开又闭的子集或为 \(\emptyset\)、或为 \(X\)；
+    \item 不存在从 \(X\) 到 \(\set{0,1}\)（配离散度量）的连续满射。
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  \emph{(i) \(\Leftrightarrow\) (ii)}。设 \(E \subseteq X\) 既开又闭且
+  \(E \neq \emptyset\)、\(E \neq X\)。则 \(X = E \cup (X \setminus E)\)，
+  两块非空、不交，且 \(E\) 闭、\(X \setminus E\) 也闭（因 \(E\) 开），
+  这正构成 separation。反之，separation 中的 \(F_{1}\) 既闭
+  （按定义）又开（因其补 \(F_{2}\) 闭），且非空、不等于 \(X\)（因 \(F_{2}\) 非空）。
+  两句话互为逆转。
+
+  \emph{(ii) \(\Rightarrow\) (iii)}。设 \(g \mapsdef X \to \set{0,1}\) 连续且满。
+  离散度量下 \(\set{0}\) 是开集也是闭集，由\cref{thm:open-preimage} 及%
+  \cref{cor:closed-preimage}，\(g^{-1}(\set{0})\) 在 \(X\) 中既开又闭；
+  由满射它非空，且其补 \(g^{-1}(\set{1})\) 也非空故它不等于 \(X\)。与 (ii) 矛盾。
+
+  \emph{(iii) \(\Rightarrow\) (ii)}。设 \(E\) 既开又闭且 \(\emptyset \neq E \neq X\)。
+  令 \(g\) 在 \(E\) 上取 \(0\)、在 \(X \setminus E\) 上取 \(1\)。
+  \(\set{0,1}\) 的每个子集都开，其原像分别是 \(\emptyset\)、\(E\)、\(X \setminus E\)、\(X\)，
+  四者都开，故 \(g\) 连续；\(E\) 与其补都非空故 \(g\) 满。与 (iii) 矛盾。
+\end{proof}
+
+\begin{remark}
+  第 (ii) 条写的是「或为 \(\emptyset\)、或为 \(X\)」，不写「只有 \(\emptyset\) 与 \(X\) 两个」。
+  当 \(X = \emptyset\) 时这两者是同一个集合，「两个」的说法就不准。
+\end{remark}
+
+\begin{proposition}
+  \label{prop:empty-connected}
+  空集与单点集连通。
+\end{proposition}
+
+\begin{proof}
+  separation 要求两块都非空，而 \(\emptyset\) 无法写成两个非空集之并，
+  单点集也无法写成两个非空\emph{不交}集之并。故两者都没有 separation。
+\end{proof}
+
+\begin{remark}
+  \(\emptyset\) 连通是\cref{def:separation} 的推论，不是额外的约定。
+  有的教材把空集排除在外，那是为了别处叙述方便；本书依定义办，
+  后文凡涉及空集处都按这个口径，不再另作声明。
+\end{remark}
+
+\begin{intuition}
+  连通的直观是「一块」，但要说准并不容易。不能说两块「互不沾边」——
+  \cref{ex:clopen-in-union} 中 \((0,1)\) 与 \((1,2)\) 在 \(\R\) 中的闭包在 \(1\) 处相碰。
+  也不能说「有个共同的边界点不在空间里」，\([0,1] \cup [2,3]\) 的两块在 \(\R\) 中的
+  闭包压根不交，却同样构成 separation。
+
+  准确的说法只涉及子空间自身：两块在 \(X\) 中各自闭，故各自的\emph{相对}闭包
+  仍是它自己，两者不交。至于在更大的环境空间中，它们的闭包可能相交
+  （两个开区间在缺失的点 \(1\) 处相接），也可能不交（两个闭区间隔着一段距离）。
+  连通与否只看子空间内部，与它泡在什么空间里无关。
+\end{intuition}
+
+\section{三条基本引理}
+\label{sec:connected-lemmas}
+
+下面三条都是一两行的推理，但后面几节反复要用，先集中证出来。
+
+\begin{lemma}[连通子集落在一块中]
+  \label{lem:connected-in-one-piece}
+  设 \(X = F_{1} \cup F_{2}\) 是 separation，\(C \subseteq X\) 连通。
+  则 \(C \subseteq F_{1}\) 或 \(C \subseteq F_{2}\)。
+\end{lemma}
+
+\begin{proof}
+  由\cref{lem:subspace-openclosed}(ii)，\(C \cap F_{1}\) 与 \(C \cap F_{2}\)
+  都是 \(C\) 中的闭集，两者不交且并为 \(C\)。若两者都非空，
+  它们就构成 \(C\) 的 separation，与 \(C\) 连通矛盾。
+  故其中之一为空，即 \(C\) 整个落在另一块里。
+\end{proof}
+
+\begin{lemma}[闭包连通]
+  \label{lem:closure-connected}
+  设 \(A \subseteq B \subseteq \overline{A}\)（闭包在某个度量空间 \(X\) 中取），
+  且 \(A\) 连通。则 \(B\) 连通。
+\end{lemma}
+
+\begin{proof}
+  设 \(B = F_{1} \cup F_{2}\) 是 separation。由\cref{lem:connected-in-one-piece}，
+  不妨 \(A \subseteq F_{1}\)。取 \(b \in F_{2}\)。由\cref{lem:subspace-openclosed}(ii)，
+  \(F_{1} = F \cap B\) 对某个 \(X\) 中的闭集 \(F\)，于是 \(A \subseteq F\)，
+  从而 \(\overline{A} \subseteq F\)。而 \(b \in B \subseteq \overline{A} \subseteq F\)，
+  故 \(b \in F \cap B = F_{1}\)，与 \(b \in F_{2}\) 及两块不交矛盾。
+\end{proof}
+
+\begin{lemma}[有公共点之并连通]
+  \label{lem:union-connected}
+  设 \(I \neq \emptyset\)，\(\set{C_{i}}_{i \in I}\) 是 \(X\) 的一族连通子集，
+  且存在 \(p \in \bigcap_{i \in I} C_{i}\)。则 \(C = \bigcup_{i \in I} C_{i}\) 连通。
+  （\(I = \emptyset\) 时并为空集，由\cref{prop:empty-connected} 也连通。）
+\end{lemma}
+
+\begin{proof}
+  设 \(C = F_{1} \cup F_{2}\) 是 separation，不妨 \(p \in F_{1}\)。
+  对每个 \(i\)，\(C_{i}\) 连通，由\cref{lem:connected-in-one-piece}
+  它落在 \(F_{1}\) 或 \(F_{2}\) 中；而 \(p \in C_{i} \cap F_{1}\) 且两块不交，
+  故只能 \(C_{i} \subseteq F_{1}\)。于是 \(C = \bigcup_{i} C_{i} \subseteq F_{1}\)，
+  \(F_{2} = \emptyset\)，与 separation 的定义矛盾。
+\end{proof}
+
+\begin{remark}
+  这三条的用途分别是：\cref{lem:connected-in-one-piece} 在%
+  \cref{sec:path-connected}证「道路连通蕴含连通」；
+  \cref{lem:closure-connected} 证正弦曲线连通；
+  \cref{lem:union-connected} 用来\emph{构造}连通集，
+  习题里的有理网格与\cref{sec:ch5-outlook}的连通分支都靠它。
+
+  \cref{lem:union-connected} 要求整族共享\emph{同一个}点，这个条件可以放宽，
+  但要多绕一步。若一族连通集只是\emph{两两}相交，整族的交仍可能为空，
+  引理套不上去；此时固定其中一个成员 \(C_{0}\)，先由引理得每个 \(C_{i} \cup C_{0}\) 连通，
+  这些集合共含 \(C_{0}\)，再用一次引理，仍得并集连通。
+  「每个成员都与某个固定的连通集 \(C_{0}\) 相交」也照此办理，
+  只是要把 \(C_{0}\) 一并算进所求的并集里。\cref{exr:rational-grid} 就是这样的例子。
+\end{remark}
+
+\section{\(\R\) 的连通子集恰是区间}
+\label{sec:interval-connected}
+
+本节是全章的核心，也是本章把确界原理直接用在拓扑结论上的地方。先把「区间」说准。
+
+\begin{definition}[区间]
+  \label{def:interval}
+  称 \(I \subseteq \R\) 为\term{区间}{interval}，若对一切 \(x,y \in I\) 与 \(z \in \R\)，
+  \(x < z < y\) 蕴含 \(z \in I\)。
+\end{definition}
+
+\begin{remark}
+  这个定义一句话涵盖了开区间、闭区间、半开区间、射线、\(\R\) 自身、
+  单点集与空集，不必分九种情形逐个列举。后两者空洞地满足条件：
+  单点集里找不出 \(x<y\)，空集里连一个点也没有。
+\end{remark}
+
+\begin{theorem}[区间刻画]
+  \label{thm:interval-connected}
+  \(I \subseteq \R\) 连通当且仅当 \(I\) 是区间。
+\end{theorem}
+
+\begin{strategy}
+  \(\Rightarrow\) 方向用反证：若 \(I\) 不是区间，就有个 \(z \notin I\) 卡在 \(I\)
+  的两点之间，拿 \(z\) 把 \(I\) 切成左右两半即可。
+
+  \(\Leftarrow\) 方向是真正的工作。设 \(I = F_{1} \cup F_{2}\) 是 separation，
+  两块各取一点 \(a \in F_{1}\)、\(b \in F_{2}\)，不妨 \(a<b\)。
+  把 \(F_{1}\) 在 \([a,b]\) 中的那一段取上确界 \(c\)，
+  再证 \(c\) 同时落在两块里，与不交矛盾。
+  确界原理只在取 \(c\) 这一步用到。
+\end{strategy}
+
+\begin{proof}
+  \emph{\(\Rightarrow\)}。设 \(I\) 不是区间，则存在 \(x,y \in I\) 与 \(z \notin I\)
+  使 \(x<z<y\)。令
+  \[
+    F_{1} = I \cap (-\infty,\,z), \qquad F_{2} = I \cap (z,\,\infty) .
+  \]
+  两者非空（分别含 \(x\) 与 \(y\)）、不交，且因 \(z \notin I\) 其并为 \(I\)。
+  由\cref{lem:subspace-openclosed}(i)，两者都是 \(I\) 中的开集；
+  而它们互为补集，故各自也闭。于是它们构成 \(I\) 的 separation，\(I\) 不连通。
+
+  \emph{\(\Leftarrow\)}。设 \(I\) 是区间而 \(I = F_{1} \cup F_{2}\) 是 separation。
+  分七步导出矛盾。
+
+  \emph{第 1 步（前提要看清）}。这里的 \(F_{1},F_{2}\) 是 \(I\)
+  \emph{作为子空间}中的闭集，未必是 \(\R\) 中的闭集。
+  \cref{ex:clopen-in-union} 正是这样的例子：\((0,1)\) 在 \((0,1)\cup(1,2)\) 中闭，
+  在 \(\R\) 中不闭。
+
+  \emph{第 2 步}。取 \(a \in F_{1}\)、\(b \in F_{2}\)。两块不交故 \(a \neq b\)；
+  两块在定义中地位对称，必要时交换 \(F_{1}\) 与 \(F_{2}\) 的名字，故可设 \(a<b\)。
+
+  \emph{第 3 步（唯一用到区间性的地方）}。由 \(a,b \in I\) 及\cref{def:interval}，
+  \begin{equation}
+    \label{eq:ab-in-I}
+    [a,b] \subseteq I .
+  \end{equation}
+  令 \(A = F_{1} \cap [a,b]\)。它含有 \(a\) 故非空，且以 \(b\) 为上界。
+  由确界原理（\cref{ax:completeness}）得 \(c = \sup A\)，且 \(a \le c \le b\)，
+  再由\cref{eq:ab-in-I} 知 \(c \in I\)。
+
+  \emph{第 4 步（\(c \in F_{1}\)）}。给定 \(\varepsilon>0\)。由上确界的 \(\varepsilon\)
+  刻画（\cref{prop:sup-epsilon}），存在 \(x_{0} \in A\) 使 \(x_{0} > c-\varepsilon\)；
+  又 \(x_{0} \le c\)，故 \(x_{0} \in B_{I}(c,\varepsilon) \cap A\)。
+  可见每个以 \(c\) 为心的球都与 \(A\) 相交，即 \(c\) 是 \(A\) 在 \(I\) 中的闭包点。
+  而 \(A \subseteq F_{1}\) 且 \(F_{1}\) 在 \(I\) 中闭，故 \(c \in F_{1}\)。
+
+  \emph{第 5 步（\(c<b\)）}。由第 3 步 \(c \le b\)；由第 4 步 \(c \in F_{1}\)，
+  而 \(b \in F_{2}\) 且两块不交，故 \(c \neq b\)。
+
+  \emph{第 6 步（\((c,b] \subseteq F_{2}\)）}。由\cref{eq:ab-in-I}，
+  \((c,b] \subseteq [a,b] \subseteq I\)，故这一段的点都在 \(I\) 中，谈得上属于哪一块。
+  若某个 \(t \in (c,b]\) 落在 \(F_{1}\) 中，则 \(t \in F_{1} \cap [a,b] = A\) 而 \(t>c=\sup A\)，
+  矛盾。故 \((c,b]\) 中的点都不在 \(F_{1}\) 中，只能在 \(F_{2}\) 中。
+
+  \emph{第 7 步（\(c \in F_{2}\)）}。由第 5 步 \((c,b]\) 非空。
+  取 \(t_{n} = c + (b-c)/(n+1)\)，则 \(t_{n} \in (c,b]\) 且 \(t_{n} \to c\)，
+  故 \(c\) 是 \((c,b]\) 在 \(I\) 中的闭包点。由第 6 步 \((c,b] \subseteq F_{2}\)
+  且 \(F_{2}\) 在 \(I\) 中闭，故 \(c \in F_{2}\)。
+
+  第 4 步与第 7 步给出 \(c \in F_{1} \cap F_{2}\)，与两块不交矛盾。
+\end{proof}
+
+\begin{pitfall}
+  第 3 步不可省。去掉它，上面整段推理对 \(\R\) 的\emph{任意}子集都照抄不误，
+  连\cref{ex:clopen-in-union} 中的 \((0,1) \cup (1,2)\) 也照样「证」得出连通，
+  而那里刚给出它的 separation。漏在哪里？取 \(a = 1/2\)、\(b = 3/2\)，
+  则 \(c = \sup\bigl((0,1) \cap [1/2,\,3/2]\bigr) = 1\)，而 \(1\) 根本不在空间里，
+  第 4 步就无从谈起。
+
+  由此该记住的检查习惯是：读完一个证明，回头看它用到了哪些假设。
+  某项假设没用到，要判断它是多余的，还是推理中漏了依据——
+  两种情形都存在，不能一见没用到就断定证明有错。
+  本证明中，区间性通过\cref{eq:ab-in-I} 保证了后续讨论的点仍属于 \(I\)。
+\end{pitfall}
+
+\begin{remark}
+  第 3 步中 \(c=a\) 是允许的，不必另开一路讨论：那时 \(A=\set{a}\)，
+  第 4 步给出 \(a \in F_{1}\)（本来就是），第 5 至 7 步照走不误。
+\end{remark}
+
+\section{连续像仍连通与介值定理}
+\label{sec:ivt}
+
+有了\cref{thm:interval-connected}，介值定理只差一步。这一步与%
+\cref{thm:continuous-image-compact}「连续像仍紧」形状完全一样。
+
+\begin{theorem}[连续像仍连通]
+  \label{thm:continuous-image-connected}
+  设 \(X\) 连通，\(f \mapsdef X \to Y\) 连续，则 \(f(X)\) 连通。
+\end{theorem}
+
+\begin{proof}
+  先把陪域换掉。把 \(f\) 看作从 \(X\) 到 \(f(X)\) 的映射，它仍连续：
+  \(f(X)\) 中的开集形如 \(V \cap f(X)\)（\(V\) 在 \(Y\) 中开，
+  由\cref{lem:subspace-openclosed}(i)），其原像等于 \(f^{-1}(V)\)，由假设是开集。
+
+  设 \(f(X) = F_{1} \cup F_{2}\) 是 separation。诸 \(F_{j}\) 是 \(f(X)\) 中的闭集，
+  由上一段与\cref{cor:closed-preimage}，\(f^{-1}(F_{1})\) 与 \(f^{-1}(F_{2})\)
+  都是 \(X\) 中的闭集；它们非空（因 \(F_{j}\) 是像集的非空子集）、不交、并为 \(X\)。
+  这是 \(X\) 的 separation，与 \(X\) 连通矛盾。
+\end{proof}
+
+\begin{corollary}[介值定理]
+  \label{cor:ivt}
+  设 \(I \subseteq \R\) 为区间，\(f \mapsdef I \to \R\) 连续，\(x,y \in I\)。
+  则介于 \(f(x)\) 与 \(f(y)\) 之间的每个实数都被 \(f\) 取到。
+\end{corollary}
+
+\begin{proof}
+  由\cref{thm:interval-connected}，\(I\) 连通；由%
+  \cref{thm:continuous-image-connected}，\(f(I)\) 连通；再由%
+  \cref{thm:interval-connected} 反向，\(f(I)\) 是区间。
+  而 \(f(x),f(y) \in f(I)\)，按\cref{def:interval}，两者之间的数都在 \(f(I)\) 中。
+\end{proof}
+
+\begin{example}[零点存在]
+  \label{ex:root-exists}
+  设 \(f\) 在 \([a,b]\) 上连续且 \(f(a)f(b)<0\)，则 \(f\) 在 \((a,b)\) 中有零点。
+  \begin{worked}
+    \(0\) 介于 \(f(a)\) 与 \(f(b)\) 之间，由\cref{cor:ivt} 存在 \(c \in [a,b]\)
+    使 \(f(c)=0\)。又 \(f(a),f(b)\) 都不为零故 \(c \neq a,b\)。
+  \end{worked}
+\end{example}
+
+\begin{remark}
+  \cref{ex:root-exists} 的传统证法是二分法：反复取中点、留下变号的那一半。
+  那个证明附带给出一个收敛到零点的算法；本节的证明不给任何算法，
+  它只断言零点存在。\cref{ch:metric}的牛顿法与压缩映射原理走的是另一条路，
+  那里连收敛速度都算得出来。存在性与构造性的这一对照贯穿全书。
+\end{remark}
+
+下面这条推论把第 4、5 两章合到一处。
+
+\begin{corollary}[紧区间上的像仍是紧区间]
+  \label{cor:image-compact-interval}
+  设 \(a \le b\)，\(f \mapsdef [a,b] \to \R\) 连续，\(m = \min f\)、\(M = \max f\)
+  （\(a=b\) 时 \(m=M\)）。
+  则 \(f([a,b]) = [m,M]\)。
+\end{corollary}
+
+\begin{proof}
+  由最值定理（\cref{thm:extreme-value}），\(m\) 与 \(M\) 存在且被取到，
+  故 \(f([a,b]) \subseteq [m,M]\) 且两端点属于像集。
+  由\cref{cor:ivt}，介于两者之间的数全被取到，故 \([m,M] \subseteq f([a,b])\)。
+\end{proof}
+
+\begin{remark}
+  两章各出一半：紧性给出 \(m\) 与 \(M\) 取得到，连通性给出中间的一个不漏。
+  第 7 章证积分中值定理时用的就是这条推论的这两半。
+\end{remark}
+
+\begin{pitfall}
+  介值定理管的是连续函数。导函数未必连续，因此不能把\cref{cor:ivt}
+  直接套到导函数上去。第 6 章的 Darboux 定理断言导函数仍有介值性质，
+  它得另行证明。
+
+  本书拟采用的 Rolle 定理、中值定理及 Darboux 定理的证明以最值定理为主要工具，
+  也就是说它们在\cref{ch:compactness}的下游而不在本章的下游。
+  介值定理的下游是第 7 章的积分中值定理与第 6 章反函数的存在与连续。
+\end{pitfall}
+
+\section{连通性作为拓扑不变量}
+\label{sec:topological-invariant}
+
+\cref{ch:continuity}定义了同胚（\cref{def:homeomorphism}），而%
+\cref{tab:ch3-where-used} 把连通性列为本卷区分空间的第一件工具。本节给出做法。
+
+由\cref{thm:continuous-image-connected}，同胚保持连通性——正向与逆向都连续，
+两边的连通性可以互推。但只用这一条能区分的空间很少：\((0,1)\)、\([0,1)\)、
+\([0,1]\) 与圆周全是连通的。下面这个观察把工具磨利。
+
+\begin{proposition}[割点法]
+  \label{prop:cut-point}
+  设 \(f \mapsdef X \to Y\) 为同胚，\(p \in X\)。则 \(f\) 限制在
+  \(X \setminus \set{p}\) 上是它到 \(Y \setminus \set{f(p)}\) 的同胚。
+  于是两者的连通性相同。
+\end{proposition}
+
+\begin{proof}
+  \(f\) 是双射，故它把 \(X \setminus \set{p}\) 双射到 \(Y \setminus \set{f(p)}\)。
+  连续性与逆的连续性对子空间的限制照样成立
+  （由\cref{lem:subspace-openclosed}，子空间的开集就是原开集与之相交）。
+  最后一句由\cref{thm:continuous-image-connected} 两向各用一次。
+\end{proof}
+
+\begin{example}[{\((0,1)\) 与 \([0,1)\) 不同胚}]
+  \label{ex:01-not-homeo}
+  \begin{worked}
+    在 \([0,1)\) 中去掉端点 \(0\)，剩下 \((0,1)\)，是区间，
+    由\cref{thm:interval-connected} 连通。
+
+    在 \((0,1)\) 中去掉任一点 \(p\)，剩下 \((0,p) \cup (p,1)\)。
+    它不是区间（\(p\) 卡在两点之间却不属于它），故不连通。
+
+    若存在同胚 \(f \mapsdef (0,1) \to [0,1)\)，取 \(p = f^{-1}(0)\)，
+    则由\cref{prop:cut-point}，\((0,1) \setminus \set{p}\) 与 \([0,1) \setminus \set{0}\)
+    连通性相同。前者不连通，后者连通，矛盾。
+  \end{worked}
+\end{example}
+
+\begin{example}[{\([0,1]\) 与圆周不同胚}]
+  \label{ex:circle-not-homeo}
+  记 \(S^{1} = \setst{(x,y) \in \R^{2}}{x^{2}+y^{2}=1}\)。
+  \begin{worked}
+    \emph{圆周去掉一点仍连通}。设 \(q = (\cos\theta_{0},\sin\theta_{0})\)。
+    映射 \(t \mapsto (\cos t, \sin t)\) 把区间 \((\theta_{0},\,\theta_{0}+2\pi)\)
+    连续地映满 \(S^{1} \setminus \set{q}\)。区间连通
+    （\cref{thm:interval-connected}），故其连续像连通
+    （\cref{thm:continuous-image-connected}）。
+
+    \emph{线段去掉内点则不连通}。取内点 \(1/2\)，则
+    \([0,1] \setminus \set{1/2}\) 等于 \([0,1/2) \cup (1/2,1]\)，
+    不是区间，故不连通。
+
+    若存在同胚 \(f \mapsdef [0,1] \to S^{1}\)，由\cref{prop:cut-point}，
+    \([0,1] \setminus \set{1/2}\) 与 \(S^{1} \setminus \set{f(1/2)}\) 连通性相同。
+    前者不连通，后者连通，矛盾。
+  \end{worked}
+\end{example}
+
+\begin{remark}
+  割点法的用武之地远不止这两例。数一数「去掉后分成几块」，就能区分线段与
+  字母 T 形：后者有个点去掉后剩三块，而线段去掉任一点后至多两块
+  （去掉内点得两块，去掉端点仍是一块），
+  见\cref{exr:cut-point}。\(\R\) 与 \(\R^{n}\)（\(n \ge 2\)）不同胚也走这条路，
+  但要先知道 \(\R^{n} \setminus \set{p}\) 连通，那是下一节的事，
+  故留作\cref{exr:r-vs-rn}。
+\end{remark}
+
+\section{道路连通}
+\label{sec:path-connected}
+
+「一块」的另一种说法是「任两点之间走得通」。这个说法更接近直觉，也更强。
+
+\begin{definition}[道路与道路连通]
+  \label{def:path-connected}
+  设 \(X\) 为度量空间，\(x,y \in X\)。称连续映射 \(\gamma \mapsdef [0,1] \to X\)
+  为从 \(x\) 到 \(y\) 的\term{道路}{path}，若 \(\gamma(0)=x\)、\(\gamma(1)=y\)。
+  若 \(X\) 中任两点之间都有道路，则称 \(X\) 为\term{道路连通的}{path-connected}。
+\end{definition}
+
+\begin{proposition}[道路的反向与拼接]
+  \label{prop:path-ops}
+  设 \(\alpha\) 是从 \(x\) 到 \(y\) 的道路，\(\beta\) 是从 \(y\) 到 \(z\) 的道路。则
+  \begin{enumerate}[label=(\roman*)]
+    \item \(t \mapsto \alpha(1-t)\) 是从 \(y\) 到 \(x\) 的道路；
+    \item 令
+      \begin{equation}
+        \label{eq:path-concat}
+        (\alpha * \beta)(t) =
+        \begin{cases}
+          \alpha(2t), & 0 \le t \le 1/2, \\
+          \beta(2t-1), & 1/2 \le t \le 1,
+        \end{cases}
+      \end{equation}
+      则 \(\alpha * \beta\) 是从 \(x\) 到 \(z\) 的道路。
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  (i) 是连续映射的复合。
+
+  (ii) 两式在 \(t=1/2\) 处分别给出 \(\alpha(1)=y\) 与 \(\beta(0)=y\)，取值一致，
+  故\cref{eq:path-concat} 确实定义了一个映射。连续性分三种情形：
+  \(t<1/2\) 与 \(t>1/2\) 处分别由 \(\alpha\)、\(\beta\) 的连续性得出；
+  在 \(t=1/2\) 处，给定 \(\varepsilon>0\)，由 \(\alpha\) 在 \(1\) 处与 \(\beta\) 在 \(0\) 处
+  的连续性取 \(\delta_{1},\delta_{2}>0\) 使相应的像落在 \(B(y,\varepsilon)\) 中，
+  取 \(\delta = \min\set{\delta_{1},\delta_{2}}/2\) 即可。
+\end{proof}
+
+\begin{proposition}
+  \label{prop:path-implies-connected}
+  道路连通蕴含连通。
+\end{proposition}
+
+\begin{proof}
+  设 \(X\) 道路连通而 \(X = F_{1} \cup F_{2}\) 是 separation。
+  取 \(x \in F_{1}\)、\(y \in F_{2}\) 与从 \(x\) 到 \(y\) 的道路 \(\gamma\)。
+  由\cref{thm:interval-connected}，\([0,1]\) 连通；由%
+  \cref{thm:continuous-image-connected}，\(\gamma([0,1])\) 连通。
+  由\cref{lem:connected-in-one-piece}，\(\gamma([0,1])\) 整个落在 \(F_{1}\) 或 \(F_{2}\) 中。
+  但它含有 \(x \in F_{1}\) 与 \(y \in F_{2}\)，而两块不交，矛盾。
+\end{proof}
+
+\begin{example}[欧氏空间与去掉一点的欧氏空间]
+  \label{ex:rn-path-connected}
+  \(\R^{n}\) 道路连通；当 \(n \ge 2\) 时 \(\R^{n} \setminus \set{p}\) 也道路连通。
+  两者因而都连通。
+  \begin{worked}
+    \(\R^{n}\)：任给 \(x,y\)，取线段 \(\gamma(t) = (1-t)x + ty\)。
+    它连续（各坐标是 \(t\) 的一次函数），起止点正确。
+
+    \(\R^{n} \setminus \set{p}\)（\(n \ge 2\)）：任给 \(x,y \neq p\)。
+    若线段 \([x,y]\) 不过 \(p\)，直接用它。若过 \(p\)，则取一点 \(m\)
+    使 \(m\) 不在直线 \(xy\) 上——因 \(n \ge 2\)，这样的 \(m\) 存在——
+    再走折线 \(x \to m \to y\)。两段线段都不过 \(p\)：\(p\) 在直线 \(xy\) 上，
+    而线段 \([x,m]\) 与 \([m,y]\) 除端点 \(x\)、\(y\) 外不与该直线相交
+    （两条不同的直线至多交于一点）。由\cref{prop:path-ops}(ii) 把两段拼起来。
+
+    连通性由\cref{prop:path-implies-connected}。
+  \end{worked}
+\end{example}
+
+\begin{remark}
+  \cref{ch:reals}的\cref{exr:sup-not-metric} 在解答中用过「去掉一点后
+  \(\R^{2}\) 仍连通」，当时全书还没有依据，\cref{ex:rn-path-connected} 补上了。
+  \(n=1\) 时结论不成立：\(\R \setminus \set{0}\) 不是区间，故不连通。
+\end{remark}
+
+反过来不成立。下面这个例子是本章最该记住的反例。
+
+\begin{example}[拓扑学家的正弦曲线]
+  \label{ex:topologist-sine}
+  在 \(\R^{2}\) 中令
+  \begin{equation}
+    \label{eq:sine-curve}
+    G = \setst{\bigl(x,\ \sin(1/x)\bigr)}{0 < x \le 1}, \qquad
+    Y = \set{0} \times [-1,1], \qquad S = G \cup Y .
+  \end{equation}
+  则 \(S\) 紧且连通，却不道路连通。
+\end{example}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=1]
+    \draw[htGray, -{Stealth[length=4pt]}] (-1.0,0) -- (8.7,0) node[below right, font=\scriptsize] {\(x\)};
+    \draw[htGray!60, dashed] (0,-1.75) -- (0,1.75);
+    \node[font=\scriptsize, htGray] at (0.28,1.72) {\(y\)};
+    % 振荡段：按 u = 1/x 等步长取样，才画得出越靠近纵轴越密的来回
+    \draw[htRule, thick, domain=1:60, samples=1500, smooth, variable=\u]
+      plot ({8/\u},{sin(deg(\u))*1.4});
+    % 竖段：用强调色加粗，与虚线的纵轴分开
+    \draw[htAccent, line width=2.4pt] (0,-1.4) -- (0,1.4);
+    \fill[htRule] (8,{sin(deg(1))*1.4}) circle (1.4pt);
+    \node[right, font=\scriptsize] at (8.1,{sin(deg(1))*1.4}) {\((1,\sin 1)\)};
+    \node[left, font=\scriptsize, htAccent] at (-0.12,0.8) {竖段 \(Y\)};
+    \node[font=\scriptsize, htRule] at (5.0,-1.78) {振荡段 \(G\)};
+    \draw[htGray] (-0.12,1.4) -- (0.12,1.4);
+    \node[left, font=\scriptsize, htGray] at (-0.15,1.4) {\(1\)};
+    \draw[htGray] (-0.12,-1.4) -- (0.12,-1.4);
+    \node[left, font=\scriptsize, htGray] at (-0.15,-1.4) {\(-1\)};
+  \end{tikzpicture}
+  \caption{拓扑学家的正弦曲线 \(S = G \cup Y\)。越靠近纵轴，振荡越密，
+    图中只画得出有限多个来回。竖段 \(Y\) 上的每一点都是 \(G\) 的闭包点
+    （\cref{ex:topologist-sine} 的证明），所以 \(S\) 连通；
+    而从竖段走到振荡段的道路不存在。}
+  \label{fig:topologist-sine}
+\end{figure}
+
+\begin{proof}[\cref{ex:topologist-sine} 的验证]
+  \emph{紧}。\(S\) 含于 \([0,1] \times [-1,1]\) 故有界。它闭：\(Y\) 闭，
+  而 \(G\) 在 \(\R^{2}\) 中的闭包点若横坐标为正，则由 \(\sin(1/x)\)
+  在正横坐标处的连续性它仍在 \(G\) 中；若横坐标为零，则其纵坐标落在 \([-1,1]\) 中故属于 \(Y\)。
+  由\cref{thm:heine-borel}，\(S\) 紧。
+
+  \emph{\(S = \overline{G}\)}。上一段已给出 \(\overline{G} \subseteq S\)。
+  反向只需证 \(Y \subseteq \overline{G}\)：给定 \(y \in [-1,1]\)，
+  取 \(\theta\) 使 \(\sin\theta = y\)，再令 \(x_{n} = 1/(\theta + 2\pi n)\)（\(n\) 充分大使
+  \(0<x_{n}\le 1\)）。则
+  \[
+    \sin(1/x_{n}) = \sin(\theta + 2\pi n) = \sin\theta = y ,
+  \]
+  故 \((x_{n},y) \in G\)，而 \(x_{n} \to 0\)，即 \((x_{n},y) \to (0,y)\)。
+  于是 \((0,y) \in \overline{G}\)。
+
+  \emph{连通}。\(G\) 是区间 \((0,1]\) 在连续映射 \(x \mapsto (x,\sin(1/x))\) 下的像，
+  由\cref{thm:interval-connected} 与\cref{thm:continuous-image-connected} 连通。
+  由 \(G \subseteq S = \overline{G}\) 及\cref{lem:closure-connected}，\(S\) 连通。
+
+  \emph{不道路连通}。设有道路 \(\gamma \mapsdef [0,1] \to S\)
+  从 \((0,0) \in Y\) 走到 \((1,\sin 1) \in G\)。记 \(T = \gamma^{-1}(Y)\)。
+  \(Y\) 在 \(S\) 中闭，故 \(T\) 在 \([0,1]\) 中闭；\(0 \in T\) 故非空；
+  \(T\) 有界。于是 \(t_{0} = \max T\) 存在，且 \(t_{0}<1\)（因 \(\gamma(1) \notin Y\)）。
+
+  记 \(\gamma(t) = \bigl(x(t),\,y(t)\bigr)\)，两个坐标函数都连续。
+  由 \(\gamma\) 在 \(t_{0}\) 处连续，取 \(\eta>0\) 使 \(\abs{t-t_{0}}<\eta\) 时
+  \(\gamma(t)\) 与 \(\gamma(t_{0})\) 的距离小于 \(1/2\)；再取
+  \(0<\delta<\min\set{\eta,\ 1-t_{0}}\)，于是 \([t_{0},t_{0}+\delta] \subseteq [0,1]\) 且
+  \begin{equation}
+    \label{eq:sine-close}
+    \abs{y(t) - y(t_{0})} < \tfrac12 \qquad \text{对一切 } t \in [t_{0},\,t_{0}+\delta] .
+  \end{equation}
+  由 \(t_{0}\) 的极大性，\(t \in (t_{0},\,t_{0}+\delta]\) 时 \(\gamma(t) \notin Y\)，
+  即 \(x(t)>0\)。特别地 \(x(t_{0}+\delta) > 0\)，而 \(x(t_{0}) = 0\)。
+
+  现在把介值定理用在\emph{横坐标}函数 \(x\) 上。在 \((0,\,x(t_{0}+\delta))\) 中
+  取 \(u\) 与 \(v\) 使 \(\sin(1/u) = 1\)、\(\sin(1/v) = -1\)：只需取
+  \(u = 1/(\pi/2 + 2\pi k)\)、\(v = 1/(3\pi/2 + 2\pi k)\)，\(k\) 充分大即可。
+  由 \(x\) 在 \([t_{0},t_{0}+\delta]\) 上连续、\(x(t_{0})=0<u<x(t_{0}+\delta)\)
+  及\cref{cor:ivt}，存在 \(s \in (t_{0},\,t_{0}+\delta)\) 使 \(x(s)=u\)；同理存在
+  \(s' \in (t_{0},\,t_{0}+\delta)\) 使 \(x(s')=v\)。而 \(\gamma(s),\gamma(s') \in G\)，
+  故 \(y(s) = \sin(1/u) = 1\)、\(y(s') = \sin(1/v) = -1\)。
+  两者相差 \(2\)，与\cref{eq:sine-close} 给出的 \(\abs{y(s)-y(s')}<1\) 矛盾。
+\end{proof}
+
+\begin{remark}
+  这里再次用介值定理控制道路的横坐标：道路要从竖段走到振荡段，
+  横坐标必须从 \(0\) 连续地到达某个正值，于是把其间的每个数都取到
+  （横坐标本身未必单调，介值定理不需要单调）。
+  而任一 \((0,\varepsilon)\) 中都有使 \(\sin(1/x)\) 取 \(+1\) 与 \(-1\) 的横坐标，
+  纵坐标便被迫一上一下。
+
+  \(\sin(1/x)\) 在\cref{ch:continuity}的\cref{exr:discontinuous-point} 已经出现过，
+  那里用它演示 \(0\) 处的不连续；这里用它的图像演示连通与道路连通的分野。
+  这个例子的标准处理见\textcite{pugh2015}第 2 章与\textcite{garling2013b}§16.2。
+\end{remark}
+
+\begin{remark}
+  \cref{ex:topologist-sine} 中的 \(S\) 既紧又连通，仍不道路连通。
+  可见「紧 + 连通」也补不上这个缺口。要让两个概念重合，须另加条件，
+  下面这条是最常用的一个。
+\end{remark}
+
+\begin{theorem}[开连通集即道路连通]
+  \label{thm:open-connected-path}
+  设 \(U \subseteq \R^{n}\) 为开集。则 \(U\) 连通当且仅当 \(U\) 道路连通。
+\end{theorem}
+
+\begin{proof}
+  充分性即\cref{prop:path-implies-connected}。必要性留作\cref{exr:open-connected-path}，
+  提示见该题。
+\end{proof}
+
+\section{本章结论在更一般框架下的地位}
+\label{sec:ch5-outlook}
+
+把\cref{ch:compactness}的层次表按本章所得补全。
+
+\begin{table}[htbp]
+  \centering
+  \caption{连通性相关概念所依赖的结构。连通与道路连通只用开集就能说清，
+    故都在拓扑层；序层不可丢掉，\cref{thm:interval-connected} 恰恰又用了一次确界原理，
+    而「区间」本身就是序概念。}
+  \label{tab:ch5-structure}
+  \begin{tabular}{@{}llp{5.4cm}@{}}
+    \toprule
+    层次 & 概念 & 一般拓扑空间中的情况 \\
+    \midrule
+    拓扑 & 开覆盖紧、序列紧、连通、道路连通
+         & 连通与道路连通原样成立；两种紧一般不等价 \\
+    度量 & 全有界、完备性 & 不能仅由开集族决定 \\
+    序   & 上确界性质、区间
+         & 一般拓扑空间未指定序，故不能直接表述\cref{thm:interval-connected} 的区间刻画 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{remark}
+  哪些内容能原样带进卷四，要分开说。\cref{def:separation}、
+  \cref{prop:connected-equiv}、\cref{sec:connected-lemmas}的三条引理、
+  \cref{thm:continuous-image-connected} 与\cref{sec:path-connected}的定义
+  都只用开集说话，把「度量空间」换成「拓扑空间」即可原样成立。
+  \cref{thm:interval-connected} 是例外：
+  它是关于 \(\R\) 的结论，一般拓扑空间里连「区间」二字都无从说起。
+\end{remark}
+
+\begin{remark}
+  确界原理到这里并未退场。\cref{thm:interval-connected} 的第 3 步刚用过它，
+  第 7 章的达布上下和还要靠它。准确的说法是：在一般度量空间中，
+  紧性与连通性承担相应的全局结论；对实值的距离或函数值，仍然可以取确界。
+\end{remark}
+
+\begin{remark}[连通分支]
+  \(X\) 中含点 \(p\) 的一切连通子集之并仍连通（\cref{lem:union-connected}，
+  公共点取 \(p\)），它是含 \(p\) 的最大连通子集，称为 \(p\) 所在的%
+  \term{连通分支}{connected component}。两条基本事实都是现成的：
+  两个分支若相交，其并由\cref{lem:union-connected} 连通，由极大性它们相等，
+  故诸分支互不相交，其并为 \(X\)，构成 \(X\) 的一个划分；
+  每个分支在 \(X\) 中闭，因为由\cref{lem:closure-connected}
+  分支的闭包仍连通且含该分支，由极大性两者相等。
+
+  「分支闭」说的是在 \(X\) 中闭。它与「分支在更大的空间中开」并不冲突：
+  \(\R\) 的开集 \(U\) 的每个分支在 \(U\) 中闭，同时在 \(\R\) 中是开区间，
+  见\cref{exr:open-decomposition}。
+\end{remark}
+
+\begin{remark}[去向]
+  介值定理在后续章节的用处有两处。第 7 章的积分中值定理：
+  由最值定理得 \(m \le\) 平均值 \(\le M\)，再由\cref{cor:ivt} 找到取到该值的点。
+  第 6 章一元反函数的存在与连续：区间上的连续单射必严格单调，
+  这一条的证明用的正是介值定理。
+\end{remark}
+
+\section*{习题}
+\addcontentsline{toc}{section}{习题}
+
+\begin{exercise}[例行]
+  \label{exr:decide-connected}
+  判定下列子集是否连通，并说明理由：
+  (a) \(\Q \subseteq \R\)；\quad
+  (b) \(\Q^{2} \subseteq \R^{2}\)；\quad
+  (c) \(\set{0} \cup \setst{1/n}{n \ge 1} \subseteq \R\)；\quad
+  (d) 含两点以上的离散度量空间。
+  \begin{solution}
+    (a) 不连通：\(\sqrt2 \notin \Q\) 而 \(1,2 \in \Q\)，故 \(\Q\) 不是区间，
+    由\cref{thm:interval-connected} 不连通。显式的 separation 是
+    \(\Q \cap (-\infty,\sqrt2)\) 与 \(\Q \cap (\sqrt2,\infty)\)。
+
+    (b) 不连通：取 \(F_{1} = \setst{(x,y) \in \Q^{2}}{x<\sqrt2}\)、
+    \(F_{2} = \setst{(x,y) \in \Q^{2}}{x>\sqrt2}\)。两者非空、不交、并为 \(\Q^{2}\)，
+    且分别是 \(\R^{2}\) 中的开半平面与 \(\Q^{2}\) 之交，故在 \(\Q^{2}\) 中都开，
+    因而也都闭。
+
+    (c) 不连通：记 \(A\) 为该集合。\(\set{1} = (1/2,\,2) \cap A\) 在 \(A\) 中开，
+    又 \(\set{1} = [1,1] \cap A\) 在 \(A\) 中闭，且它既非空也不等于 \(A\)。
+    由\cref{prop:connected-equiv}(ii)，\(A\) 不连通。
+    （\(0\) 处则不然：含 \(0\) 的任何球都含无穷多个 \(1/n\)。）
+
+    (d) 不连通：取任一点 \(p\)，\(\set{p}\) 在离散度量下既开又闭，
+    且因空间有两点以上故它不等于全空间。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:integer-valued}
+  设 \(X\) 连通，\(f \mapsdef X \to \R\) 连续且只取整数值。证明 \(f\) 是常值映射。
+  \begin{solution}
+    由\cref{thm:continuous-image-connected}，\(f(X)\) 连通；
+    由\cref{thm:interval-connected}，\(f(X)\) 是区间。
+    若 \(f(X)\) 含两个不同的整数 \(m<n\)，则由\cref{def:interval}，
+    \(m + 1/2 \in f(X)\)，与 \(f\) 只取整数值矛盾。
+    故 \(f(X)\) 至多一点，即 \(f\) 常值（\(X=\emptyset\) 时空洞成立）。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:bisection}
+  证明 \(f(x) = x^{3}-3x+1\) 在 \([0,1]\) 上有零点，
+  再用二分法确定该零点四舍五入到小数点后一位的结果。
+  \begin{solution}
+    \(f(0)=1>0\)、\(f(1)=-1<0\)，\(f\) 是多项式故连续，
+    由\cref{ex:root-exists} 在 \((0,1)\) 中有零点。
+
+    二分法每步取中点，留下端点值异号的那一半：
+    \[
+      \begin{array}{lll}
+        f(0.5)\approx-0.375<0 & \Rightarrow & [0,\,0.5] \\
+        f(0.25)\approx+0.266>0 & \Rightarrow & [0.25,\,0.5] \\
+        f(0.375)\approx-0.072<0 & \Rightarrow & [0.25,\,0.375] \\
+        f(0.3125)\approx+0.093>0 & \Rightarrow & [0.3125,\,0.375] \\
+        f(0.34375)\approx+0.0094>0 & \Rightarrow & [0.34375,\,0.375] \\
+        f(0.359375)\approx-0.0317<0 & \Rightarrow & [0.34375,\,0.359375] \\
+        f(0.3515625)\approx-0.0112<0 & \Rightarrow & [0.34375,\,0.3515625] \\
+        f(0.34765625)\approx-0.00095<0 & \Rightarrow & [0.34375,\,0.34765625] .
+      \end{array}
+    \]
+    最后这个区间整个落在 \((0.25,\,0.35)\) 内，其中每个数四舍五入到一位小数都得 \(0.3\)，
+    故所求结果是 \(0.3\)。
+
+    停在哪一步要想清楚。区间长度小于 \(0.1\) 并不足以定下一位小数：
+    第四步的 \([0.3125,\,0.375]\) 长 \(0.0625\)，却跨过了舍入分界 \(0.35\)，
+    左端舍入得 \(0.3\)、右端得 \(0.4\)。要定下一位小数，须让区间整个落在
+    某个舍入分界的一侧。
+
+    对照\cref{ex:root-exists} 后的那条注：二分法同时给出算法，
+    本章的证明只给存在性。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:connected-contains-interval}
+  设 \(A \subseteq \R\) 连通且 \(0,1 \in A\)。证明 \([0,1] \subseteq A\)。
+  \begin{solution}
+    由\cref{thm:interval-connected}，\(A\) 是区间。
+    对 \(0<z<1\)，由\cref{def:interval} 及 \(0,1 \in A\) 得 \(z \in A\)。
+    两端点按假设已在 \(A\) 中。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:intersection-not-connected}
+  举例说明两个连通集之交未必连通。
+  \begin{solution}
+    在 \(\R^{2}\) 中取上、下两个闭半圆：
+    \(A = \setst{(x,y)}{x^{2}+y^{2}=1,\ y \ge 0}\)、
+    \(B = \setst{(x,y)}{x^{2}+y^{2}=1,\ y \le 0}\)。
+    两者分别是区间 \([0,\pi]\) 与 \([\pi,2\pi]\) 的连续像，故都连通
+    （\cref{thm:interval-connected} 与\cref{thm:continuous-image-connected}）。
+    而 \(A \cap B = \set{(1,0),\,(-1,0)}\) 是两点集，
+    由\cref{exr:decide-connected}(d) 的同一理由不连通。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:boundary-criterion}
+  证明：\(X\) 连通当且仅当 \(X\) 的每个非空真子集都有非空的相对边界
+  （\(A\) 的相对边界指 \(\overline{A} \setminus A^{\circ}\)，闭包与内部都在 \(X\) 中取）。
+  \begin{solution}
+    对任一 \(A \subseteq X\)，恒有 \(A^{\circ} \subseteq A \subseteq \overline{A}\)，
+    故相对边界为空当且仅当 \(A^{\circ} = A = \overline{A}\)，
+    即当且仅当 \(A\) 既开又闭。
+
+    于是「每个非空真子集都有非空相对边界」等价于「没有既开又闭的非空真子集」，
+    由\cref{prop:connected-equiv}(ii) 这就是连通。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:cut-point}
+  用割点法证明：\([0,1]\) 与 \([0,1] \cup [2,3]\) 不同胚；
+  平面上的字母 T 形与线段不同胚。
+  \begin{solution}
+    第一对更简单，连割点都不必用：\([0,1]\) 连通（区间），
+    而 \([0,1] \cup [2,3]\) 不是区间故不连通，
+    由\cref{thm:continuous-image-connected} 同胚保持连通性。
+
+    第二对：记 T 形为 \(T = ([-1,1] \times \set{0}) \cup (\set{0} \times [-1,0])\)，
+    分支点 \(p = (0,0)\)。去掉 \(p\) 后 \(T\) 分成三段，两两之间没有道路，
+    且这三段各自在 \(T \setminus \set{p}\) 中既开又闭，故 \(T \setminus \set{p}\) 不连通，
+    并且它的连通分支有三个。
+
+    线段 \([0,1]\) 去掉任一点后至多分成两段，故任一点去掉后的分支数至多为二。
+    若 \(f \mapsdef [0,1] \to T\) 是同胚，取 \(q = f^{-1}(p)\)，
+    由\cref{prop:cut-point}，\([0,1] \setminus \set{q}\) 与 \(T \setminus \set{p}\) 同胚，
+    而同胚保持分支的个数（分支互相对应），三与二不等，矛盾。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:two-proofs}
+  \cref{thm:interval-connected} 的 \(\Leftarrow\) 方向可以有两种写法：
+  一种像正文那样同时用 \(F_{1}\) 与 \(F_{2}\) 在 \(I\) 中的闭性，
+  另一种只用 \(F_{1}\) 在 \(I\) 中既开又闭。分别写出，并比较两者的步骤。
+  \begin{solution}
+    第二种写法：设 \(I\) 是区间、\(E \subseteq I\) 在 \(I\) 中既开又闭且
+    \(\emptyset \neq E \neq I\)。取 \(a \in E\)、\(b \in I \setminus E\)，不妨 \(a<b\)，
+    则 \([a,b] \subseteq I\)。令 \(c = \sup(E \cap [a,b])\)。
+
+    由 \(E\) 在 \(I\) 中闭，与正文第 4 步相同的论证给出 \(c \in E\)，故 \(c \neq b\)，
+    即 \(c<b\)。再由 \(E\) 在 \(I\) 中\emph{开}，存在 \(\varepsilon>0\) 使
+    \(B_{I}(c,\varepsilon) \subseteq E\)；取 \(t = \min\set{c+\varepsilon/2,\ b}\)，
+    则 \(t \in (c,b] \subseteq I\) 且 \(t \in E \cap [a,b]\)，而 \(t>c=\sup(E\cap[a,b])\)，矛盾。
+
+    比较：正文的写法在第 7 步要另造一列 \(t_{n} \to c\) 说明 \(c\) 是 \((c,b]\)
+    的闭包点；第二种写法用「开」直接取到一个超过 \(c\) 的点，省掉那一步，
+    但它要求先把「无 separation」翻译成「无非平凡的既开又闭子集」
+    （\cref{prop:connected-equiv}）。两种写法都用到 \([a,b] \subseteq I\) 与确界原理，
+    各一次。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:rational-grid}
+  证明 \(H = \setst{(x,y) \in \R^{2}}{x \in \Q \text{ 或 } y \in \Q}\) 连通。
+  \begin{solution}
+    \(H\) 是全体「横坐标为有理数的竖线」与「纵坐标为有理数的横线」之并。
+    这一族直线\emph{没有}公共点（如 \(y=1\) 与 \(y=2\) 两条横线不相交），
+    故不能直接用\cref{lem:union-connected}。分两步。
+
+    先令 \(C = (\set{0} \times \R) \cup (\R \times \set{0})\) 为两条坐标轴之并。
+    每条坐标轴是 \(\R\) 的连续像故连通，两者同含原点，
+    由\cref{lem:union-connected}，\(C\) 连通。
+
+    再设 \(L\) 是 \(H\) 中的任一条网格线。若 \(L\) 是竖线 \(x=q\)（\(q \in \Q\)），
+    则 \((q,0) \in C \cap L\)；若 \(L\) 是横线 \(y=q\)，则 \((0,q) \in C \cap L\)。
+    两种情形都有 \(C \cap L \neq \emptyset\)，故 \(C \cup L\) 是两个有公共点的
+    连通集之并，由\cref{lem:union-connected} 连通。
+
+    最后，诸 \(C \cup L\) 全部含有 \(C\)，取 \(C\) 中任一点作公共点，
+    再用一次\cref{lem:union-connected}：它们的并
+    \(\bigcup_{L}(C \cup L) = H\) 连通。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:open-connected-path}
+  证明\cref{thm:open-connected-path} 的必要性：\(\R^{n}\) 中的开连通集道路连通。
+
+  提示：先单独处理 \(U=\emptyset\)。此后固定 \(p \in U\)，令 \(U_{1}\) 为 \(U\) 中
+  能用道路与 \(p\) 相连的点之集；用 \(U\) 的开性证 \(U_{1}\) 与 \(U \setminus U_{1}\) 都开，
+  再用 \(U\) 的连通性。
+  \begin{solution}
+    先处理 \(U = \emptyset\)：空集中任两点之间的条件空洞成立，故它道路连通。
+
+    设 \(U \neq \emptyset\)，固定 \(p \in U\)。令
+    \(U_{1} = \setst{x \in U}{U \text{ 中有从 } p \text{ 到 } x \text{ 的道路}}\)。
+    \(U_{1} \ni p\) 故非空。
+
+    \(U_{1}\) 开：设 \(x \in U_{1}\)，由 \(U\) 开取 \(B(x,r) \subseteq U\)。
+    对 \(z \in B(x,r)\)，线段 \([x,z]\) 含于该球故含于 \(U\)；
+    把从 \(p\) 到 \(x\) 的道路与这条线段拼起来（\cref{prop:path-ops}(ii)），
+    得 \(z \in U_{1}\)。故 \(B(x,r) \subseteq U_{1}\)。
+
+    \(U \setminus U_{1}\) 开：设 \(x \in U \setminus U_{1}\)，同样取 \(B(x,r) \subseteq U\)。
+    若某个 \(z \in B(x,r)\) 属于 \(U_{1}\)，则把从 \(p\) 到 \(z\) 的道路接上线段
+    \([z,x]\) 即得 \(x \in U_{1}\)，矛盾。故 \(B(x,r) \subseteq U \setminus U_{1}\)。
+
+    于是 \(U_{1}\) 在 \(U\) 中既开又闭（其补开）且非空，
+    由 \(U\) 连通及\cref{prop:connected-equiv}(ii)，\(U_{1}=U\)。
+    最后，\(U\) 中任两点 \(x,y\) 都与 \(p\) 有道路相连，
+    把其中一条反向再与另一条拼接（\cref{prop:path-ops}）即得从 \(x\) 到 \(y\) 的道路。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:punctured-rn}
+  补上\cref{ch:reals}的\cref{exr:sup-not-metric} 欠下的一步。该题断言
+  \(\R^{2}\) 上不存在与欧氏度量相容的全序（相容意即序区间生成同一拓扑）。
+  写出完整的反证，并指明哪一步用到本章的结论。
+  \begin{solution}
+    设 \(\preceq\) 是 \(\R^{2}\) 上与欧氏度量相容的全序。
+    全序集至多有两个端点（最小元与最大元），故可取 \(p \in \R^{2}\) 使 \(p\)
+    既非最小元也非最大元。令
+    \[
+      L = \setst{x}{x \prec p}, \qquad R = \setst{x}{p \prec x} ,
+    \]
+    则 \(\R^{2} \setminus \set{p} = L \cup R\)，两者不交；由 \(p\) 非端点，两者非空。
+    序区间 \((\leftarrow,p)\) 与 \((p,\rightarrow)\) 按相容性是欧氏拓扑中的开集，
+    故 \(L,R\) 在 \(\R^{2}\) 中开，因而在 \(\R^{2} \setminus \set{p}\) 中也开
+    （\cref{lem:subspace-openclosed}(i)），于是它们构成一个 separation。
+
+    \emph{本章的结论用在这里}：\cref{ex:rn-path-connected} 给出
+    \(\R^{2} \setminus \set{p}\) 道路连通，再由\cref{prop:path-implies-connected}
+    它连通，与上一段的 separation 矛盾。
+
+    结论不是「\(\R^{2}\) 上没有全序」——由良序定理它有全序；
+    此处断言的是没有与度量\emph{相容}的全序。
+    这正是第 2 章起不再谈确界的原因：确界依赖序，而序在这里配不上度量。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:chain-union}
+  设 \(X = \bigcup_{n \ge 1} A_{n}\)，各 \(A_{n}\) 连通且
+  \(A_{n} \cap A_{n+1} \neq \emptyset\)。证明 \(X\) 连通。
+  \begin{solution}
+    令 \(B_{n} = A_{1} \cup \dots \cup A_{n}\)。对 \(n\) 归纳证 \(B_{n}\) 连通：
+    \(B_{1}=A_{1}\) 连通；设 \(B_{n}\) 连通，取
+    \(q \in A_{n} \cap A_{n+1} \subseteq B_{n} \cap A_{n+1}\)，
+    则 \(B_{n}\) 与 \(A_{n+1}\) 是两个有公共点 \(q\) 的连通集，
+    由\cref{lem:union-connected}，\(B_{n+1} = B_{n} \cup A_{n+1}\) 连通。
+
+    由 \(A_{1} \cap A_{2} \neq \emptyset\) 知 \(A_{1}\) 非空，取 \(p \in A_{1}\)。
+    诸 \(B_{n}\) 全部含有 \(A_{1}\) 故都含 \(p\)，
+    由\cref{lem:union-connected}，\(X = \bigcup_{n} B_{n}\) 连通。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:open-decomposition}
+  证明 \(\R\) 的每个开集是至多可数个两两不交的开区间之并。
+  \begin{solution}
+    设 \(U \subseteq \R\) 开。取 \(U\) 的连通分支族（\cref{sec:ch5-outlook}中关于连通分支的那条注）。
+    诸分支两两不交、并为 \(U\)，只需再证两件事。
+
+    \emph{每个分支是区间}。分支连通，由\cref{thm:interval-connected} 它是区间。
+    （区间可以无界，如 \(U=\R\)。）
+
+    \emph{每个分支在 \(\R\) 中开}。设 \(C\) 是分支，\(x \in C\)。
+    由 \(U\) 开取 \((x-\varepsilon,\,x+\varepsilon) \subseteq U\)。
+    这个开区间连通且与 \(C\) 相交（含 \(x\)），由\cref{lem:union-connected}，
+    \(C \cup (x-\varepsilon,x+\varepsilon)\) 连通；它含 \(C\) 而 \(C\) 是极大连通子集，
+    故 \((x-\varepsilon,x+\varepsilon) \subseteq C\)。于是 \(C\) 开。
+
+    \emph{至多可数}。固定 \(\Q\) 的一个枚举 \(q_{1},q_{2},\dots\)。
+    每个分支是非空开区间故含有理数；把它对应到它所含的下标最小的那个 \(q_{k}\)。
+    不同分支不交故对应到不同的下标，于是分支族与 \(\N\) 的一个子集之间有单射，
+    分支至多可数。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:r-vs-rn}
+  证明 \(\R\) 与 \(\R^{n}\)（\(n \ge 2\)）不同胚。
+  \begin{solution}
+    \(\R \setminus \set{0} = (-\infty,0) \cup (0,\infty)\) 不是区间，
+    由\cref{thm:interval-connected} 不连通。
+    而 \(\R^{n} \setminus \set{p}\)（\(n \ge 2\)）道路连通故连通
+    （\cref{ex:rn-path-connected} 与\cref{prop:path-implies-connected}）。
+
+    若存在同胚 \(f \mapsdef \R \to \R^{n}\)，由\cref{prop:cut-point}，
+    \(\R \setminus \set{0}\) 与 \(\R^{n} \setminus \set{f(0)}\) 连通性相同，矛盾。
+
+    这一手法到 \(\R^{m}\) 与 \(\R^{n}\)（\(2 \le m < n\)）就不够用了：
+    去掉一点后两者都连通。那里要用代数拓扑的同调群，或 Brouwer 的区域不变性定理。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:plane-minus-rationals}
+  证明 \(\R^{2} \setminus \Q^{2}\) 道路连通。
+  \begin{solution}
+    先证：对每个 \(p \in \R^{2} \setminus \Q^{2}\)，过 \(p\) 的直线中只有可数多条
+    含有 \(\Q^{2}\) 的点。这里 \(p \notin \Q^{2}\) 不可少——若 \(p\) 本身是有理点，
+    过它的每条直线都含有理点，断言就不成立。
+
+    在 \(p \notin \Q^{2}\) 的前提下，每个 \(r \in \Q^{2}\) 都异于 \(p\)，
+    因而唯一确定一条过 \(p\) 与 \(r\) 的直线；\(\Q^{2}\) 可数，故这样的直线至多可数。
+    过 \(p\) 的直线有不可数多条（按方向角参数化），
+    因而存在过 \(p\) 且与 \(\Q^{2}\) 不交的直线 \(L_{p}\)。
+
+    任给 \(p,q \in \R^{2} \setminus \Q^{2}\)。如上取 \(L_{p}\) 与 \(L_{q}\)，
+    两者与 \(\Q^{2}\) 都不交。若两者平行，把 \(L_{q}\) 换成另一条合乎要求的直线即可
+    （合乎要求的方向有不可数多个，被排除的至多可数，故可避开一个方向）。
+    于是可设两者不平行，交于一点 \(m\)。折线 \(p \to m \to q\)
+    的两段分别含于 \(L_{p}\) 与 \(L_{q}\)，都与 \(\Q^{2}\) 不交，
+    由\cref{prop:path-ops}(ii) 拼成从 \(p\) 到 \(q\) 的道路。
+  \end{solution}
+\end{exercise}

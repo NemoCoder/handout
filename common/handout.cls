@@ -354,6 +354,19 @@
   bookmarksnumbered=true, bookmarksopen=true,
   pdfencoding=auto, psdextra,
 ]{hyperref}
+%% 定理与习题的计数器按章重置（\newtheorem 的 [chapter] 选项），但 hyperref
+%% 生成的锚点名默认只取序号，于是各章的第 10 题共用锚点 exercise.10、
+%% 各章的定理 11 共用 theorem.11：编号与 \cref 的显示都对，链接却跳到
+%% 最先出现的那一章。给锚点补上章号。改这里后须重新编译全书并实际点开链接核对。
+%% theorem 一族共用 theorem 计数器，但 hyperref 按环境名各建一套锚点
+%% （lemma.8、definition.10……），故每个别名都要单独补章号。
+\@for\ht@thmenv:={theorem,lemma,proposition,corollary,definition,%
+                  assumption,property,example}\do{%
+  \expandafter\providecommand\csname theH\ht@thmenv\endcsname{}%
+  \expandafter\renewcommand\csname theH\ht@thmenv\endcsname{\thechapter.\arabic{theorem}}%
+}
+\providecommand{\theHexercise}{}\renewcommand{\theHexercise}{\thechapter.\arabic{exercise}}
+
 \RequirePackage[noabbrev,capitalise]{cleveref}
 \crefname{theorem}{定理}{定理}
 \crefname{lemma}{引理}{引理}

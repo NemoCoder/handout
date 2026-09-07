@@ -55,6 +55,9 @@ make clean                 # 只删 build/；distclean 连 dist/ 一起删
   `\xiaoshi`）以 `\DeclareSIUnit` 声明在 econ 宏文件里，配 `\qty{}{}` 使用。
 - `<学科>/main.tex`——全书入口，中部「章节登记表」是 `\include` 列表。
 - `<学科>/standalone/chNN.tex`——单章编译入口，靠 `\setcounter{chapter}{N-1}` 对齐章号。
+  跨章标签由 `standalone/xr-others.tex` 逐章导入 `build/aux-…/chapters/*.aux`，
+  并跳过 `\HTSELF` 指定的本章那一份——直接对全书 aux 用 `\externaldocument` 会把
+  本章标签重复读进来，日志里出现上百条 multiply defined，盖住真正的重复。
   （其文件头注释里的 `make econ-ch CH=ch01` 是过时写法，实际目标是 `make ch S=… C=…`。）
 - `<学科>/metadata.tex`——书名/作者/版本/许可，改这些只动这一处。
 - 编译时 Makefile `export TEXINPUTS := $(CURDIR)/common//:`，故 `handout.cls` 在任何子目录可见；
@@ -65,8 +68,12 @@ make clean                 # 只删 build/；distclean 连 dist/ 一起删
 1. 建 `<学科>/chapters/chNN-english-phrase.tex`（小写连字符，序号两位），首行
    `\chapter{…}` + `\label{ch:…}`。
 2. 在 `<学科>/main.tex` 的章节登记表加一行 `\include{chapters/chNN-…}`。
-3. 复制 `standalone/ch01.tex` 为 `chNN.tex`，改 `\setcounter{chapter}{N-1}` 与 `\input` 文件名。
-4. `make ch S=… C=chNN` 单章验证 → `touch <学科>/main.tex && make <学科>` 全书验证。
+3. 复制 `standalone/ch01.tex` 为 `chNN.tex`，改三处：`\def\HTSELF{chNN-…}`、
+   `\setcounter{chapter}{N-1}`、`\input` 的文件名。
+4. 把新章基名加进 `math/standalone/xr-others.tex` 的章节登记表（漏了则该章的
+   跨章 `\cref` 在别章的单章 PDF 里印成 `??`）。
+5. `touch <学科>/main.tex && make <学科>` 全书验证 → `make ch S=… C=chNN` 单章验证
+   （单章靠 xr 读全书 aux，顺序不能反）。
 
 ## 正文写作约定（超出 style-guide 的机制性部分）
 
@@ -79,6 +86,8 @@ make clean                 # 只删 build/；distclean 连 dist/ 一起删
   中文有定名的一律用中文。
 - **定理环境**：`theorem` `lemma` `proposition` `corollary` `definition` `assumption`
   `property` `example` 共用一个按章编号的计数器；`exercise` 单独按章编号；
+  两者的 hyperref 锚点在 cls 里补过章号（`\theH…`），否则各章同号的对象共用锚点，
+  编号显示正确而链接跳到最先出现的那一章。新增定理类环境时要一并加进那张列表。
   `remark` `intuition` 不编号。定理正文自动排楷体。
 - **交叉引用一律 `\cref`/`\Cref`**，cls 已配好中文名（「定理 1.2」「第 3 章」「式 (1.3)」），
   不要手写「见定理 1.2」。标签前缀：`ch: sec: def: thm: prop: lem: cor: ax: ex: exr: eq: fig: tab:`。
