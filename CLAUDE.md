@@ -59,7 +59,9 @@ make clean                 # 只删 build/；distclean 连 dist/ 一起删
   并跳过 `\HTSELF` 指定的本章那一份——直接对全书 aux 用 `\externaldocument` 会把
   本章标签重复读进来，日志里出现上百条 multiply defined，盖住真正的重复。
   （其文件头注释里的 `make econ-ch CH=ch01` 是过时写法，实际目标是 `make ch S=… C=…`。）
-- `<学科>/metadata.tex`——书名/作者/版本/许可，改这些只动这一处。
+- `<学科>/metadata.tex`——书名/副书名/作者/版本/许可/封面图，改这些只动这一处。
+  封面图由 `\coverart{<tikzpicture>}` 与 `\covernote{<一行说明>}` 两个钩子给出，
+  各学科自备；留空则封面不排图。cls 只管版式，不含任何学科专有的图。
 - 编译时 Makefile `export TEXINPUTS := $(CURDIR)/common//:`，故 `handout.cls` 在任何子目录可见；
   latexmk 用 `-cd`，所以 `-outdir` 的相对深度 main 是 `../build/…`、standalone 是 `../../build/…`。
 

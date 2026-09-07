@@ -7,3 +7,24 @@
 \date{\today}
 \license{本讲义以 CC BY-NC-SA 4.0 协议发布，转载请注明出处。}
 \shorttitle{经济学原理}
+
+%%% 封面图：生产可能性边界。取自第 1 章图 1.1，选它是因为它一张图说完
+%%% 本书的出发点——资源有限，边界之内是浪费，边界之外够不着，
+%%% 一切选择都发生在那条弧上，取此舍彼。
+\coverart{%
+  \begin{tikzpicture}[scale=0.62]
+    %% 可行域
+    \fill[htRule, opacity=0.07] (0,0) -- (5,0) arc[start angle=0, end angle=90, radius=5] -- cycle;
+    %% 坐标轴
+    \draw[htGray, -{Stealth[length=4.5pt]}] (0,0) -- (6.3,0);
+    \draw[htGray, -{Stealth[length=4.5pt]}] (0,0) -- (0,6.3);
+    %% 生产可能性边界
+    \draw[htRule, line width=1.3pt] (5,0) arc[start angle=0, end angle=90, radius=5];
+    %% 三个点：边界上、内部、外部
+    \fill[htAccent] (3,4) circle (0.085);
+    \fill[htGray]   (2,2) circle (0.085);
+    \fill[htAccent] (4.5,3.5) circle (0.085);
+    \node[htAccent, font=\scriptsize, anchor=south west] at (3.05,4.05) {\(A\)};
+    \node[htGray,   font=\scriptsize, anchor=north east] at (1.95,1.95) {\(B\)};
+    \node[htAccent, font=\scriptsize, anchor=south west] at (4.55,3.55) {\(C\)};
+  \end{tikzpicture}}

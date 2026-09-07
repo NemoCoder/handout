@@ -63,6 +63,14 @@ def check(path):
                   f"编译会报 thmt@dummyctr 警告；改为指向邻近的编号对象或直接用文字")
             bad += 1
 
+    # 未编号环境上的 \label 无法被 \cref 正确引用（会退到 thmt@dummyctr），
+    # 留着只会诱使后来者写出 \cref{rem:...}。此前第 1 至 4 章各犯过一次。
+    for env in ("remark", "intuition", "strategy", "pitfall"):
+        for m in re.finditer(r"\\begin\{" + env + r"\}(\[[^\]]*\])?\s*\\label\{([^}]+)\}", raw):
+            print(f"  应改  {path}  未编号环境 {env} 上的标签 {m.group(2)} 无法被 \\cref 引用，"
+                  f"应删掉或改指邻近的编号对象")
+            warn += 1
+
     # 中文与 \cref/\textbf/\emph 之间的空格。xeCJK 只在汉字与拉丁字符\u76f4\u63a5
     # 相邻时才插入间距，宏输出外面的 {} 会切断这一判定，故须在源码里人工补齐：
     #   \cref{ch:…}/\cref{sec:…} 排成「第 3 章」，以汉字收尾，后面不留空格；

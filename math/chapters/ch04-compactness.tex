@@ -103,7 +103,6 @@
 \end{center}
 
 \begin{remark}
-  \label{rem:sufficient-not-necessary}
   这张表要先看明白，否则容易把\cref{thm:uniform-on-compact} 记反。
   该定理说的是：\emph{定义域紧}是「连续蕴含一致连续」的\emph{充分}条件。
   它不说定义域不紧就没有一致连续的映射，\cref{ex:one-over-x-uniform}
@@ -396,7 +395,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:diagonal-new}
   上面的\emph{对角线抽取}是本书第一次使用这个手法，值得记住：
   当需要一个同时满足无穷多个条件的子列时，就逐层加细、最后取对角线。
   它在第 9 章证明 Arzelà--Ascoli 定理时还会出现。
@@ -547,13 +545,10 @@
 \end{proof}
 
 \begin{remark}[通往卷四的门]
-  \label{rem:compact-to-topology}
   \cref{def:compact} 的陈述中只出现「开集」，没有距离。
   卷四把它取作拓扑空间中紧性的定义。届时\cref{thm:compact-equiv} 不再成立：
   一般拓扑空间中紧与序列紧互不蕴含，全有界更是无从谈起（那里没有度量）。
-  这与\cref{ch:continuity}的情形一致：三副面孔中，提到距离的那一副
-  （全有界）离开度量空间即无从谈起，而序列紧虽仍有定义，
-  却不再与紧等价。只有开覆盖紧原封不动地活了下来并反客为主。
+  这与\cref{ch:continuity}的情形一致，对照那里的同一条注即可。
 
   文献中还有第四种刻画，称为可数紧：每个\emph{可数}开覆盖有有限子覆盖。
   在度量空间中它与上述三条等价，本讲义不用，故不展开。
@@ -595,7 +590,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:sup-to-compact}
   这个证明兑现了第 1 章那句话：紧性是确界原理的接替者。
   交接的确切含义是：\emph{定义域}的那一侧从此改用紧性——
   \cref{thm:uniform-on-compact} 对任意紧度量空间成立，不必是实区间。
@@ -702,7 +696,6 @@
 \end{proof}
 
 \begin{remark}[边界，务必看清]
-  \label{rem:uc-boundary}
   \cref{thm:uniform-on-compact} 说的是：\emph{定义域紧}是「连续蕴含一致连续」的%
   \emph{充分}条件。它不说别的。对照\cref{sec:why-compact}的那张表：
   \begin{itemize}
@@ -746,10 +739,10 @@
 
 三条向前的接口：
 
-\emph{其一}，\cref{def:compact} 在卷四取作拓扑空间中紧性的定义。
-届时会有紧而不序列紧的空间，也有序列紧而不紧的空间；
-把\cref{thm:compact-equiv} 拆开来看，正是那里的主要工作之一。
-Tychonoff 定理断言任意多个紧空间之积仍紧，本讲义在卷四证明。
+\emph{其一}，\cref{def:compact} 在卷四取作拓扑空间中紧性的定义，
+届时\cref{thm:compact-equiv} 会被拆开，详见\cref{sec:open-cover}末尾的注。
+这里只补一条去向：Tychonoff 定理断言任意多个紧空间之积仍紧，本讲义在卷四证明，
+用的正是\cref{exr:fip} 的有限交性质形式。
 
 \emph{其二}，\cref{def:totally-bounded} 的全有界在第 9 章与卷五重现。
 Arzelà--Ascoli 定理以「有界加等度连续」刻画 \(C(K)\) 中的\emph{相对紧}子集，
@@ -862,7 +855,8 @@ Arzelà--Ascoli 定理以「有界加等度连续」刻画 \(C(K)\) 中的\emph{
   证明：\(X\) 紧当且仅当任一具有\emph{有限交性质}的闭集族
   （即其中任意有限多个成员之交非空）其总交非空。
   \begin{solution}
-    取补集即可。设 \(X\) 紧，\(\mathcal{F}\) 为闭集族且总交为空。
+    取补集即可（\cref{exr:open-iff-complement-closed}）。
+    设 \(X\) 紧，\(\mathcal{F}\) 为闭集族且总交为空。
     则 \(\setst{X \setminus F}{F \in \mathcal{F}}\) 是开覆盖，
     取有限子覆盖 \(X = \bigcup_{j}(X \setminus F_{j}) = X \setminus \bigcap_{j}F_{j}\)，
     故 \(\bigcap_{j} F_{j} = \emptyset\)，与有限交性质矛盾。

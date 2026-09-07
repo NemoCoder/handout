@@ -119,11 +119,24 @@
 \end{table}
 
 \begin{remark}[读法建议]
-  本章比后续各章更偏基础，初次阅读不必全部掌握。
-  \cref{sec:sup-calc}与 \cref{sec:sup-principle}是必须掌握的，
-  确界的计算要练到不假思索；\cref{sec:order-complete}的一般化、
-  \cref{ex:non-archimedean} 的非阿基米德域、以及\cref{thm:uniqueness}
-  可以先跳过，读完第 2 章的度量空间再回看。
+  本章比后续各章更偏基础，初次阅读不必全部掌握。三条路径如下。
+
+  \emph{必读}：\cref{sec:why-reals}、\cref{sec:rational-gap}、\cref{sec:ordered-field}、
+  \cref{sec:sup-calc}、\cref{sec:sup-principle}、\cref{sec:archimedean}、
+  \cref{sec:cauchy}、\cref{sec:outlook}。其中确界的计算（\cref{sec:sup-calc}）
+  要练到不假思索，\cref{sec:cauchy}是通往第 2 章的入口。
+  \cref{sec:prelim}是工具，用到时回查即可。
+
+  \emph{可缓}：\cref{sec:order-complete}把序完备性一般化，读完第 2 章再回看更顺；
+  \cref{sec:uncountable}的不可数性本卷用不到，第 7 章判别 Riemann 可积时才要
+  （见\cref{tab:where-used}）。
+
+  \emph{选读}：\cref{thm:uniqueness} 的唯一性、\cref{ex:non-archimedean} 的非阿基米德域，
+  以及正文中标了「选读」的注。后续五章一次也没有用到它们
+  （附录 A 会用到唯一性定理，读附录前回看即可）。
+  注意\cref{sec:def-reals}的\cref{def:reals} 是全书对 \(\R\) 的定义，不可略。
+
+  习题中标「后续必需」的，其结论后面几章会直接调用，应当做。
 \end{remark}
 
 \section{预备：本章要用到的记号与事实}
@@ -363,7 +376,7 @@
   \Cref{thm:complete-implies-arch} 将说明，完备性自动排除了反例。
 \end{intuition}
 
-\begin{example}[一个非阿基米德的有序域]
+\begin{example}[{一个非阿基米德的有序域\optread}]
   \label{ex:non-archimedean}
   设 \(\R(t)\) 为实系数有理函数域。对非零的 \(f \in \R(t)\)，
   把 \(f\) 写成两个多项式之商，规定 \(f > 0\) 当且仅当分子与分母的
@@ -742,7 +755,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:which-axiom}
   证明中没有出现过一次加法或乘法。因此这三条是纯粹的序性质，
   与 \(\R\) 的域结构无关。
 
@@ -770,7 +782,7 @@
 序完备性刻画 \(\Q\) 所缺失的结构。定义本身既未断言这样的对象存在，
 也未断言它唯一。两者都成立，但其地位不同。
 
-\begin{theorem}[唯一性]
+\begin{theorem}[{唯一性\optread}]
   \label{thm:uniqueness}
   设 \(\R\) 与 \(\R'\) 都是序完备的有序域，则存在唯一的双射
   \(j \mapsdef \R \to \R'\) 使得对一切 \(x, y \in \R\) 有
@@ -785,7 +797,6 @@
 \end{remark}
 
 \begin{remark}[一段史实]
-  \label{rem:history}
   柯西于 1821 年出版《分析教程》，其中首次给出了数学分析的严格叙述，
   但他把实数的性质当作已知而未加追问。1858 年，戴德金在苏黎世高等工业学校
   准备微分学讲义时，按他自己的说法，比以往任何时候都更强烈地感到算术缺乏
@@ -896,7 +907,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:metric-forward}
   \Cref{prop:d-is-metric} 的三条性质将在第 2 章抽象为\term{度量}{metric}
   的公理：任给一个集合与其上满足这三条的二元函数，就得到一个度量空间。
   这三条性质中不出现序关系。下述概念同样如此。
@@ -967,7 +977,6 @@
 \end{proof}
 
 \begin{remark}[本章的核心]
-  \label{rem:the-point}
   \Cref{thm:completeness-split} 把一条性质拆成了两条，而这两条的性质截然不同：
   \begin{itemize}
     \item 阿基米德性（\cref{def:archimedean}）的陈述里出现了 \(<\)，是一条\emph{序}陈述；
@@ -1389,9 +1398,10 @@
 
 \begin{exercise}[延伸]
   \label{exr:sup-not-metric}
+  \needlater\
   举出一个集合与其上的度量，使得该集合上无法定义与度量相容的全序。
   由此说明为什么第 2 章起不再以确界为主要工具。
-  （\emph{后续必需}：第 5 章会补上本题所缺的一步并回引。）
+  （第 5 章会补上本题所缺的一步并回引。）
   \begin{solution}
     取平面 \(\R^{2}\) 及欧氏距离。设有全序 \(\preceq\) 与之相容
     （意即序区间构成的族生成同一拓扑）。去掉一点后 \(\R^{2}\) 仍连通，

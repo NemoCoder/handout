@@ -167,16 +167,23 @@
 %% 8. 元信息接口
 %% -------------------------------------------------------------------------
 \newcommand{\ht@shorttitle}{}
+\newcommand{\ht@subtitle}{}
 \newcommand{\ht@subject}{}
 \newcommand{\ht@version}{}
 \newcommand{\ht@institute}{}
 \newcommand{\ht@license}{}
+\newcommand{\ht@coverart}{}
+\newcommand{\ht@covernote}{}
 
 \newcommand{\shorttitle}[1]{\renewcommand{\ht@shorttitle}{#1}}
+\newcommand{\subtitle}[1]{\renewcommand{\ht@subtitle}{#1}}
 \newcommand{\subject}[1]{\renewcommand{\ht@subject}{#1}}
 \newcommand{\htversion}[1]{\renewcommand{\ht@version}{#1}}
 \newcommand{\institute}[1]{\renewcommand{\ht@institute}{#1}}
 \newcommand{\license}[1]{\renewcommand{\ht@license}{#1}}
+%% 封面图与其说明。各学科在 metadata.tex 里给一段 tikzpicture；留空则封面不排图。
+\newcommand{\coverart}[1]{\renewcommand{\ht@coverart}{#1}}
+\newcommand{\covernote}[1]{\renewcommand{\ht@covernote}{#1}}
 
 %% -------------------------------------------------------------------------
 %% 9. 定理类环境（中文名，按章编号，共用计数器）
@@ -338,6 +345,16 @@
   before skip=8pt, after skip=8pt,
 }
 
+%% 选读标记。用在节标题或环境的可选参数里，标出初读可跳过、不影响主线的材料。
+%%   \section[标题〔选读〕]{标题\optread}
+%%   \begin{example}[标题\optread]
+%% 与习题的「例行／结构／延伸」三档无关——后者说的是题目难度，
+%% 这里说的是阅读顺序。节标题里要同时给短标题，否则目录与页眉排不好。
+\newcommand{\optread}{\,{\normalfont\sffamily\footnotesize\color{htGray}〔选读〕}}
+
+%% 后续必需：标在习题上，提示该题结论后面几章要直接调用。
+\newcommand{\needlater}{\,{\normalfont\sffamily\footnotesize\color{htAccent}〔后续必需〕}}
+
 %% 草稿期待办标记：draft 选项下显示，正式编译时静默
 \ifht@draft
   \newcommand{\todo}[1]{\textcolor{red}{\sffamily\small[TODO: #1]}}
@@ -404,25 +421,51 @@
 \renewcommand{\maketitle}{%
   \begin{titlepage}
     \thispagestyle{empty}
-    \vspace*{4cm}
-    \noindent{\color{htRule}\rule{\textwidth}{1.2pt}}\par
-    \vspace{1.2em}
+    %% 左侧通栏色条：给封面一个固定的视觉锚点，也便于书脊定位
+    \begin{tikzpicture}[remember picture, overlay]
+      \fill[htRule] (current page.north west) rectangle
+        ($(current page.south west)+(8mm,0)$);
+      \fill[htAccent] (current page.north west) rectangle
+        ($(current page.north west)+(8mm,-40mm)$);
+    \end{tikzpicture}%
+    \vspace*{2.6cm}
+
+    %% 标题区
     \noindent{\sffamily\bfseries\zihao{0}\color{htRule}\@title}\par
-    \vspace{0.8em}
-    \ifdefempty{\ht@subject}{}{\noindent{\sffamily\zihao{3}\color{htGray}\ht@subject}\par\vspace{0.6em}}
-    \noindent{\color{htRule}\rule{\textwidth}{0.5pt}}\par
-    \vspace{2.5em}
-    \noindent{\zihao{4}\@author}\par
-    \ifdefempty{\ht@institute}{}{\vspace{0.4em}\noindent{\zihao{-4}\color{htGray}\ht@institute}\par}
+    \ifdefempty{\ht@subtitle}{}{%
+      \vspace{0.35em}
+      \noindent{\sffamily\zihao{2}\color{htAccent}\ht@subtitle}\par}
+    \vspace{0.9em}
+    \noindent{\color{htRule}\rule{0.42\textwidth}{1.1pt}}\par
+    \ifdefempty{\ht@subject}{}{%
+      \vspace{0.7em}
+      \noindent{\sffamily\zihao{4}\color{htGray}\ht@subject}\par}
+
+    %% 封面图：与标题同左对齐，不居中——整页只用一条左轴线
+    \ifdefempty{\ht@coverart}{\vfill}{%
+      \vspace{1.5cm}
+      \noindent\ht@coverart\par
+      \ifdefempty{\ht@covernote}{}{%
+        \vspace{1.1em}
+        \noindent{\zihao{6}\color{htGray}\ht@covernote}\par}}
     \vfill
+
+    %% 版本区
+    \noindent{\zihao{4}\@author}\par
+    \ifdefempty{\ht@institute}{}{%
+      \vspace{0.3em}\noindent{\zihao{-4}\color{htGray}\ht@institute}\par}
+    \vspace{1.1em}
     \ifht@teacher
-      \noindent{\sffamily\zihao{4}\color{htAccent}教师版（含习题解答，请勿外传）}\par\vspace{0.8em}
+      \noindent{\sffamily\zihao{-4}\color{htAccent}教师版（含习题解答，请勿外传）}\par
     \else
-      \noindent{\sffamily\zihao{4}\color{htGray}学生版}\par\vspace{0.8em}
+      \noindent{\sffamily\zihao{-4}\color{htGray}学生版}\par
     \fi
+    \vspace{0.35em}
     \noindent{\zihao{-4}\color{htGray}\@date
-      \ifdefempty{\ht@version}{}{\qquad 版本 \ht@version}}\par
-    \ifdefempty{\ht@license}{}{\vspace{0.6em}\noindent{\zihao{6}\color{htGray}\ht@license}\par}
+      \ifdefempty{\ht@version}{}{\quad·\quad 版本 \ht@version}}\par
+    \ifdefempty{\ht@license}{}{%
+      \vspace{0.45em}\noindent{\zihao{6}\color{htGray}\ht@license}\par}
+    \vspace{0.6cm}
   \end{titlepage}
 }
 

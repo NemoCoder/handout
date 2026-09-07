@@ -1,9 +1,29 @@
-%%% 数学讲义元信息 —— 改书名、作者、版本只需改这一处
-\title{数学分析讲义}
-\subject{Mathematical Analysis}
+%%% 数学讲义元信息 —— 改书名、作者、版本、封面只需改这一处
+\title{数学分析 I}
+\subtitle{结构与极限}
+\subject{Mathematical Analysis I: Structure and Limits}
 \author{Clarence Liao}
 \institute{}
 \htversion{0.1.0}
 \date{\today}
 \license{本讲义以 CC BY-NC-SA 4.0 协议发布，转载请注明出处。}
-\shorttitle{数学分析}
+\shorttitle{数学分析 I}
+
+%%% 封面图：\R^2 上三个度量的单位球。取自第 2 章图 2.1，
+%%% 选它是因为它一张图说完本卷的主张——同一个点集，换一种距离，
+%%% 「离原点不超过 1」就是另一个形状。三者的嵌套 B_1 ⊆ B_2 ⊆ B_∞
+%%% 正是 d_∞ ≤ d_2 ≤ d_1 的几何形式。
+\coverart{%
+  \begin{tikzpicture}[scale=2.1]
+    %% d_∞ 的单位球：正方形
+    \draw[htGray, line width=0.6pt] (-1,-1) rectangle (1,1);
+    %% d_2 的单位球：圆
+    \draw[htRule, line width=1.1pt] (0,0) circle (1);
+    %% d_1 的单位球：菱形
+    \fill[htAccent, opacity=0.13] (1,0) -- (0,1) -- (-1,0) -- (0,-1) -- cycle;
+    \draw[htAccent, line width=1.1pt] (1,0) -- (0,1) -- (-1,0) -- (0,-1) -- cycle;
+    %% 坐标轴：细、短，只作定位
+    \draw[htGray!55, line width=0.4pt] (-1.32,0) -- (1.32,0);
+    \draw[htGray!55, line width=0.4pt] (0,-1.32) -- (0,1.32);
+    \fill[htRule] (0,0) circle (0.028);
+  \end{tikzpicture}}

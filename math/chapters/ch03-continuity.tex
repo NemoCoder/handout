@@ -142,7 +142,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:seq-moral}
   记住这一条：\emph{要判断一个映射是否连续，序列判据通常最省力}。
   凡结论形如「某某映射连续」，先试序列；证不出来再换 \(\varepsilon\)-\(\delta\)。
   \cref{thm:composite-continuous} 的证明是最好的示范：它把两次「保持收敛」
@@ -198,7 +197,6 @@
 \end{proof}
 
 \begin{remark}[两副面孔的分工]
-  \label{rem:two-faces}
   \cref{def:continuous} 与\cref{eq:eps-delta} 逻辑上等价，用途却不同：
   \begin{itemize}
     \item 证\emph{连续}用序列，如\cref{thm:composite-continuous}；
@@ -330,15 +328,12 @@
 \end{pitfall}
 
 \begin{remark}[通往卷四的门]
-  \label{rem:door-to-topology}
   \cref{thm:open-preimage} 的陈述中只出现「开集」二字，没有距离。
   由\cref{thm:metric-topology}，开集族满足三条性质，卷四把那三条取作%
   \term{拓扑}{topology}的公理；相应地，卷四把\cref{thm:open-preimage} 的
   结论取作连续的\emph{定义}。
 
-  于是本章的三副面孔在卷四的命运不同：序列判据与 \(\varepsilon\)-\(\delta\) 条件
-  提到了距离，其中 \(\varepsilon\)-\(\delta\) 在没有度量的空间中无从表述；
-  序列判据仍可表述，却不再与连续等价。开集判据移植得过去，并且反客为主。
+  三副面孔到卷四的不同命运已在\cref{sec:why-continuity}说过，此处不重复。
   这是本书「用得越少，走得越远」这条主线的又一个实例。
 \end{remark}
 
@@ -360,7 +355,6 @@
 \end{proof}
 
 \begin{remark}[对第 2 章完备性反例的解释]
-  \label{rem:explain-ch2}
   \cref{prop:convergence-topological} 表明\emph{收敛是拓扑概念}：
   它可以只用开集说清楚，与具体的度量无关。同理，闭包、闭集、稠密、
   内部、边界、聚点也都是拓扑概念。
@@ -481,7 +475,6 @@
 \end{example}
 
 \begin{remark}
-  \label{rem:uniform-not-topological}
   一致连续\emph{不是}拓扑性质。\cref{eq:uniform} 中要拿不同点处的
   \(\delta\) 作比较，用到的是度量本身而非开集族。
   这与第 2 章完备性的情形完全同类：两者都落在「依赖度量」那一层。
@@ -570,9 +563,10 @@
 
 两条向前的接口：
 
-\emph{其一}，\cref{thm:open-preimage} 在卷四取作拓扑空间中连续的定义。
-届时序列判据将不再等价于它——在一般拓扑空间中，保持序列收敛的映射未必连续，
-须把序列换成网。这是收敛阶梯的第三级。
+\emph{其一}，\cref{thm:open-preimage} 在卷四取作拓扑空间中连续的定义，
+理由见\cref{sec:open-continuity}末尾的注。这里只补一条去向：届时
+「保持序列收敛」不再等价于连续，须把序列换成网，这是收敛阶梯的第三级
+（第一级是数列，第二级是度量空间中的数列，见\cref{ch:metric}）。
 
 \emph{其二}，第 4 章将证明紧集上的连续函数必一致连续。
 届时\cref{ex:not-uniform} 中 \(1/x\) 的反例会得到解释：

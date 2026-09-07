@@ -181,7 +181,8 @@
 
 \begin{remark}
   两块互为补集，故「\(F_{1}\) 与 \(F_{2}\) 都闭」与「都开」说的是同一件事：
-  \(F_{2} = X \setminus F_{1}\) 闭等价于 \(F_{1}\) 开。Pugh 即从「都开」出发定义。
+  由\cref{exr:open-iff-complement-closed}，\(F_{2} = X \setminus F_{1}\) 闭等价于
+  \(F_{1}\) 开。Pugh 即从「都开」出发定义。
   下面的刻画把这件事写明。
 \end{remark}
 
@@ -350,7 +351,8 @@
   \]
   两者非空（分别含 \(x\) 与 \(y\)）、不交，且因 \(z \notin I\) 其并为 \(I\)。
   由\cref{lem:subspace-openclosed}(i)，两者都是 \(I\) 中的开集；
-  而它们互为补集，故各自也闭。于是它们构成 \(I\) 的 separation，\(I\) 不连通。
+  而它们在 \(I\) 中互为补集，由\cref{exr:open-iff-complement-closed} 故各自也闭。
+  于是它们构成 \(I\) 的 separation，\(I\) 不连通。
 
   \emph{\(\Leftarrow\)}。设 \(I\) 是区间而 \(I = F_{1} \cup F_{2}\) 是 separation。
   分七步导出矛盾。

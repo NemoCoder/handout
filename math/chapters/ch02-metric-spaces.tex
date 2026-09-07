@@ -103,14 +103,21 @@
 \end{table}
 
 \begin{remark}[读法建议]
-  \cref{sec:metric-def}的例子库应当逐个算过，后面每遇到一个新概念都要回来
-  在这些例子上验证一遍。抽象概念若不落到具体例子上，很难真正掌握。
-  \cref{sec:norm}关于范数与内积的部分初读可略，它在卷二才真正用上；
-  \cref{sec:completion}完备化的构造细节可以先跳过结论以后再补：
-  要记住的是完备化存在且唯一，技术验证可以回头再看。
-  \cref{sec:contraction}的压缩映射原理必须掌握，其证明只有半页，宜熟记。
-  \cref{lem:subspace-openclosed} 的相对开闭判据虽只有三行，第 3 至 5 章反复要用。
-  习题中\cref{exr:sequential-closure} 的闭包序列刻画也属后续必需，标了「后续必需」的题都该做。
+  \emph{必读}：\cref{sec:why-metric}、\cref{sec:metric-def}、\cref{sec:convergence}、
+  \cref{sec:open-closed}、\cref{sec:completeness}、\cref{sec:contraction}、
+  \cref{sec:ch2-outlook}。其中\cref{sec:metric-def}的例子库应当逐个算过，
+  后面每遇到一个新概念都要回来在这些例子上验证一遍：抽象概念若不落到具体例子上，
+  很难真正掌握；\cref{sec:contraction}的压缩映射原理证明只有半页，宜熟记；
+  \cref{lem:subspace-openclosed} 的相对开闭判据只有三行，第 3 至 5 章反复要用。
+
+  \emph{要结论不要证明}：\cref{sec:completion}的完备化。记住「每个度量空间都有完备化、
+  且在等距同构下唯一」即可，构造本身是技术验证，回头再看不迟。
+
+  \emph{选读}：\cref{sec:norm}的范数与内积，卷二才真正用上；
+  其中的 Cauchy 不等式（\cref{prop:cauchy-ineq}）是例外，
+  \cref{sec:metric-def}验证 \(d_{2}\) 是度量时要用。
+
+  习题中标「后续必需」的，其结论后面几章会直接调用，应当做。
 \end{remark}
 
 \section{度量与例子库}
@@ -153,7 +160,6 @@
 \end{remark}
 
 \begin{remark}
-  \label{rem:nonneg-redundant}
   定义中没有要求 \(d \ge 0\)，因为它可由其余两条推出：由 (M3) 与 (M2)，
   \begin{equation}
     \label{eq:nonneg}
@@ -289,8 +295,12 @@
   \end{enumerate}
 \end{pitfall}
 
-\section{范数与内积：结构的阶梯}
+\section[范数与内积：结构的阶梯〔选读〕]{范数与内积：结构的阶梯\optread}
 \label{sec:norm}
+
+本节初读可略，它在卷二讨论赋范空间与 Hilbert 空间时才真正用上。
+只有一处例外：\cref{sec:metric-def}验证 \(d_{2}\) 满足三角不等式时借用了
+本节的 Cauchy 不等式（\cref{prop:cauchy-ineq}），那一条要看。
 
 \cref{sec:metric-def}的例子里，\(\R^{n}\)、\(C[a,b]\)、\(\ell^{1}\) 都不只是集合，
 它们还能做加法与数乘。这些额外结构使得距离可以由一个更简单的量导出。
@@ -326,7 +336,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:not-every-metric-from-norm}
   反过来不成立：\emph{并非每个度量都来自范数}。
   由\cref{eq:norm-metric-props}，来自范数的度量必平移不变且齐次，
   而离散度量（\cref{ex:metric-discrete}）在 \(X=\R\) 上不齐次：
@@ -555,7 +564,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:finite-only}
   (iii) 中的「有限」不能去掉：在 \(\R\) 中 \(\bigcap_{n \ge 1}(-1/n,\,1/n) = \set{0}\)，
   是可数多个开集之交，却不是开集。取最小值的那一步正是有限性用武之处。
 
@@ -710,7 +718,6 @@
 \end{proof}
 
 \begin{remark}[对第 1 章对照表的修正]
-  \label{rem:refine-ch1-table}
   第 1 章末把实数系的各条性质分成「依赖序」与「依赖距离」两类。
   \cref{thm:complete-not-topological} 表明后一类还须再分一层：
 
@@ -763,6 +770,8 @@
   两个指向同一位置的列应当视为相同，于是要作商。
   这与\cref{app:construction} 从 \(\Q\) 造 \(\R\) 的手法完全一致。
 \end{strategy}
+
+下面的构造是技术验证，初读记住定理的结论即可，回头再补。
 
 \begin{proof}
   记 \(\mathcal{C}\) 为 \(X\) 中全体 Cauchy 列之集（收敛与否不论）。
@@ -919,7 +928,6 @@
 \end{proof}
 
 \begin{remark}
-  \label{rem:contraction-remarks}
   三点值得注意。
 
   其一，\cref{eq:contraction-error} 取 \(n=0\) 给出
@@ -1179,6 +1187,7 @@
 
 \begin{exercise}[结构]
   \label{exr:open-iff-complement-closed}
+  \needlater\
   证明 \(A\) 是闭集当且仅当 \(X \setminus A\) 是开集。
   这个证明用到了度量的哪些性质？
   \begin{solution}
@@ -1268,9 +1277,9 @@
 
 \begin{exercise}[结构]
   \label{exr:sequential-closure}
+  \needlater\
   证明：在度量空间中 \(b \in \overline{A}\) 当且仅当存在 \(A\) 中的数列收敛于 \(b\)。
-  这条结论在什么地方用到了度量？
-  （\emph{后续必需}：第 4 章证「紧集必闭」时直接调用它。）
+  这条结论在什么地方用到了度量？（第 4 章证「紧集必闭」时直接调用它。）
   \begin{solution}
     若有 \(a_{n} \to b\)，\(a_{n} \in A\)，则每个球 \(B(b,\varepsilon)\) 含有某个 \(a_{n}\)，
     故 \(b \in \overline{A}\)。反之设 \(b \in \overline{A}\)，
