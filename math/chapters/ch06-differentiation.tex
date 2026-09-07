@@ -1,0 +1,1317 @@
+%%% ==========================================================================
+%%%  第六章：一元微分学
+%%%  大纲第二版见 temp/ch06-outline.md，章节边界见 temp/ch07-09-boundary.md。
+%%%  写作时须守住的几条（大纲第八节，均为审阅指出）：
+%%%   - 定义用线性逼近，余项写 |r(h)|/|h| → 0（不写 r(h)/h），商作等价刻画；
+%%%   - Rolle 显式走最值定理并回引第 4 章；
+%%%   - Darboux 显式走最值定理，写明不是介值定理，回引第 5 章的 pitfall；
+%%%   - 反函数定理两条陈述都要有，第一条的「连续单射」不可丢；
+%%%   - 逆连续写邻域论证（要用单调性造出两侧的像点），不写「逆单调故连续」；
+%%%   - 链式法则先指出 s(0)=0，再在非零增量处作除法；
+%%%   - 第一类间断点的定义必须先要求「不连续」；
+%%%   - 初等函数只在例题与习题中出现，且不依赖后文才构造的超越函数。
+%%%  TODO：第 7、9 章与卷二建立后，把「第 N 章」改回 \cref{ch:...}。
+%%% ==========================================================================
+\chapter{一元微分学}
+\label{ch:differentiation}
+
+\begin{keypoint}[本章要点]
+  \begin{itemize}
+    \item 导数是\emph{最好的线性逼近}。本章把它定义成「存在线性映射使误差比增量
+          更快地趋于零」，商的形式只是一维的等价刻画。
+    \item 这个定义到卷二原样成立：把线性映射的定义域与陪域换成 \(\R^{n}\)、\(\R^{m}\)，
+          余项的绝对值换成范数，就是 Fréchet 导数。商的形式换不过去，因为除不了向量。
+    \item 中值定理族的根在\cref{ch:compactness}的最值定理，不在介值定理。
+          导函数未必连续，介值定理套不到导函数上。
+    \item 导函数虽可能不连续，却不会有第一类间断，且仍有介值性质（Darboux 定理）。
+          两条都由最值定理得出。
+    \item 一元反函数定理要「连续单射」这个前提。仅有一点的导数非零，
+          连局部单射都保证不了。
+  \end{itemize}
+\end{keypoint}
+
+\section{为什么把导数定义成线性逼近}
+\label{sec:why-derivative}
+
+\begin{remark}[关于初等函数]
+  本章部分例题与习题使用先修课程中的初等函数及其基本性质（如
+  \(\sin\) 的导数是 \(\cos\)），它们的系统构造见第 7 章与第 9 章。
+  这些例题不作为后文构造所依赖的一般定理的证明依据：
+  第 7 章由积分造 \(\log\) 时要用本章的中值定理与反函数定理，
+  而那两条的证明只用到\cref{ch:compactness}与\cref{ch:connectedness}的结论，
+  不依赖任何后文才构造的超越函数。
+\end{remark}
+
+中学把导数说成「切线的斜率」。切线并非无法不循环地定义（可以说它是割线的极限位置），
+但那个定义要先说清「极限位置」是什么，绕一圈仍回到同一个极限。
+换一个问法反而干脆。
+
+给定 \(f\) 与定义域的内点 \(a\)，在 \(a\) 附近用一次函数
+\[
+  x \longmapsto f(a) + c(x-a)
+\]
+去逼近 \(f\)。所有这样的一次函数都在 \(a\) 处取对了值；差别在于逼近得多好。
+若要求误差比 \(\abs{x-a}\) 本身更快地趋于零，则合用的 \(c\) 至多有一个，
+而那个 \(c\) 正是 \(f'(a)\)。
+
+\begin{pitfall}
+  是「至多有一个」，不是「恰有一个」。\(f(x)=\abs{x}\) 在 \(a=0\) 处
+  这样的 \(c\) 一个也没有：取 \(x>0\) 与 \(x<0\) 分别逼出 \(c=1\) 与 \(c=-1\)。
+  唯一性说的是「若存在则唯一」，存在性要另行验证，那正是「可微」二字的内容。
+\end{pitfall}
+
+\begin{concept}{导数}
+  \cwhy{「切线的斜率」这个说法要先有切线，而切线又要靠导数来定。
+    改问「哪个一次函数在 \(a\) 附近逼近 \(f\) 得最好」，问题就落到了实处，
+    而且答案唯一（\cref{prop:derivative-unique}）。}
+  \crel{它是「用线性对象逼近非线性对象」这一手法在一维的第一次出现。
+    卷二的 Fréchet 导数、卷三的切空间用的是同一个想法，
+    换掉的只是线性映射的定义域与陪域。}
+  \cwhere{微积分的两个支柱之一，另一个是积分。凡是要把局部的变化率信息
+    汇总成整体结论的地方都用它。}
+  \cdo{中值定理族（\cref{sec:mvt}）由此得出，进而有单调性判据、极值判定、
+    Taylor 展开与反函数定理。第 7 章的微积分基本定理把它与积分接在一起。}
+\end{concept}
+
+\begin{table}[htbp]
+  \centering
+  \caption{本章各条结论在后续章节中的用途。}
+  \label{tab:ch6-where-used}
+  \begin{tabular}{@{}llp{5.2cm}@{}}
+    \toprule
+    本章结论 & 后续用途（首次使用处） & 说明 \\
+    \midrule
+    中值定理     & 第 7 章 & 微积分基本定理 \\
+    反函数定理   & 第 7 章 & 由 \(\log\) 取逆得 \(\exp\) \\
+    Taylor 定理  & 第 9 章 & Taylor 级数与解析性 \\
+    凸性         & 第 7 章 & 积分形式的 Jensen 不等式；第 9 章与卷五继续用 \\
+    线性逼近的定义 & 卷二   & Fréchet 导数 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection*{本章要做的五件事}
+
+\begin{enumerate}[label=(\arabic*), leftmargin=1.8em]
+  \item 把「最好的线性逼近」写成定义，并证运算法则（\cref{sec:derivative-rules}）。
+  \item 由最值定理推出中值定理族（\cref{sec:mvt}）。这是本章与第 4 章的接口。
+  \item 说明导函数虽可不连续，却不会有第一类间断，且有介值性质
+        （\cref{sec:derivative-properties}）。
+  \item 证一元反函数定理（\cref{sec:inverse-function}），供第 7 章造 \(\exp\)。
+  \item 高阶导数与 Taylor 定理、凸函数，以及本章在更一般框架下的地位。
+\end{enumerate}
+
+\begin{remark}[读法建议]
+  \cref{sec:derivative-rules}与\cref{sec:mvt}必须掌握，
+  其中链式法则的证明值得逐行核对，它是本章唯一到卷二仍可用的证明。
+  \cref{sec:derivative-properties}的两条结论初读可只记结论，
+  但\cref{ex:not-monotone-near-zero} 那个反例要看，后面两节都靠它。
+  \cref{sec:inverse-function}的两条陈述要分清：
+  一条用「连续单射」，一条用 \(C^{1}\)，后者才是通向卷二的那一条。
+\end{remark}
+
+\section{导数：定义与运算法则}
+\label{sec:derivative-rules}
+
+\begin{definition}[可微与导数]
+  \label{def:differentiable}
+  设 \(f\) 定义在区间 \(I\) 上，\(a\) 是 \(I\) 的内点。若存在线性映射
+  \(L \mapsdef \R \to \R\) 与定义在 \(0\) 的某去心邻域上的函数 \(r\) 使
+  \begin{equation}
+    \label{eq:linear-approx}
+    f(a+h) = f(a) + L(h) + r(h), \qquad
+    \frac{\abs{r(h)}}{\abs{h}} \longrightarrow 0 \quad (h \to 0),
+  \end{equation}
+  则称 \(f\) 在 \(a\) \term{可微}{differentiable}，称 \(L\) 为 \(f\) 在 \(a\) 的%
+  \term{导数}{derivative}。
+\end{definition}
+
+\begin{remark}
+  余项的条件写成 \(\abs{r(h)}/\abs{h} \to 0\) 而不是 \(r(h)/h \to 0\)。
+  一维两者相同，但到 \(\R^{n}\) 就除不了向量了，而这个定义的价值恰在于它移植得过去：
+  卷二把 \(L\) 换成 \(\R^{n} \to \R^{m}\) 的线性映射、把两处绝对值换成相应的范数，
+  \cref{eq:linear-approx} 一字不改地成为 Fréchet 导数的定义。
+\end{remark}
+
+\begin{proposition}[导数唯一]
+  \label{prop:derivative-unique}
+  \cref{def:differentiable} 中的 \(L\) 至多有一个。
+\end{proposition}
+
+\begin{proof}
+  设 \(L_{1}, L_{2}\) 都合用，令 \(M = L_{1}-L_{2}\)。两式相减得
+  \(\abs{M(h)} \le \abs{r_{1}(h)} + \abs{r_{2}(h)}\)，故 \(\abs{M(h)}/\abs{h} \to 0\)。
+  而 \(M\) 线性，\(M(h) = mh\) 对某个 \(m \in \R\) 成立，于是 \(\abs{M(h)}/\abs{h} = \abs{m}\)
+  是常数。常数趋于零只能自身为零，故 \(m=0\)，即 \(L_{1}=L_{2}\)。
+\end{proof}
+
+\(\R\) 到 \(\R\) 的线性映射就是「乘一个数」：\(L(h) = L(1) \cdot h\)。
+于是可以把导数记成一个实数。
+
+\begin{remark}[记号]
+  记 \(f'(a) := L(1)\)，仍称之为 \(f\) 在 \(a\) 的导数，也记作 \(\dd{f}{x}(a)\)。
+  这一步是一维特有的便利，不是导数的本质：到 \(\R^{n}\) 上，
+  \(L\) 由矩阵代表，没有哪个数顶替得了它。
+\end{remark}
+
+\begin{proposition}[与商的形式等价]
+  \label{prop:quotient-form}
+  设 \(a\) 是 \(I\) 的内点，\(l \in \R\)。则 \(f\) 在 \(a\) 可微且 \(f'(a)=l\)
+  当且仅当
+  \begin{equation}
+    \label{eq:quotient-form}
+    \lim_{h \to 0} \frac{f(a+h)-f(a)}{h} = l .
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  设\cref{eq:linear-approx} 成立且 \(L(h)=lh\)。对 \(h \neq 0\)，
+  \[
+    \frac{f(a+h)-f(a)}{h} - l = \frac{r(h)}{h},
+  \]
+  其绝对值等于 \(\abs{r(h)}/\abs{h} \to 0\)，故\cref{eq:quotient-form} 成立。
+
+  反之设\cref{eq:quotient-form} 成立，令 \(r(h) := f(a+h)-f(a)-lh\)（\(h \neq 0\)）。
+  则 \(\abs{r(h)}/\abs{h} = \abs{\bigl(f(a+h)-f(a)\bigr)/h - l} \to 0\)。
+\end{proof}
+
+此后计算导数一律用\cref{eq:quotient-form}，它便于估算；
+而凡是要把结论带到更一般的场合，回到\cref{eq:linear-approx}。
+
+\begin{proposition}
+  \label{prop:diff-implies-cont}
+  可微蕴含连续，反之不然。
+\end{proposition}
+
+\begin{proof}
+  由\cref{eq:linear-approx}，\(h \to 0\) 时 \(L(h) \to 0\) 且 \(r(h) \to 0\)
+  （因 \(\abs{r(h)} = \frac{\abs{r(h)}}{\abs{h}}\abs{h}\)，两个因子都趋于零），
+  故 \(f(a+h) \to f(a)\)。
+
+  反之不然：\(\abs{x}\) 在 \(0\) 处连续而不可微，理由见\cref{sec:why-derivative}的常见错误框。
+\end{proof}
+
+\begin{remark}
+  「连续而不可微」还能坏得多。存在处处连续处处不可微的函数，
+  其构造要用一致收敛，留到第 9 章。
+\end{remark}
+
+\begin{theorem}[四则运算]
+  \label{thm:arithmetic-rules}
+  设 \(f, g\) 在 \(a\) 可微。则 \(f+g\)、\(fg\) 在 \(a\) 可微，且
+  \[
+    (f+g)'(a) = f'(a)+g'(a), \qquad
+    (fg)'(a) = f'(a)g(a) + f(a)g'(a) .
+  \]
+  若 \(g(a) \neq 0\)，则 \(f/g\) 在 \(a\) 可微且
+  \((f/g)'(a) = \bigl(f'(a)g(a)-f(a)g'(a)\bigr)/g(a)^{2}\)。
+\end{theorem}
+
+\begin{proof}
+  和的情形由\cref{eq:quotient-form} 与\cref{prop:limit-basics} 直接得出。
+
+  积：记 \(\Delta f = f(a+h)-f(a)\)、\(\Delta g = g(a+h)-g(a)\)，则
+  \[
+    \frac{f(a+h)g(a+h)-f(a)g(a)}{h}
+      = \frac{\Delta f}{h}\,g(a+h) + f(a)\,\frac{\Delta g}{h} .
+  \]
+  由\cref{prop:diff-implies-cont}，\(g(a+h) \to g(a)\)；再用\cref{prop:limit-basics}。
+
+  商：先证 \((1/g)'(a) = -g'(a)/g(a)^{2}\)。由 \(g\) 连续且 \(g(a) \neq 0\)，
+  \(h\) 充分小时 \(g(a+h) \neq 0\)，且
+  \[
+    \frac{1}{h}\left(\frac{1}{g(a+h)}-\frac{1}{g(a)}\right)
+      = -\frac{1}{g(a+h)g(a)} \cdot \frac{\Delta g}{h} ,
+  \]
+  取极限即得。再与积的情形合起来。
+\end{proof}
+
+\begin{strategy}
+  链式法则若按商的形式证，要处理「分母 \(f(a+h)-f(a)\) 可能为零」这个麻烦，
+  传统教材常在此含糊过去。按\cref{eq:linear-approx} 证则干净：
+  两个线性逼近复合起来，主项是两个线性映射的复合，
+  剩下的都归入余项。要小心的只有一处：余项 \(s\) 的自变量可能取到零，
+  那时不能作除法。办法是把 \(s\) 的零点值单独定义，此后只在非零处作除法。
+\end{strategy}
+
+\begin{theorem}[链式法则]
+  \label{thm:chain-rule}
+  设 \(f\) 在 \(a\) 可微，\(g\) 在 \(b = f(a)\) 可微。则 \(g \circ f\) 在 \(a\) 可微，且
+  \[
+    (g \circ f)'(a) = g'(b)\,f'(a) .
+  \]
+\end{theorem}
+
+\begin{proof}
+  由 \(f\) 在 \(a\) 可微，
+  \begin{equation}
+    \label{eq:chain-f}
+    f(a+h) = f(a) + f'(a)h + r(h), \qquad \abs{r(h)}/\abs{h} \to 0 .
+  \end{equation}
+  由 \(g\) 在 \(b\) 可微，令
+  \[
+    s(k) := g(b+k) - g(b) - g'(b)k .
+  \]
+  这个式子在 \(k=0\) 处也有意义，且给出 \(s(0)=0\)。于是可以定义
+  \[
+    \sigma(k) := \begin{cases} \abs{s(k)}/\abs{k}, & k \neq 0, \\ 0, & k = 0, \end{cases}
+  \]
+  它满足 \(\sigma(k) \to 0 = \sigma(0)\)（\(k \to 0\)），并且
+  \begin{equation}
+    \label{eq:chain-s}
+    \abs{s(k)} = \sigma(k)\abs{k} \qquad \text{对一切 } k \text{ 成立}
+  \end{equation}
+  ——\(k \neq 0\) 时按定义，\(k=0\) 时两端都是零。
+  这样一来，此后只在 \(k \neq 0\) 处作过除法，零增量不再是例外情形。
+
+  记 \(k(h) := f(a+h)-f(a) = f'(a)h + r(h)\)。取 \(h\) 充分小使 \(\abs{r(h)} \le \abs{h}\)，
+  则
+  \begin{equation}
+    \label{eq:chain-k-bound}
+    \abs{k(h)} \le \bigl(\abs{f'(a)}+1\bigr)\abs{h} .
+  \end{equation}
+  代入并整理：
+  \[
+    g\bigl(f(a+h)\bigr) - g\bigl(f(a)\bigr)
+      = g'(b)\,k(h) + s\bigl(k(h)\bigr)
+      = g'(b)f'(a)\,h + \underbrace{g'(b)r(h) + s\bigl(k(h)\bigr)}_{=:\,R(h)} .
+  \]
+  只需证 \(\abs{R(h)}/\abs{h} \to 0\)。第一项：\(\abs{g'(b)r(h)}/\abs{h}
+  = \abs{g'(b)}\cdot\abs{r(h)}/\abs{h} \to 0\)。第二项：由\cref{eq:chain-s} 与%
+  \cref{eq:chain-k-bound}，
+  \[
+    \frac{\abs{s(k(h))}}{\abs{h}} = \sigma\bigl(k(h)\bigr)\frac{\abs{k(h)}}{\abs{h}}
+      \le \sigma\bigl(k(h)\bigr)\bigl(\abs{f'(a)}+1\bigr) ,
+  \]
+  而 \(h \to 0\) 时 \(k(h) \to 0\)，故 \(\sigma(k(h)) \to 0\)。两项合起来即得。
+\end{proof}
+
+\begin{remark}
+  这个证明到卷二可用：把 \(f'(a)\)、\(g'(b)\) 换成线性映射 \(Df(a)\)、\(Dg(b)\)，
+  把绝对值换成范数，\cref{eq:chain-k-bound} 换成有界线性映射的估计
+  \(\lVert Df(a)h\rVert \le \lVert Df(a)\rVert\,\lVert h\rVert\)，逐行照抄。
+  按商的形式写的那个版本则要重写：那里除的是数，卷二没有数可除。
+\end{remark}
+
+\section{极值与中值定理族}
+\label{sec:mvt}
+
+导数是局部的量，中值定理把它与整体的增量接起来。这一节的全部结论
+都溯源到\cref{ch:compactness}的最值定理——这是\cref{tab:ch4-where-used}
+许下的账，此处结清。
+
+\begin{lemma}[Fermat]
+  \label{lem:fermat}
+  设 \(f\) 定义在 \(I\) 上，在\emph{内点} \(c\) 处取到局部极值且在 \(c\) 可微。
+  则 \(f'(c)=0\)。
+\end{lemma}
+
+\begin{proof}
+  设 \(c\) 是局部极大点（极小同理）。取 \(\eta>0\) 使 \((c-\eta,c+\eta) \subseteq I\)
+  且 \(f(x) \le f(c)\) 在其上成立。对 \(0<h<\eta\)，
+  \[
+    \frac{f(c+h)-f(c)}{h} \le 0 ,
+  \]
+  令 \(h \to 0^{+}\) 得 \(f'(c) \le 0\)；对 \(-\eta<h<0\)，同一个商非负，
+  令 \(h \to 0^{-}\) 得 \(f'(c) \ge 0\)。故 \(f'(c)=0\)。
+\end{proof}
+
+\begin{pitfall}
+  「内点」不可去。\(f(x)=x\) 在 \([0,1]\) 上于端点 \(0\) 取到最小值、
+  于端点 \(1\) 取到最大值，而 \(f'\) 处处为 \(1\)。
+  证明中用到了 \(c\) 两侧都有定义域的点，端点处只剩一侧。
+\end{pitfall}
+
+\begin{theorem}[Rolle]
+  \label{thm:rolle}
+  设 \(f\) 在 \([a,b]\)（\(a<b\)）上连续、在 \((a,b)\) 内可微，且 \(f(a)=f(b)\)。
+  则存在 \(c \in (a,b)\) 使 \(f'(c)=0\)。
+\end{theorem}
+
+\begin{proof}
+  \([a,b]\) 非空且紧（\cref{thm:heine-borel}），\(f\) 连续，
+  由最值定理（\cref{thm:extreme-value}），\(f\) 在 \([a,b]\) 上取到最大值 \(M\) 与最小值 \(m\)。
+
+  若 \(M=m\)，则 \(f\) 恒为常数，\((a,b)\) 中任一点都可用。
+
+  若 \(M>m\)，则由 \(f(a)=f(b)\)，两个值中至少有一个不等于 \(f(a)\)，
+  设 \(M \neq f(a)=f(b)\)（另一情形同理）。取到 \(M\) 的点因而不是 \(a\) 也不是 \(b\)，
+  即它是内点 \(c \in (a,b)\)。在那里 \(f\) 可微，由\cref{lem:fermat} 得 \(f'(c)=0\)。
+\end{proof}
+
+\begin{remark}
+  这就是\cref{ch:compactness}与本章的接口：紧性保证极值\emph{取得到}，
+  取得到才谈得上在那一点求导。
+
+  「在\emph{闭}区间上连续」这一条不可减弱。取 \(f(x)=x\)（\(0 \le x<1\)）、\(f(1)=0\)：
+  它满足 \(f(0)=f(1)=0\)，在 \((0,1)\) 内可微，而 \(f' \equiv 1\) 处处非零。
+  漏掉的正是「在 \([0,1]\) 上连续」——\(f\) 在 \(1\) 处不连续，
+  于是最值定理用不上，\(f\) 在 \([0,1]\) 上根本取不到最大值。
+\end{remark}
+
+\begin{theorem}[Lagrange 中值定理]
+  \label{thm:mvt}
+  设 \(f\) 在 \([a,b]\)（\(a<b\)）上连续、在 \((a,b)\) 内可微。
+  则存在 \(c \in (a,b)\) 使
+  \begin{equation}
+    \label{eq:mvt}
+    f(b)-f(a) = f'(c)\,(b-a) .
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+  令 \(\varphi(x) = f(x) - f(a) - \dfrac{f(b)-f(a)}{b-a}(x-a)\)，
+  即从 \(f\) 中减去那条割线。\(\varphi\) 在 \([a,b]\) 上连续、在 \((a,b)\) 内可微，
+  且 \(\varphi(a)=\varphi(b)=0\)。由\cref{thm:rolle} 取 \(c\) 使 \(\varphi'(c)=0\)，
+  即得\cref{eq:mvt}。
+\end{proof}
+
+\begin{theorem}[Cauchy 中值定理]
+  \label{thm:cauchy-mvt}
+  设 \(f,g\) 在 \([a,b]\) 上连续、在 \((a,b)\) 内可微。则存在 \(c \in (a,b)\) 使
+  \[
+    \bigl(f(b)-f(a)\bigr)g'(c) = \bigl(g(b)-g(a)\bigr)f'(c) .
+  \]
+\end{theorem}
+
+\begin{proof}
+  令 \(\psi(x) = \bigl(f(b)-f(a)\bigr)g(x) - \bigl(g(b)-g(a)\bigr)f(x)\)。
+  直接验证 \(\psi(a)=\psi(b)=f(b)g(a)-f(a)g(b)\)，再用\cref{thm:rolle}。
+\end{proof}
+
+\begin{remark}
+  Cauchy 中值定理是 Taylor 定理余项估计的工具，见\cref{sec:mvt}之后的第 6.6 节。
+  取 \(g(x)=x\) 即回到\cref{thm:mvt}。
+\end{remark}
+
+\begin{corollary}
+  \label{cor:zero-derivative}
+  设 \(f\) 在\emph{区间} \(I\) 上可微且 \(f' \equiv 0\)，则 \(f\) 在 \(I\) 上是常值。
+\end{corollary}
+
+\begin{proof}
+  任取 \(x<y\) 于 \(I\)。由 \(I\) 是区间，\([x,y] \subseteq I\)（\cref{def:interval}）；
+  在其上用\cref{thm:mvt} 得 \(f(y)-f(x) = f'(c)(y-x) = 0\)。
+\end{proof}
+
+\begin{pitfall}
+  「区间」不可去。在 \(\R \setminus \set{0}\) 上令 \(f=1\)（\(x>0\)）、\(f=-1\)（\(x<0\)），
+  则 \(f\) 可微且 \(f' \equiv 0\)，却不是常值。
+  上面的证明在这里断在 \([x,y] \subseteq I\) 那一步：
+  \(x<0<y\) 时 \([x,y]\) 不含于定义域。
+  这与\cref{ch:connectedness}的区间刻画是同一件事的两副面孔——
+  定义域连通，导数为零才蕴含常值。
+\end{pitfall}
+
+\begin{corollary}[单调性判据]
+  \label{cor:monotone}
+  设 \(f\) 在区间 \(I\) 上可微。若 \(f' \ge 0\) 于 \(I\)，则 \(f\) 单调不减；
+  若 \(f' > 0\) 于 \(I\)，则 \(f\) 严格递增。
+\end{corollary}
+
+\begin{proof}
+  对 \(x<y\) 用\cref{thm:mvt}，\(f(y)-f(x)=f'(c)(y-x)\) 的符号由 \(f'(c)\) 决定。
+\end{proof}
+
+下面这个例子说明\cref{cor:monotone} 的条件是「在整个区间上」，
+换成「在一点上」就不成立。本章后面两节都要用到它。
+
+\begin{example}[导数在一点为正，函数却在该点附近不单调]
+  \label{ex:not-monotone-near-zero}
+  令
+  \begin{equation}
+    \label{eq:wiggle}
+    f(x) = \begin{cases}
+      \dfrac{x}{2} + x^{2}\sin\dfrac{1}{x}, & x \neq 0, \\[2ex]
+      0, & x = 0 .
+    \end{cases}
+  \end{equation}
+  则 \(f\) 在 \(\R\) 上可微，\(f'(0)=1/2>0\)，而 \(f\) 在 \(0\) 的任何邻域内都不单调。
+  \begin{worked}
+    \emph{在 \(0\) 处可微}。对 \(h \neq 0\)，
+    \[
+      \frac{f(h)-f(0)}{h} = \frac{1}{2} + h\sin\frac{1}{h} ,
+    \]
+    而 \(\abs{h\sin(1/h)} \le \abs{h} \to 0\)，故 \(f'(0)=1/2\)。
+
+    \emph{在 \(x \neq 0\) 处}，由\cref{thm:arithmetic-rules} 与\cref{thm:chain-rule}，
+    \begin{equation}
+      \label{eq:wiggle-derivative}
+      f'(x) = \frac{1}{2} + 2x\sin\frac{1}{x} - \cos\frac{1}{x} .
+    \end{equation}
+
+    \emph{不单调}。取 \(x_{n} = 1/(2\pi n)\)，则 \(\sin(1/x_{n})=0\)、\(\cos(1/x_{n})=1\)，
+    故 \(f'(x_{n}) = 1/2 - 1 = -1/2 < 0\)。
+    取 \(y_{n} = 1/\bigl((2n+1)\pi\bigr)\)，则 \(\sin(1/y_{n})=0\)、\(\cos(1/y_{n})=-1\)，
+    故 \(f'(y_{n}) = 1/2 + 1 = 3/2 > 0\)。
+    两列点都趋于 \(0\)，于是 \(0\) 的每个邻域内 \(f'\) 都取到正值与负值；
+    由\cref{cor:monotone} 的逆否，\(f\) 在其中的任何子区间上都不可能单调。
+  \end{worked}
+\end{example}
+
+\begin{remark}
+  \cref{eq:wiggle-derivative} 还说明一件事：\(x \to 0\) 时 \(f'(x)\) 没有极限
+  （\(\cos(1/x)\) 在 \([-1,1]\) 中来回摆动），
+  而 \(f'(0)\) 存在。可见\emph{导函数可以不连续}。
+  下一节要问的是：导函数的不连续能坏到什么程度。
+
+  （\(\sin\) 与 \(\cos\) 的构造见第 9 章，此处用其先修性质；
+  本章的定理证明一处也不依赖它们。）
+\end{remark}
+
+\section{导函数的两条性质}
+\label{sec:derivative-properties}
+
+\cref{ex:not-monotone-near-zero} 表明导函数未必连续。但它也坏不到哪去：
+本节证它不会有第一类间断（\cref{cor:no-first-kind}），
+而且仍有介值性质（\cref{thm:darboux}）。两条都由中值定理与最值定理得出。
+
+\begin{lemma}[单侧极限若存在必等于导数]
+  \label{lem:one-sided-limit}
+  设 \(I\) 为开区间，\(c \in I\)，\(f\) 在 \(I\) 上可微。
+  若 \(\lim_{x \to c^{+}} f'(x) = L\) 存在且有限，则 \(f'(c) = L\)。
+  左侧同理。
+\end{lemma}
+
+\begin{proof}
+  给定 \(\varepsilon>0\)，取 \(\eta>0\) 使 \(c<\xi<c+\eta\) 时 \(\abs{f'(\xi)-L}<\varepsilon\)。
+  对 \(0<h<\eta\)，在 \([c,c+h]\) 上用\cref{thm:mvt} 得 \(\xi_{h} \in (c,c+h)\) 使
+  \[
+    \frac{f(c+h)-f(c)}{h} = f'(\xi_{h}) ,
+  \]
+  而 \(\xi_{h} \in (c,c+\eta)\)，故上式与 \(L\) 之差小于 \(\varepsilon\)。
+  可见右侧的商趋于 \(L\)。由 \(f\) 在 \(c\) 可微，该商的极限就是 \(f'(c)\)，故 \(f'(c)=L\)。
+\end{proof}
+
+\begin{definition}[第一类间断点]
+  \label{def:first-kind}
+  设 \(c\) 是函数 \(\varphi\) 定义域的内点，且 \(\varphi\) 在 \(c\) \emph{不连续}。
+  若左右极限 \(\varphi(c^{-})\)、\(\varphi(c^{+})\) 都存在且有限，
+  则称 \(c\) 为 \(\varphi\) 的\term{第一类间断点}{discontinuity of the first kind}：
+  两者相等而其共同值不等于 \(\varphi(c)\) 时称为\term{可去间断点}{removable discontinuity}，
+  两者不等时称为\term{跳跃间断点}{jump discontinuity}。
+  其余的不连续点称为\term{第二类间断点}{discontinuity of the second kind}。
+\end{definition}
+
+\begin{pitfall}
+  定义里「在 \(c\) 不连续」一句不可省。少了它，凡是左右极限都存在且有限的点
+  都成了「第一类间断点」，而连续点正满足这个条件。
+  另外，第一类间断点包含可去与跳跃\emph{两种}，
+  不可把它直接等同于跳跃间断。
+\end{pitfall}
+
+\begin{corollary}[导函数没有第一类间断点]
+  \label{cor:no-first-kind}
+  设 \(I\) 为开区间，\(f\) 在 \(I\) 上可微。则 \(f'\) 在 \(I\) 中没有第一类间断点。
+\end{corollary}
+
+\begin{proof}
+  设 \(c \in I\) 是 \(f'\) 的第一类间断点，则 \(f'(c^{-})\) 与 \(f'(c^{+})\) 都存在且有限。
+  由\cref{lem:one-sided-limit}，两者都等于 \(f'(c)\)。于是两者相等且等于函数值，
+  按\cref{def:first-kind} 这正是 \(f'\) 在 \(c\) 连续，与「不连续」矛盾。
+\end{proof}
+
+\begin{remark}
+  \cref{ex:not-monotone-near-zero} 的 \(f'\) 在 \(0\) 处不连续，
+  按\cref{cor:no-first-kind} 它只能是第二类间断，事实正是如此：
+  \(\cos(1/x)\) 在 \(x \to 0\) 时没有单侧极限。
+\end{remark}
+
+\begin{theorem}[Darboux]
+  \label{thm:darboux}
+  设 \(I\) 为开区间，\(f\) 在 \(I\) 上可微，\(a<b\) 且 \([a,b] \subseteq I\)。
+  则 \(f'\) 在 \([a,b]\) 上取到介于 \(f'(a)\) 与 \(f'(b)\) 之间的一切值。
+\end{theorem}
+
+\begin{strategy}
+  把「取到中间值」化成「取到极值」：给定目标值 \(\lambda\)，
+  减去一条斜率为 \(\lambda\) 的直线，问题变成找导数为零的点，
+  那正是最值定理加 Fermat 引理的活。
+\end{strategy}
+
+\begin{proof}
+  先设 \(f'(a) < \lambda < f'(b)\)。令 \(g(x) = f(x)-\lambda x\)，
+  则 \(g\) 在 \([a,b]\) 上可微，因而连续。由最值定理（\cref{thm:extreme-value}），
+  \(g\) 在 \([a,b]\) 上取到最小值。
+
+  最小值不在 \(a\)：\(g'(a) = f'(a)-\lambda < 0\)，故由导数的定义，
+  \(h>0\) 充分小时 \(\bigl(g(a+h)-g(a)\bigr)/h < 0\)，即 \(g(a+h)<g(a)\)。
+  同理最小值不在 \(b\)：\(g'(b)>0\) 给出 \(h>0\) 充分小时 \(g(b-h)<g(b)\)。
+
+  故最小值在内点 \(c \in (a,b)\) 取到。由\cref{lem:fermat}，\(g'(c)=0\)，即 \(f'(c)=\lambda\)。
+
+  再设 \(f'(a) > \lambda > f'(b)\)。对 \(-f\) 用已证情形：
+  \((-f)'(a) = -f'(a) < -\lambda < -f'(b) = (-f)'(b)\)，
+  故存在 \(c\) 使 \((-f)'(c) = -\lambda\)，即 \(f'(c)=\lambda\)。
+\end{proof}
+
+\begin{pitfall}
+  这个证明用的是\emph{最值定理}（\cref{ch:compactness}），\emph{不是}介值定理。
+  \cref{ch:connectedness}的介值定理管的是\emph{连续}函数，
+  而\cref{ex:not-monotone-near-zero} 已经表明导函数可以不连续，套不上去。
+  那一章的常见错误框预告过这件事，此处兑现。
+
+  Darboux 定理说的正是：导函数虽未必连续，却仍有介值性质。
+  「有介值性质」比「连续」弱——\(f'\) 可以有第二类间断而仍满足 Darboux。
+\end{pitfall}
+
+\begin{remark}
+  \cref{cor:no-first-kind} 也可以由\cref{thm:darboux} 推出：
+  有介值性质的函数不会有第一类间断。本章选\cref{lem:one-sided-limit} 那条路，
+  因为它更短，且顺带给出了「\(f'\) 的单侧极限一旦存在就等于 \(f'\) 的值」这条常用结论。
+  两条路都通，不是非此即彼。
+\end{remark}
+
+\section{一元反函数定理}
+\label{sec:inverse-function}
+
+第 7 章要由 \(\log\) 取逆得到 \(\exp\)，用的就是这一节。
+本节分三步：连续单射必严格单调、逆连续、逆可微。前两步是%
+\cref{ch:connectedness}末尾许下的账。
+
+\begin{pitfall}
+  常见的误记是「\(f'(a) \neq 0\) 则 \(f\) 在 \(a\) 附近有可微的逆」。
+  这不成立。\cref{ex:not-monotone-near-zero} 中的 \(f\) 有 \(f'(0)=1/2 \neq 0\)，
+  却在 \(0\) 的任何邻域内都不单调，因而在任何邻域内都不是单射——
+  连逆映射都没有，遑论逆可微。
+  下面两条定理各自写明了所需的前提：一条要求「连续单射」，一条要求 \(C^{1}\)。
+\end{pitfall}
+
+\begin{proposition}[连续单射必严格单调]
+  \label{prop:injective-monotone}
+  设 \(I\) 为区间，\(f \mapsdef I \to \R\) 连续且单射。则 \(f\) 严格单调。
+\end{proposition}
+
+\begin{proof}
+  设不然，则存在 \(x<y<z\) 于 \(I\) 使 \(f(y)\) 不介于 \(f(x)\) 与 \(f(z)\) 之间。
+  由单射，三个值两两不等。不妨 \(f(y) > \max\set{f(x),f(z)}\)
+  （另一情形对 \(-f\) 讨论）。取 \(\mu\) 使 \(\max\set{f(x),f(z)} < \mu < f(y)\)。
+
+  在 \([x,y]\) 上用介值定理（\cref{cor:ivt}）得 \(u \in (x,y)\) 使 \(f(u)=\mu\)；
+  在 \([y,z]\) 上同样得 \(v \in (y,z)\) 使 \(f(v)=\mu\)。
+  而 \(u<y<v\) 故 \(u \neq v\)，与单射矛盾。
+\end{proof}
+
+\begin{proposition}[逆连续]
+  \label{prop:inverse-continuous}
+  设 \(I\) 为区间，\(f \mapsdef I \to \R\) 连续且严格单调，\(J = f(I)\)。
+  则 \(J\) 是区间，且 \(f^{-1} \mapsdef J \to I\) 连续。
+\end{proposition}
+
+\begin{proof}
+  \(J\) 是区间：由\cref{thm:interval-connected}，\(I\) 连通；
+  由\cref{thm:continuous-image-connected}，\(J\) 连通；再用一次\cref{thm:interval-connected}。
+
+  设 \(f\) 严格递增（递减同理），\(x_{0} \in I\)，\(y_{0}=f(x_{0})\)，给定 \(\varepsilon>0\)。
+
+  先设 \(x_{0}\) 是 \(I\) 的内点。取 \(u,v \in I\) 使
+  \[
+    x_{0}-\varepsilon < u < x_{0} < v < x_{0}+\varepsilon ,
+  \]
+  令 \(\delta = \min\set{f(x_{0})-f(u),\ f(v)-f(x_{0})}\)。
+  由严格递增，两个差都为正，故 \(\delta>0\)。
+  若 \(y \in J\) 且 \(\abs{y-y_{0}}<\delta\)，则
+  \[
+    f(u) \le y_{0}-\delta < y < y_{0}+\delta \le f(v) ,
+  \]
+  再由 \(f^{-1}\) 严格递增得 \(u < f^{-1}(y) < v\)，故 \(\abs{f^{-1}(y)-x_{0}}<\varepsilon\)。
+
+  若 \(x_{0}\) 是 \(I\) 的左端点，则只取上面的 \(v\)，令 \(\delta = f(v)-f(x_{0})>0\)：
+  \(y \in J\) 且 \(\abs{y-y_{0}}<\delta\) 时有 \(y<f(v)\)，故 \(f^{-1}(y)<v\)；
+  另一侧由 \(f^{-1}(y) \ge x_{0}\) 直接得到。右端点同理。
+  \(I\) 是单点集时 \(J\) 也是单点集，结论平凡。
+\end{proof}
+
+\begin{pitfall}
+  这里不能只说「\(f^{-1}\) 单调，故连续」——单调函数完全可以有跳跃间断。
+  也不能只说「\(x_{0}\) 的 \(\varepsilon\)-邻域的像是含 \(y_{0}\) 的区间、而 \(J\) 是区间，
+  故它含 \(y_{0}\) 的相对邻域」：含某点的区间未必是该点的邻域，
+  \(y_{0}\) 完全可能落在那个像的端点上。
+  上面的证明用严格单调性\emph{造出}了 \(y_{0}\) 两侧的像点 \(f(u)\)、\(f(v)\)，
+  这一步是关键。
+\end{pitfall}
+
+\begin{theorem}[逆可微]
+  \label{thm:inverse-differentiable}
+  设 \(I\) 为开区间，\(f \mapsdef I \to \R\) 连续且单射，
+  \(f\) 在 \(a \in I\) 可微且 \(f'(a) \neq 0\)。记 \(b=f(a)\)、\(g=f^{-1}\)。
+  则 \(g\) 在 \(b\) 可微，且
+  \[
+    g'(b) = \frac{1}{f'(a)} .
+  \]
+\end{theorem}
+
+\begin{proof}
+  由\cref{prop:injective-monotone}，\(f\) 严格单调；由\cref{prop:inverse-continuous}，
+  \(J=f(I)\) 是区间且 \(g\) 连续。又 \(I\) 开、\(f\) 连续严格单调，故 \(b\) 是 \(J\) 的内点。
+
+  设 \(y \in J\)、\(y \neq b\)，令 \(x = g(y)\)。由 \(g\) 单射，\(x \neq a\)；
+  由 \(g\) 在 \(b\) 连续，\(y \to b\) 时 \(x \to a\)。于是
+  \[
+    \frac{g(y)-g(b)}{y-b} = \frac{x-a}{f(x)-f(a)}
+      = \left(\frac{f(x)-f(a)}{x-a}\right)^{-1} .
+  \]
+  括号内的量在 \(x \to a\) 时趋于 \(f'(a) \neq 0\)，
+  由\cref{prop:limit-basics} 的商的法则，整式趋于 \(1/f'(a)\)。
+\end{proof}
+
+\begin{corollary}[\(C^{1}\) 版]
+  \label{cor:c1-inverse}
+  设 \(f\) 在 \(a\) 的某个邻域上连续可微且 \(f'(a) \neq 0\)。
+  则存在 \(a\) 的开邻域 \(U\)，使 \(f\) 限制在 \(U\) 上是到开区间 \(f(U)\) 的双射，
+  其逆连续可微，且 \((f^{-1})' = 1/(f' \circ f^{-1})\)。
+\end{corollary}
+
+\begin{proof}
+  由 \(f'\) 连续且 \(f'(a) \neq 0\)，存在开邻域 \(U\) 使 \(f'\) 在 \(U\) 上与 \(f'(a)\) 同号，
+  特别地处处非零。由\cref{cor:monotone}，\(f\) 在 \(U\) 上严格单调，因而是单射。
+  对 \(U\) 中每一点用\cref{thm:inverse-differentiable}，得 \(f^{-1}\) 在 \(f(U)\) 上可微，
+  且 \((f^{-1})'(y) = 1/f'\bigl(f^{-1}(y)\bigr)\)。
+  右端是连续函数的复合与倒数（分母不为零），故连续，即 \(f^{-1}\) 连续可微。
+  \(f(U)\) 是区间（\cref{prop:inverse-continuous}）且开，因 \(f\) 在 \(U\) 上严格单调连续，
+  把开区间映成开区间。
+\end{proof}
+
+\begin{remark}
+  两条陈述的分工要看清。\cref{thm:inverse-differentiable} 的前提是「连续单射」，
+  这在一维够用，因为一维有序，单射加连续就逼出了单调（\cref{prop:injective-monotone}）。
+  \cref{cor:c1-inverse} 换成 \(C^{1}\) 的前提，结论则是\emph{局部}的。
+
+  卷二的反函数定理走的是后一条：那里把「\(f'(a) \neq 0\)」换成「\(Df(a)\) 可逆」，
+  把「严格单调」换成「局部同胚」，形状与\cref{cor:c1-inverse} 一致。
+  前一条移植不过去：\(\R^{n}\) 上没有序，也就没有单调可用。
+\end{remark}
+
+\begin{example}[第 7 章要用的正是这一条]
+  \label{ex:inverse-preview}
+  第 7 章将定义 \(\log x = \int_{1}^{x} \dif t/t\)（\(x>0\)），
+  并证明它在 \((0,\infty)\) 上连续可微、\(\log' x = 1/x > 0\)、值域为 \(\R\)。
+  \begin{worked}
+    由 \(\log' > 0\) 与\cref{cor:monotone}，\(\log\) 严格递增，因而是单射；
+    它连续，故由\cref{prop:injective-monotone} 与\cref{prop:inverse-continuous}
+    其逆连续。再由\cref{thm:inverse-differentiable}，逆在每一点可微，且
+    \[
+      (\log^{-1})'(y) = \frac{1}{\log'\bigl(\log^{-1}(y)\bigr)} = \log^{-1}(y) .
+    \]
+    把这个逆记作 \(\exp\)，上式就是 \(\exp' = \exp\)。
+
+    这里只用到本章的结论，没有用到 \(\exp\) 的任何性质：
+    第 7 章正是这样把它造出来的，不循环。
+  \end{worked}
+\end{example}
+
+\section{高阶导数与 Taylor 定理}
+\label{sec:taylor}
+
+线性逼近只用到一阶导数，误差是 \(o(h)\)。若 \(f\) 更光滑，用高次多项式逼近
+可以把误差压得更小。Taylor 定理把「小到什么程度」说准。
+
+\begin{definition}[高阶导数]
+  \label{def:higher-derivative}
+  设 \(f\) 在开区间 \(I\) 上可微。若 \(f'\) 在 \(I\) 上可微，记其导数为 \(f''\)；
+  依此定义 \(f^{(k)}\)。若 \(f^{(k)}\) 在 \(I\) 上存在且连续，记 \(f \in C^{k}(I)\)；
+  若一切阶导数都存在，记 \(f \in C^{\infty}(I)\)。约定 \(f^{(0)}=f\)。
+\end{definition}
+
+\begin{remark}
+  \(C^{k}\) 的定义里「连续」一条不多余：\cref{ex:not-monotone-near-zero} 中的 \(f\)
+  处处可微而 \(f'\) 不连续，故它可微却不属于 \(C^{1}\)。
+  另一方面，\(f^{(k)}\) 存在自动蕴含 \(f^{(k-1)}\) 连续（\cref{prop:diff-implies-cont}），
+  所以 \(C^{k}\) 与「\(k\) 阶可导」只差最后一层。
+\end{remark}
+
+\begin{theorem}[Taylor，Lagrange 余项]
+  \label{thm:taylor-lagrange}
+  设 \(a \neq x\)，记 \(J\) 为以 \(a\) 与 \(x\) 为端点的闭区间。
+  若 \(f \in C^{n}(J)\) 且 \(f\) 在 \(J\) 的内部 \(n+1\) 阶可导，
+  则存在严格介于 \(a\) 与 \(x\) 之间的 \(\xi\) 使
+  \begin{equation}
+    \label{eq:taylor-lagrange}
+    f(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x-a)^{k}
+         + \frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1} .
+  \end{equation}
+\end{theorem}
+
+\begin{remark}
+  两处措辞要留意。其一，\(x \neq a\) 不可省：\(x=a\) 时\cref{eq:taylor-lagrange}
+  两端本来就相等，谈不上「严格介于 \(a\) 与 \(x\) 之间」的 \(\xi\)。
+  其二，闭区间上的 \(C^{n}\) 按端点取单侧导数理解——
+  \cref{def:differentiable} 只在内点定义了双侧导数。
+\end{remark}
+
+\begin{strategy}
+  要证的是「余项等于某个 \(f^{(n+1)}(\xi)\) 除以 \((n+1)!\)」。
+  办法是先把余项系数 \(M\) 定义成「使等式成立的那个数」，
+  再造一个以 \(a\) 与 \(x\) 为零点的辅助函数，用 Rolle 定理逼出 \(M\) 的值。
+  辅助函数取成「把 \(a\) 换成变元 \(t\)」的那个式子，其导数会逐项相消，只剩一项。
+\end{strategy}
+
+\begin{proof}
+  取 \(M\) 使
+  \[
+    f(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x-a)^{k} + M(x-a)^{n+1} ;
+  \]
+  因 \(x \neq a\)，这样的 \(M\) 唯一确定。令
+  \[
+    g(t) = f(x) - \sum_{k=0}^{n} \frac{f^{(k)}(t)}{k!}(x-t)^{k} - M(x-t)^{n+1},
+    \qquad t \in J .
+  \]
+  \(g\) 在 \(J\) 上连续、在 \(J\) 的内部可导，且 \(g(x)=0\)（各项都含因子 \(x-t\) 或抵消）、
+  \(g(a)=0\)（由 \(M\) 的取法）。由\cref{thm:rolle}，存在严格介于 \(a\) 与 \(x\) 之间的
+  \(\xi\) 使 \(g'(\xi)=0\)。
+
+  求 \(g'\)。求和那一项的导数逐项相消：
+  \[
+    \frac{\dif}{\dif t}\sum_{k=0}^{n} \frac{f^{(k)}(t)}{k!}(x-t)^{k}
+      = \sum_{k=0}^{n} \frac{f^{(k+1)}(t)}{k!}(x-t)^{k}
+      - \sum_{k=1}^{n} \frac{f^{(k)}(t)}{(k-1)!}(x-t)^{k-1}
+      = \frac{f^{(n+1)}(t)}{n!}(x-t)^{n} ,
+  \]
+  第二个和式把下标 \(k\) 换成 \(k-1\) 后与第一个和式的前 \(n\) 项逐项抵消。于是
+  \[
+    g'(t) = -\frac{f^{(n+1)}(t)}{n!}(x-t)^{n} + M(n+1)(x-t)^{n} .
+  \]
+  在 \(t=\xi\) 处令它为零。因 \(\xi \neq x\)，可约去 \((x-\xi)^{n}\)，
+  得 \(M = f^{(n+1)}(\xi)/(n+1)!\)。
+\end{proof}
+
+\begin{theorem}[Taylor，Peano 余项]
+  \label{thm:taylor-peano}
+  设 \(f \in C^{n}(I)\)，\(a \in I\) 为内点。则
+  \begin{equation}
+    \label{eq:taylor-peano}
+    f(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x-a)^{k} + o\bigl((x-a)^{n}\bigr)
+    \qquad (x \to a) .
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+  对 \(x \neq a\) 用\cref{thm:taylor-lagrange} 的 \(n-1\) 阶形式
+  （只需 \(f \in C^{n-1}\) 且内部 \(n\) 阶可导，本处的假设更强）：存在 \(\xi\)
+  严格介于 \(a\) 与 \(x\) 之间使
+  \[
+    f(x) = \sum_{k=0}^{n-1} \frac{f^{(k)}(a)}{k!}(x-a)^{k}
+         + \frac{f^{(n)}(\xi)}{n!}(x-a)^{n} .
+  \]
+  两端减去\cref{eq:taylor-peano} 中的求和，得
+  \[
+    f(x) - \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x-a)^{k}
+      = \frac{f^{(n)}(\xi) - f^{(n)}(a)}{n!}(x-a)^{n} .
+  \]
+  \(x \to a\) 时 \(\xi \to a\)，由 \(f^{(n)}\) 连续，方括号内趋于零，故右端是 \(o((x-a)^{n})\)。
+\end{proof}
+
+\begin{remark}
+  两种余项分工不同。Lagrange 余项给得出\emph{具体的数值估计}，
+  代价是要多一阶可导（见\cref{exr:taylor-sqrt}、\cref{exr:landau}）；
+  Peano 余项只说\emph{阶}，用于极限计算与极值判定，条件更松。
+  第 7 章有了积分之后还会有第三种：积分余项。
+\end{remark}
+
+\begin{pitfall}
+  \cref{eq:taylor-lagrange} 是\emph{有限阶}的公式，对每个固定的 \(n\) 各说一句话。
+  它\emph{不}自动推出「\(n \to \infty\) 时右端的级数收敛到 \(f\)」——
+  那要余项趋于零，而余项里的 \(\xi\) 随 \(n\) 变动。
+  存在 \(C^{\infty}\) 函数，其在某点的 Taylor 级数处处收敛却不等于该函数。
+  这一对关系与那个反例见第 9 章。
+\end{pitfall}
+
+\section{凸函数}
+\label{sec:convex}
+
+凸性是比可微性更原始的条件：它的定义里没有极限，却已经强到能推出连续。
+本节先讲一般的凸函数，再看可微时它与导数的关系。
+
+\begin{definition}[凸函数]
+  \label{def:convex}
+  设 \(I\) 为区间，\(f \mapsdef I \to \R\)。若对一切 \(x,y \in I\) 与 \(\lambda \in [0,1]\)，
+  \begin{equation}
+    \label{eq:convex}
+    f\bigl(\lambda x + (1-\lambda)y\bigr) \le \lambda f(x) + (1-\lambda) f(y),
+  \end{equation}
+  则称 \(f\) 为 \(I\) 上的\term{凸函数}{convex function}。
+  不等号反向者称为\term{凹函数}{concave function}。
+\end{definition}
+
+\begin{intuition}
+  \cref{eq:convex} 说的是：连接图像上两点的弦不低于这两点之间的图像。
+  「弦在上方」是凸性最直观的说法，下面几条结论都从这一句读得出来。
+\end{intuition}
+
+\begin{lemma}[三弦引理]
+  \label{lem:three-chords}
+  设 \(f\) 在区间 \(I\) 上凸，\(x<y<z\) 于 \(I\)。则
+  \begin{equation}
+    \label{eq:three-chords}
+    \frac{f(y)-f(x)}{y-x} \le \frac{f(z)-f(x)}{z-x} \le \frac{f(z)-f(y)}{z-y} .
+  \end{equation}
+\end{lemma}
+
+\begin{proof}
+  令 \(\lambda = \dfrac{z-y}{z-x} \in (0,1)\)，则 \(y = \lambda x + (1-\lambda)z\)。
+  由\cref{eq:convex}，
+  \[
+    f(y) \le \lambda f(x) + (1-\lambda) f(z) .
+  \]
+  两端减去 \(f(x)\) 并除以 \(y-x = (1-\lambda)(z-x) > 0\)，得第一个不等式；
+  两端减去 \(f(z)\) 并除以 \(y-z = -\lambda(z-x) < 0\)（不等号反向），得第二个。
+\end{proof}
+
+\begin{remark}
+  \cref{lem:three-chords} 说的是差商关于两个变元都单调不减。
+  这条引理是本节的主力：下面的连续性、切线支撑不等式与导数判据都由它得出。
+\end{remark}
+
+\begin{theorem}[凸函数在内点连续]
+  \label{thm:convex-continuous}
+  设 \(f\) 在区间 \(I\) 上凸，则 \(f\) 在 \(I\) 的每个内点连续。
+\end{theorem}
+
+\begin{proof}
+  取 \(I\) 的内点 \(x_{0}\)，再取 \(a<c<x_{0}<d<b\) 全在 \(I\) 中。往证 \(f\) 在 \([c,d]\) 上
+  Lipschitz，因而在 \(x_{0}\) 连续。
+
+  设 \(c \le u < v \le d\)。反复用\cref{lem:three-chords}：对 \(a<c\le u<v\) 得
+  \[
+    \frac{f(c)-f(a)}{c-a} \le \frac{f(v)-f(u)}{v-u} ,
+  \]
+  对 \(u<v \le d<b\) 得
+  \[
+    \frac{f(v)-f(u)}{v-u} \le \frac{f(b)-f(d)}{b-d} .
+  \]
+  记 \(K = \max\Bigl\{\bigl|\tfrac{f(c)-f(a)}{c-a}\bigr|,\ \bigl|\tfrac{f(b)-f(d)}{b-d}\bigr|\Bigr\}\)，
+  则 \(\abs{f(v)-f(u)} \le K\abs{v-u}\) 对一切 \(u,v \in [c,d]\) 成立。
+\end{proof}
+
+\begin{pitfall}
+  「内点」不可去，端点处凸函数可以不连续。取 \(I=[0,1]\)、
+  \[
+    f(0)=1, \qquad f(x)=0 \quad (0<x\le1) .
+  \]
+  逐一验证\cref{eq:convex} 可知 \(f\) 凸，而它在端点 \(0\) 处不连续。
+  \cref{thm:convex-continuous} 的证明在这里断在「取 \(a<c<x_{0}\)」那一步：
+  \(x_{0}=0\) 左边没有 \(I\) 中的点。
+\end{pitfall}
+
+以下设 \(f\) 可微，看凸性与导数的关系。
+
+\begin{proposition}[切线支撑不等式]
+  \label{prop:tangent-support}
+  设 \(f\) 在区间 \(I\) 上可微且凸。则对一切 \(x,y \in I\)，
+  \begin{equation}
+    \label{eq:tangent-support}
+    f(y) \ge f(x) + f'(x)(y-x) .
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  \(y=x\) 时取等。设 \(y>x\)。由\cref{lem:three-chords}，差商
+  \(\bigl(f(t)-f(x)\bigr)/(t-x)\) 关于 \(t\) 单调不减，故 \(t \downarrow x\) 时它趋于
+  \(f'(x)\) 且不超过 \(t=y\) 处的值，即
+  \[
+    f'(x) \le \frac{f(y)-f(x)}{y-x} .
+  \]
+  两端乘以 \(y-x>0\) 即得。\(y<x\) 时同一个差商单调不减给出反向的比较，
+  乘以 \(y-x<0\) 后不等号仍为\cref{eq:tangent-support}。
+\end{proof}
+
+\begin{intuition}
+  \cref{eq:tangent-support} 说的是：凸函数的图像不低于它的任何一条切线。
+  与「弦在上方」合起来，凸性就是「切线在下、弦在上」。
+\end{intuition}
+
+\begin{theorem}[导数判据]
+  \label{thm:convex-derivative}
+  设 \(f\) 在区间 \(I\) 上可微。则
+  \begin{enumerate}[label=(\roman*)]
+    \item \(f\) 凸当且仅当 \(f'\) 单调不减；
+    \item 若 \(f\) 二阶可导，则 \(f\) 凸当且仅当 \(f'' \ge 0\)。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  (i) 必要性：设 \(f\) 凸，\(x<y\)。由\cref{prop:tangent-support} 用两次，
+  \(f(y) \ge f(x)+f'(x)(y-x)\) 与 \(f(x) \ge f(y)+f'(y)(x-y)\)。
+  两式相加整理得 \(\bigl(f'(y)-f'(x)\bigr)(y-x) \ge 0\)，即 \(f'(x) \le f'(y)\)。
+
+  充分性：设 \(f'\) 单调不减，\(x<z\)，\(y=\lambda x+(1-\lambda)z\)（\(0<\lambda<1\)）。
+  在 \([x,y]\) 与 \([y,z]\) 上分别用\cref{thm:mvt} 得 \(\xi \in (x,y)\)、\(\eta \in (y,z)\) 使
+  \[
+    \frac{f(y)-f(x)}{y-x} = f'(\xi) \le f'(\eta) = \frac{f(z)-f(y)}{z-y} .
+  \]
+  把这个不等式整理即得\cref{eq:convex}（两端同乘正数并移项）。
+
+  (ii) 由 (i) 与\cref{cor:monotone}：\(f'' \ge 0\) 当且仅当 \(f'\) 单调不减。
+\end{proof}
+
+\begin{theorem}[Jensen 不等式，有限形式]
+  \label{thm:jensen}
+  设 \(f\) 在区间 \(I\) 上凸，\(x_{1},\dots,x_{n} \in I\)，
+  \(\lambda_{1},\dots,\lambda_{n} \ge 0\) 且 \(\sum_{j}\lambda_{j}=1\)。则
+  \[
+    f\Bigl(\sum_{j=1}^{n}\lambda_{j}x_{j}\Bigr) \le \sum_{j=1}^{n}\lambda_{j}f(x_{j}) .
+  \]
+\end{theorem}
+
+\begin{proof}
+  对 \(n\) 归纳。\(n=1\) 平凡，\(n=2\) 即\cref{eq:convex}。
+  设对 \(n\) 成立，取 \(n+1\) 个点与权。若 \(\lambda_{n+1}=1\) 则平凡；
+  否则令 \(\mu = 1-\lambda_{n+1} > 0\)，\(\bar{x} = \sum_{j \le n}(\lambda_{j}/\mu)x_{j}\)。
+  诸 \(\lambda_{j}/\mu\) 非负且和为 \(1\)，故 \(\bar{x} \in I\)（区间对凸组合封闭）。由 \(n=2\) 的情形，
+  \[
+    f\bigl(\mu\bar{x}+\lambda_{n+1}x_{n+1}\bigr)
+      \le \mu f(\bar{x}) + \lambda_{n+1}f(x_{n+1}) ,
+  \]
+  再对 \(f(\bar{x})\) 用归纳假设即得。
+\end{proof}
+
+\begin{remark}
+  第 7 章有了积分之后给出 Jensen 不等式的积分形式，那是本节在后文的第一处用途；
+  第 9 章与卷五用它证 Hölder 与 Minkowski 不等式，进而定义 \(L^{p}\) 范数。
+\end{remark}
+
+\section{本章结论在更一般框架下的地位}
+\label{sec:ch6-outlook}
+
+\begin{table}[htbp]
+  \centering
+  \caption{可微性在结构层次中的位置。它比连续性要求更多：
+    除了度量（要说得出「误差比增量更快地趋于零」），还要有线性结构
+    （要说得出「线性映射」）。}
+  \label{tab:ch6-structure}
+  \begin{tabular}{@{}llp{5.2cm}@{}}
+    \toprule
+    层次 & 概念 & 一般情形 \\
+    \midrule
+    拓扑 & 开集、闭集、连续、连通、紧 & 拓扑空间中原样成立 \\
+    度量 & 完备性、一致连续、全有界 & 不由拓扑单独决定 \\
+    度量 + 线性 & \emph{可微性}、导数 & 需赋范线性空间；卷二的 Fréchet 导数 \\
+    序 & 上确界性质、区间、单调 & 一般拓扑空间未指定序 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{example}[同胚不保持可微性]
+  \label{ex:homeo-not-differentiable}
+  \(f(x)=x^{3}\) 是 \(\R\) 到 \(\R\) 的同胚（\cref{def:homeomorphism}），
+  它处处可微，而其逆 \(x \mapsto x^{1/3}\) 在 \(0\) 处不可微。
+  \begin{worked}
+    \(f\) 严格递增且连续，故是双射；其逆连续（\cref{prop:inverse-continuous}）。
+    逆在 \(0\) 处的商是 \(h^{1/3}/h = h^{-2/3} \to +\infty\)，故不可微。
+
+    这与\cref{thm:inverse-differentiable} 不矛盾：那里要求 \(f'(a) \neq 0\)，
+    而 \(f'(0)=0\)。可见「可微双射的逆未必可微」，
+    导数非零这个条件不是装饰。
+  \end{worked}
+\end{example}
+
+\subsection*{三条向前的接口}
+
+\emph{其一}，\cref{def:differentiable} 在卷二取作 Fréchet 导数的定义。
+更准确的说法是：那里在\emph{赋范线性空间}中做同一件事，
+\(L\) 换成有界线性映射，两处绝对值换成相应的范数。
+\cref{thm:chain-rule} 的证明逐行照抄即可，见该定理后的注。
+
+\emph{其二}，\cref{cor:c1-inverse} 是卷二反函数定理的一维情形。
+那里把「\(f'(a) \neq 0\)」换成「\(Df(a)\) 可逆」，把「严格单调」换成「局部同胚」。
+\cref{thm:inverse-differentiable} 的「连续单射」版本移植不过去：
+\(\R^{n}\) 上没有序，也就没有单调可用。
+
+\emph{其三}，\cref{eq:mvt} 的\emph{单点等式}一般推广不到向量值函数。
+准确的说法是这一句，而不是「向量值函数没有中值定理」：
+向量值情形仍有不等式形式的中值估计，卷二会给出。
+反例见\cref{exr:vector-mvt}：取 \(F(t)=(t^{2},t^{3})\)，
+\(F(1)-F(0)\) 与任何 \(F'(c)\) 都不相等。
+
+\begin{remark}
+  确界原理在本章仍在幕后工作：\cref{thm:extreme-value} 靠它，
+  而本章的中值定理族全部经由\cref{thm:rolle} 追溯到那里。
+  第 7 章的达布上下和会再一次直接使用它。
+\end{remark}
+
+\section*{习题}
+\addcontentsline{toc}{section}{习题}
+
+本章尚在写作中，以下是 \cref{sec:why-derivative}至 \cref{sec:inverse-function}
+所对应的习题；Taylor 与凸函数的习题随后两节一并补出。
+
+\begin{exercise}[例行]
+  \label{exr:linear-approx-direct}
+  用\cref{def:differentiable} 直接验证 \(f(x)=x^{2}\) 与 \(g(x)=1/x\)（\(x \neq 0\)）
+  在每一点可微，并写出各自的余项 \(r(h)\)。
+  \begin{solution}
+    \(f(a+h) = a^{2} + 2ah + h^{2}\)，故取 \(L(h)=2ah\)、\(r(h)=h^{2}\)，
+    而 \(\abs{r(h)}/\abs{h} = \abs{h} \to 0\)。故 \(f'(a)=2a\)。
+
+    \(a \neq 0\)，\(\abs{h}<\abs{a}\) 时
+    \[
+      \frac{1}{a+h} = \frac{1}{a} - \frac{h}{a^{2}} + \frac{h^{2}}{a^{2}(a+h)} ,
+    \]
+    （右端通分即得）故取 \(L(h) = -h/a^{2}\)、\(r(h) = h^{2}/\bigl(a^{2}(a+h)\bigr)\)。
+    由 \(\abs{a+h} > \abs{a}/2\)（当 \(\abs{h}<\abs{a}/2\)），
+    \(\abs{r(h)}/\abs{h} \le 2\abs{h}/\abs{a}^{3} \to 0\)。故 \(g'(a)=-1/a^{2}\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:abs-not-diff}
+  证明 \(\abs{x}\) 在 \(0\) 处连续而不可微。再问 \(x\abs{x}\) 在 \(0\) 处如何。
+  \begin{solution}
+    连续显然。不可微：商 \(\abs{h}/h\) 在 \(h>0\) 时为 \(1\)、\(h<0\) 时为 \(-1\)，
+    故无极限。
+
+    \(x\abs{x}\) 在 \(0\) 处可微且导数为零：商为 \(h\abs{h}/h = \abs{h} \to 0\)。
+    事实上它处处可微，\(x>0\) 时导数为 \(2x\)、\(x<0\) 时为 \(-2x\)，即 \(2\abs{x}\)；
+    该导函数连续但在 \(0\) 处不可微，故这个函数是 \(C^{1}\) 而非 \(C^{2}\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:extremes-cubic}
+  求 \(f(x)=x^{3}-3x\) 在 \([-2,2]\) 上的最大值与最小值，
+  并指明每一步分别由哪条定理保证。
+  \begin{solution}
+    \emph{存在性}由最值定理（\cref{thm:extreme-value}）保证：
+    \([-2,2]\) 非空且紧，\(f\) 连续。
+
+    \emph{候选点}由\cref{lem:fermat} 给出：最值若在内点取到，则该点导数为零。
+    \(f'(x)=3x^{2}-3=0\) 给出 \(x=\pm1\)。加上两个端点，候选为 \(-2,-1,1,2\)。
+
+    \(f(-2)=-2\)、\(f(-1)=2\)、\(f(1)=-2\)、\(f(2)=2\)。
+    故最大值为 \(2\)（在 \(-1\) 与 \(2\) 处取到），最小值为 \(-2\)（在 \(-2\) 与 \(1\) 处取到）。
+
+    注意 Fermat 引理只给必要条件，不保证候选点是极值点；
+    端点也必须单独比较，那里\cref{lem:fermat} 不适用。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:sin-lipschitz}
+  用中值定理证明 \(\abs{\sin x - \sin y} \le \abs{x-y}\) 对一切实数成立。
+  （\(\sin\) 的可微性与 \(\sin'=\cos\) 取作先修，其构造见第 9 章。）
+  \begin{solution}
+    \(x=y\) 时平凡。\(x \neq y\) 时，在以 \(x,y\) 为端点的闭区间上用%
+    \cref{thm:mvt} 得 \(c\) 使 \(\sin x - \sin y = \cos(c)(x-y)\)。
+    再由 \(\abs{\cos c} \le 1\) 即得。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:zero-derivative-interval}
+  证明区间上导数恒为零的可微函数是常值；
+  再举例说明去掉「定义域是区间」这一条结论就不成立。
+  \begin{solution}
+    前一半即\cref{cor:zero-derivative}。
+
+    反例：在 \(\R \setminus \set{0}\) 上令 \(f(x)=1\)（\(x>0\)）、\(f(x)=-1\)（\(x<0\)）。
+    每一点附近 \(f\) 都是常值，故处处可微且 \(f' \equiv 0\)，而 \(f\) 不是常值。
+    证明断在哪里：\(x<0<y\) 时 \([x,y]\) 不含于定义域，用不了中值定理。
+    与\cref{ch:connectedness}对照，这正是定义域不连通所致。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:wiggle-derivative}
+  设 \(f(x)=x^{2}\sin(1/x)\)（\(x \neq 0\)）、\(f(0)=0\)。
+  求 \(f'\)，验证它在 \(0\) 处不连续，并指出这是第几类间断点。
+  \begin{solution}
+    \(f'(0)=0\)：商为 \(h\sin(1/h)\)，绝对值不超过 \(\abs{h}\)。
+    \(x \neq 0\) 时 \(f'(x) = 2x\sin(1/x) - \cos(1/x)\)。
+
+    \(x \to 0\) 时第一项趋于零，而 \(\cos(1/x)\) 在 \([-1,1]\) 中来回摆动：
+    取 \(x_{n}=1/(2\pi n)\) 得 \(f'(x_{n}) \to -1\)，
+    取 \(y_{n}=1/\bigl((2n+1)\pi\bigr)\) 得 \(f'(y_{n}) \to 1\)。
+    故 \(f'\) 在 \(0\) 处没有极限，更谈不上等于 \(f'(0)=0\)，即不连续。
+
+    单侧极限也不存在（上面两列点都可取在 \(x>0\) 一侧），
+    故按\cref{def:first-kind} 这是第二类间断点。
+    这与\cref{cor:no-first-kind} 一致：导函数根本不可能有第一类间断。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[例行]
+  \label{exr:taylor-sqrt}
+  写出 \(\sqrt{1+x}\) 在 \(0\) 处的二阶 Taylor 多项式，
+  并用 Lagrange 余项估计 \(\abs{x} \le 1/2\) 时的逼近误差。
+  \begin{solution}
+    记 \(f(x)=(1+x)^{1/2}\)。则
+    \(f'(x)=\tfrac12(1+x)^{-1/2}\)、\(f''(x)=-\tfrac14(1+x)^{-3/2}\)、
+    \(f'''(x)=\tfrac38(1+x)^{-5/2}\)，故 \(f(0)=1\)、\(f'(0)=\tfrac12\)、\(f''(0)=-\tfrac14\)，
+    \[
+      P_{2}(x) = 1 + \frac{x}{2} - \frac{x^{2}}{8} .
+    \]
+    由\cref{thm:taylor-lagrange}（\(n=2\)），存在 \(\xi\) 介于 \(0\) 与 \(x\) 之间使
+    \[
+      f(x)-P_{2}(x) = \frac{f'''(\xi)}{6}x^{3}
+        = \frac{x^{3}}{16\,(1+\xi)^{5/2}} .
+    \]
+    \(\abs{x} \le 1/2\) 时 \(\abs{\xi} \le 1/2\)，故 \(1+\xi \ge 1/2\)，
+    \((1+\xi)^{-5/2} \le 2^{5/2}=4\sqrt2\)，于是
+    \[
+      \abs{f(x)-P_{2}(x)} \le \frac{(1/2)^{3} \cdot 4\sqrt2}{16} = \frac{\sqrt2}{32} \approx 0.0442 .
+    \]
+    （实际最大误差在 \(x=-1/2\) 处，约为 \(0.0116\)；Lagrange 余项给的是上界，不求最优。）
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:chain-rule-zero}
+  复述\cref{thm:chain-rule} 证明中对零增量的处理：
+  说明为什么不能直接写 \(s(k)/k\)，以及 \(\sigma\) 的定义如何绕开这一点。
+  \begin{solution}
+    \(k(h) = f(a+h)-f(a)\) 完全可能为零，且可能在任意接近 \(0\) 的 \(h\) 处为零
+    （例如 \(f\) 在 \(a\) 附近有无穷多个零增量点）。
+    此时 \(s(k)/k\) 无定义，不能作为估计式中的因子。
+
+    绕法分两步。其一，由 \(s\) 的定义式直接得 \(s(0)=0\)，
+    故等式 \(\abs{s(k)} = \sigma(k)\abs{k}\) 在 \(k=0\) 处两端都是零，自动成立。
+    其二，\(\sigma\) 只在 \(k \neq 0\) 处用商定义，零点的值另行规定为 \(0\)，
+    而 \(g\) 在 \(b\) 可微恰好保证这样定义出的 \(\sigma\) 在 \(0\) 处连续。
+    于是估计式 \(\abs{s(k(h))} = \sigma(k(h))\abs{k(h)}\) 对一切 \(h\) 成立，
+    不必分「\(k(h)=0\) 与否」讨论。
+
+    关键不在于「全程不出现除法」，而在于\emph{只在非零增量处作除法、
+    零点的值另行定义}，并验证这样定义出的函数在零点连续。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:no-first-kind}
+  先写出第一类间断点的定义，再证明可微函数的导函数没有第一类间断点。
+  \begin{solution}
+    定义见\cref{def:first-kind}：\(c\) 是内点、函数在 \(c\) 不连续、
+    且左右极限都存在有限。
+
+    证明见\cref{cor:no-first-kind}：由\cref{lem:one-sided-limit}，
+    两个单侧极限都等于 \(f'(c)\)，于是相等且等于函数值，
+    这与「在 \(c\) 不连续」矛盾。
+
+    也可以走\cref{thm:darboux}：设 \(f'(c^{-})=p\)、\(f'(c^{+})=q\)。
+    若 \(p \neq q\)，取 \(\lambda\) 严格介于两者之间且 \(\lambda \neq f'(c)\)，
+    则 \(\lambda\) 在 \(c\) 的某个小邻域内不被 \(f'\) 取到，与介值性质矛盾；
+    若 \(p=q \neq f'(c)\)，同法取 \(\lambda\) 介于 \(p\) 与 \(f'(c)\) 之间。
+    两条路都通。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:bounded-derivative}
+  设 \(f\) 在\emph{区间} \(I\) 上可微且 \(\abs{f'} \le M\)。
+  证明 \(f\) 是 Lipschitz 的，因而一致连续。
+  再说明去掉「\(I\) 是区间」这一条为何结论不成立。
+  \begin{solution}
+    对 \(x,y \in I\)，\(x \neq y\)，由 \([x,y] \subseteq I\) 及\cref{thm:mvt}，
+    \(\abs{f(x)-f(y)} = \abs{f'(c)}\abs{x-y} \le M\abs{x-y}\)。
+    给定 \(\varepsilon>0\) 取 \(\delta = \varepsilon/(M+1)\) 即得一致连续。
+
+    去掉「区间」不成立：在 \(\R \setminus \set{0}\) 上取
+    \(f=1\)（\(x>0\)）、\(f=-1\)（\(x<0\)），则 \(f' \equiv 0\) 有界，
+    而取 \(x_{n}=1/n\)、\(y_{n}=-1/n\) 得 \(\abs{x_{n}-y_{n}} \to 0\)
+    却 \(\abs{f(x_{n})-f(y_{n})}=2\)，故不一致连续。
+
+    与\cref{thm:uniform-on-compact} 比较：那里的条件是定义域紧，
+    这里是导数有界加定义域连通，两组条件互不包含：
+    \(f(x)=x^{2}\) 在 \(\R\) 上导数无界而定义域不紧，也确实不一致连续；
+    \(\sqrt{x}\) 在 \([0,1]\) 上导数无界而定义域紧，仍一致连续。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:convex-continuous}
+  证明区间上的凸函数在每个内点连续，并举例说明端点处可以不连续。
+  \begin{solution}
+    前一半即\cref{thm:convex-continuous}：用\cref{lem:three-chords} 把差商
+    上下夹住，得到闭子区间上的 Lipschitz 估计。
+
+    端点反例：\(I=[0,1]\)，\(f(0)=1\)、\(f(x)=0\)（\(0<x\le1\)）。
+    验凸性：设 \(x,y \in I\)、\(\lambda \in [0,1]\)，记 \(z=\lambda x+(1-\lambda)y\)。
+    若 \(z>0\) 则左端为 \(0\)，而右端非负；若 \(z=0\) 则必有 \(x=y=0\)
+    （或 \(\lambda\) 取端点值而对应的点为 \(0\)），两端都等于 \(1\)。
+    故\cref{eq:convex} 恒成立。而 \(f(1/n) = 0 \not\to 1 = f(0)\)，
+    故 \(f\) 在 \(0\) 处不连续。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[结构]
+  \label{exr:landau}
+  设 \(f\) 在 \(\R\) 上二阶可导，且 \(\abs{f} \le M_{0}\)、\(\abs{f''} \le M_{2}\)。
+  证明 \(\abs{f'} \le 2\sqrt{M_{0}M_{2}}\)（Landau 不等式）。
+  \begin{solution}
+    设 \(M_{2}>0\)（\(M_{2}=0\) 时 \(f'\) 由\cref{cor:zero-derivative} 为常数，
+    而 \(f\) 有界迫使该常数为零）。
+
+    固定 \(x\) 与 \(h>0\)。由\cref{thm:taylor-lagrange}（\(n=1\)，展开点 \(x\)），
+    存在 \(\xi\) 介于 \(x\) 与 \(x+h\) 之间使
+    \[
+      f(x+h) = f(x) + f'(x)h + \frac{f''(\xi)}{2}h^{2} .
+    \]
+    解出 \(f'(x)h\) 并取绝对值：
+    \[
+      \abs{f'(x)}h \le \abs{f(x+h)} + \abs{f(x)} + \frac{M_{2}}{2}h^{2}
+        \le 2M_{0} + \frac{M_{2}}{2}h^{2} ,
+    \]
+    即 \(\abs{f'(x)} \le \dfrac{2M_{0}}{h} + \dfrac{M_{2}h}{2}\)。
+    右端对 \(h>0\) 取极小：由\cref{lem:fermat}，令其导数
+    \(-2M_{0}/h^{2} + M_{2}/2\) 为零得 \(h = 2\sqrt{M_{0}/M_{2}}\)，
+    代回得 \(\abs{f'(x)} \le \sqrt{M_{0}M_{2}} + \sqrt{M_{0}M_{2}} = 2\sqrt{M_{0}M_{2}}\)。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:vector-mvt}
+  取 \(F \mapsdef [0,1] \to \R^{2}\)，\(F(t)=(t^{2},t^{3})\)。
+  证明不存在 \(c \in (0,1)\) 使 \(F(1)-F(0) = F'(c)\)，
+  其中 \(F'\) 按分量求导。由此说明\cref{eq:mvt} 的单点等式一般推广不到向量值函数。
+  \begin{solution}
+    \(F(1)-F(0) = (1,1)\)，而 \(F'(c) = (2c,\,3c^{2})\)。
+    要两者相等须同时有 \(2c=1\) 与 \(3c^{2}=1\)，即 \(c=1/2\) 与 \(c=1/\sqrt3\)，
+    而 \(1/2 \neq 1/\sqrt3\)。故这样的 \(c\) 不存在。
+
+    毛病出在：中值定理对每个分量各给一个 \(c\)，
+    \(F_{1}\) 那一个是 \(1/2\)、\(F_{2}\) 那一个是 \(1/\sqrt3\)，两者不必相同，
+    而向量等式要求它们相同。
+
+    注意结论\emph{不是}「向量值函数没有中值定理」。
+    仍有不等式形式的估计，例如由分量的中值定理可得
+    \(\norm{F(b)-F(a)} \le \sqrt{2}\,(b-a)\sup_{t}\norm{F'(t)}\) 一类的界，
+    卷二会给出更好的常数与更一般的陈述。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:monotone-derivative-continuous}
+  设 \(f\) 在开区间 \(I\) 上可微且 \(f'\) 单调。证明 \(f'\) 连续。
+  \begin{solution}
+    \emph{第一步}：单调函数的单侧极限处处存在。设 \(f'\) 单调不减，\(c \in I\)。
+    集合 \(S = \setst{f'(x)}{x \in I,\ x<c}\) 非空且以 \(f'(c)\) 为上界，
+    由确界原理（\cref{ax:completeness}）\(\beta = \sup S\) 存在。
+    给定 \(\varepsilon>0\)，由上确界的 \(\varepsilon\) 刻画取 \(x_{0}<c\) 使 \(f'(x_{0})>\beta-\varepsilon\)；
+    由单调，\(x_{0}<x<c\) 时 \(\beta-\varepsilon < f'(x) \le \beta\)。
+    故 \(f'(c^{-})=\beta\) 存在。右侧同理（改用下确界）。
+
+    \emph{第二步}：由\cref{lem:one-sided-limit}，\(f'(c^{-}) = f'(c) = f'(c^{+})\)，
+    故 \(f'\) 在 \(c\) 连续。
+
+    可见「导函数单调」是很强的条件：它把可能的第二类间断也排除了。
+  \end{solution}
+\end{exercise}
+
+\begin{exercise}[延伸]
+  \label{exr:c1-diffeomorphism}
+  设 \(I\) 为开区间，\(f \in C^{1}(I)\) 且 \(f'>0\) 于 \(I\)。
+  证明 \(f\) 是 \(I\) 到开区间 \(f(I)\) 的双射，其逆也属于 \(C^{1}\)。
+  \begin{solution}
+    由\cref{cor:monotone}，\(f\) 严格递增，故是到 \(f(I)\) 的双射。
+    由\cref{prop:inverse-continuous}，\(f(I)\) 是区间且 \(f^{-1}\) 连续；
+    它开，因为严格单调的连续映射把开区间映成开区间
+    （端点取不到，由严格单调）。
+
+    由\cref{thm:inverse-differentiable}，\(f^{-1}\) 在 \(f(I)\) 的每一点可微，且
+    \((f^{-1})'(y) = 1/f'\bigl(f^{-1}(y)\bigr)\)。
+    右端是 \(f'\)（连续）、\(f^{-1}\)（连续）的复合再取倒数，分母恒正，
+    故连续。于是 \(f^{-1} \in C^{1}\)。
+
+    与\cref{cor:c1-inverse} 的差别：那里只假设在一点附近 \(C^{1}\)，
+    结论也只是局部的；这里 \(f'>0\) 在整个 \(I\) 上成立，结论便是整体的。
+  \end{solution}
+\end{exercise}

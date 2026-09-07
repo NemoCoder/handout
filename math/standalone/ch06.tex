@@ -1,0 +1,22 @@
+%%% 单章独立编译入口：第六章
+%%% 编译：make ch S=math C=ch06 [V=teacher]
+%%% 新增一章时复制本文件，改动三处：\HTSELF、\setcounter 的章号、\input 的文件名；
+%%% 另须把新章的基名加进 xr-others.tex 的章节登记表。
+%%% xr 从全书 aux 读入别章的标签，否则单章 PDF 里会印出 ??。
+%%% 因此 make ch 之前必须先 make math，Makefile 已加此依赖。
+\ifdefined\HTTEACHER \PassOptionsToClass{teacher}{handout}\fi
+\documentclass{handout}
+
+\def\HTSELF{ch06-differentiation}
+\input{xr-others.tex}
+
+\input{../../common/macros-math.tex}
+\addbibresource{../refs.bib}
+\input{../metadata.tex}
+
+\begin{document}
+\mainmatter
+\setcounter{chapter}{5}        % 本章号减一
+\input{../chapters/ch06-differentiation.tex}
+\printbibliography[heading=bibintoc,title={参考文献}]
+\end{document}
