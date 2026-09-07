@@ -74,7 +74,7 @@
   面孔 & 长处 & 到卷四 \\
   \midrule
   序列紧（\cref{sec:seq-compact}） & 承接第 3 章，证明最省力 & 仍有定义，与紧不再等价 \\
-  全有界加完备（\cref{sec:totally-bounded}） & 最便于检验，可具体估算 & 依赖度量，无从谈起 \\
+  全有界加完备（\cref{sec:totally-bounded}） & 最便于检验，可具体估算 & 不由拓扑单独决定 \\
   开覆盖紧（\cref{sec:open-cover}） & 只用开集 & 取作定义，与序列紧不再等价 \\
   \bottomrule
 \end{tabular}
@@ -230,7 +230,9 @@
           \cref{ex:ball-not-compact} 所取的 \(x^{2^{n}}\) 正是 \(x^{n}\) 的一个这样的子列。
     \item \textbf{把\cref{ex:ball-not-compact} 说成「有限维特有」而不加限定。}
           准确的陈述是：在\emph{赋范线性空间}中，闭单位球紧当且仅当空间有限维
-          （卷五的 Riesz 引理）。一般度量空间没有维数可言。
+          （卷五的 Riesz 引理）。这里的「有限维」指向量空间的维数，
+          要有线性结构才谈得上，不能不加说明地套到一般度量空间上
+          （度量空间另有拓扑维数一类概念，与此不是一回事）。
   \end{enumerate}
 \end{pitfall}
 
