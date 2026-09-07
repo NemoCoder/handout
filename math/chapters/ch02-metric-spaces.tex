@@ -35,7 +35,7 @@
   f_{n}(x) = x^{n}, \qquad n = 1, 2, 3, \dots
 \end{equation}
 这列函数是否「收敛」？这个问题在提出时并没有意义，因为我们还没有说
-两个函数之间的远近如何度量。而一旦约定了度量，答案就随之确定，并且
+两个函数之间的远近如何度量。而一旦约定了度量，答案就随之确定，并且%
 \emph{不同的约定给出不同的答案}。
 
 若规定两个函数的距离为它们在各点之差的最大值，
@@ -100,11 +100,11 @@
 \end{table}
 
 \begin{remark}[读法建议]
-  \cref{sec:metric-def} 的例子库应当逐个算过，后面每遇到一个新概念都要回来
+  \cref{sec:metric-def}的例子库应当逐个算过，后面每遇到一个新概念都要回来
   在这些例子上验证一遍。抽象概念若不落到具体例子上，很难真正掌握。
-  \cref{sec:norm} 关于范数与内积的部分初读可略，它在卷二才真正用上；
-  \cref{sec:completion} 完备化的构造细节可以先跳过结论以后再补。
-  \cref{sec:contraction} 的压缩映射原理必须掌握，其证明只有半页，宜熟记。
+  \cref{sec:norm}关于范数与内积的部分初读可略，它在卷二才真正用上；
+  \cref{sec:completion}完备化的构造细节可以先跳过结论以后再补。
+  \cref{sec:contraction}的压缩映射原理必须掌握，其证明只有半页，宜熟记。
 \end{remark}
 
 \section{度量与例子库}
@@ -131,7 +131,7 @@
     \item \(d(x,y) = d(y,x)\)（对称性）；
     \item \(d(x,z) \le d(x,y) + d(y,z)\)（三角不等式）。
   \end{enumerate}
-  则称 \(d\) 为 \(X\) 上的\term{度量}{metric}，称 \((X,d)\) 为
+  则称 \(d\) 为 \(X\) 上的\term{度量}{metric}，称 \((X,d)\) 为%
   \term{度量空间}{metric space}。
 \end{definition}
 
@@ -193,7 +193,7 @@
   \end{tikzpicture}
   \caption{\(\R^{2}\) 上三个度量的单位球 \(\setst{x}{d(x,0) \le 1}\)。
     同一个集合配上不同的度量，「离原点不超过 \(1\) 的点」构成的形状完全不同。
-    这三个度量将在\cref{exr:equiv-metrics}中证明它们等价，
+    这三个度量将在\cref{exr:equiv-metrics} 中证明它们等价，
     即它们给出相同的开集与相同的收敛数列。}
   \label{fig:unit-balls}
 \end{figure}
@@ -251,7 +251,7 @@
 \begin{example}[子空间度量]
   \label{ex:metric-subspace}
   设 \((X,d)\) 为度量空间，\(A \subseteq X\) 非空。把 \(d\) 限制在 \(A \times A\) 上，
-  仍满足三条公理，于是 \((A, d|_{A \times A})\) 也是度量空间，称为 \(X\) 的
+  仍满足三条公理，于是 \((A, d|_{A \times A})\) 也是度量空间，称为 \(X\) 的%
   \term{度量子空间}{metric subspace}。
 
   这个构造看似平凡，却是后续各章反复使用的手法：谈「\([0,1]\) 是紧的」
@@ -275,7 +275,7 @@
 \section{范数与内积：结构的阶梯}
 \label{sec:norm}
 
-\cref{sec:metric-def} 的例子里，\(\R^{n}\)、\(C[a,b]\)、\(\ell^{1}\) 都不只是集合，
+\cref{sec:metric-def}的例子里，\(\R^{n}\)、\(C[a,b]\)、\(\ell^{1}\) 都不只是集合，
 它们还能做加法与数乘。这些额外结构使得距离可以由一个更简单的量导出。
 
 \begin{definition}[范数]
@@ -492,7 +492,7 @@
     故 \(A\) 是闭集。
 
     \(A\) 的聚点全体是 \([1,2]\)。\(0\) 不是聚点：取 \(\varepsilon = 1/2\)，
-    去心球 \((-1/2,0)\cup(0,1/2)\) 与 \(A\) 不交。这样的点称为 \(A\) 的
+    去心球 \((-1/2,0)\cup(0,1/2)\) 与 \(A\) 不交。这样的点称为 \(A\) 的%
     \term{孤立点}{isolated point}。
 
     于是 \(A\) 是闭集，但 \(A\) 的聚点集 \([1,2]\) 真包含于 \(A\)。
@@ -567,7 +567,7 @@
   \label{def:complete}
   设 \((X,d)\) 为度量空间。数列 \(\seq{a_{n}}\) 称为 \term{Cauchy 列}{Cauchy sequence}，
   若对任意 \(\varepsilon>0\) 存在 \(N\)，使 \(m,n \ge N\) 时 \(d(a_{m},a_{n})<\varepsilon\)。
-  若 \(X\) 中每个 Cauchy 列都收敛于 \(X\) 中的点，则称 \((X,d)\) 为
+  若 \(X\) 中每个 Cauchy 列都收敛于 \(X\) 中的点，则称 \((X,d)\) 为%
   \term{完备的}{complete}。
 \end{definition}
 
@@ -691,7 +691,7 @@
   设 \((X,d)\) 为度量空间。称 \(A \subseteq X\) 在 \(X\) 中\term{稠密}{dense}，
   若 \(\overline{A} = X\)。若存在完备度量空间 \((\widehat{X},\widehat{d}\,)\)
   与保距映射 \(\iota \mapsdef X \to \widehat{X}\)（即 \(\widehat{d}(\iota x,\iota y)=d(x,y)\)），
-  使 \(\iota(X)\) 在 \(\widehat{X}\) 中稠密，则称 \(\widehat{X}\) 为 \(X\) 的
+  使 \(\iota(X)\) 在 \(\widehat{X}\) 中稠密，则称 \(\widehat{X}\) 为 \(X\) 的%
   \term{完备化}{completion}。
 \end{definition}
 
@@ -758,7 +758,7 @@
   取 \(X = \Q\) 便重新得到 \(\R\)。但要当心一处基础层面的差别：
   \cref{thm:completion} 的证明中，\cref{eq:completion-metric} 的极限之所以存在，
   用的是\emph{\(\R\) 已经完备}。因此这条定理\emph{不能}直接充当从 \(\Q\)
-  构造 \(\R\) 的证明——那样就循环论证了。\cref{sec:cantor} 的康托尔构造必须绕开它：
+  构造 \(\R\) 的证明——那样就循环论证了。\cref{sec:cantor}的康托尔构造必须绕开它：
   那里的度量取值于 \(\Q\)，收敛性由有理数的序直接定义，不借道 \(\R\)。
   两者手法相同，地基不同。这也解释了那里为何要对 Cauchy 列作商：
   \(1, 1.4, 1.41, \dots\) 与任何另一个逼近 \(\sqrt{2}\) 的有理列都应当代表同一个数。
@@ -827,7 +827,7 @@
 \end{theorem}
 
 \begin{strategy}
-  完备性只能用来断言 Cauchy 列有极限，所以整个证明的任务就是
+  完备性只能用来断言 Cauchy 列有极限，所以整个证明的任务就是%
   \emph{造出一个 Cauchy 列}。造法是从任一点出发反复作用 \(f\)。
   相邻两项的距离按 \(K\) 的幂次衰减，求和是等比级数，于是可以估计任意两项的距离。
   最后用 \(f\) 的连续性对等式两端取极限。
@@ -1267,7 +1267,7 @@
 
 \begin{exercise}[延伸]
   \label{exr:completion-vs-ch1}
-  把\cref{thm:completion} 的证明与\cref{sec:cantor} 中康托尔从 \(\Q\) 构造 \(\R\)
+  把\cref{thm:completion} 的证明与\cref{sec:cantor}中康托尔从 \(\Q\) 构造 \(\R\)
   的过程逐步对照，指出每一步的对应关系。哪一步在一般情形下比 \(\Q\) 的情形更难？
   \begin{solution}
     对应关系：Cauchy 列之集对应有理 Cauchy 列之集；co-Cauchy 等价关系对应
@@ -1276,7 +1276,7 @@
 
     在 \(\Q\) 的情形下额外要做的是验证域运算与序，一般情形没有这些结构，
     因而反倒更简单。真正更难的一步是\cref{eq:completion-metric} 中极限的存在性：
-    在 \(\Q\) 的情形可以直接用有理数的运算，一般情形必须借道四点不等式
+    在 \(\Q\) 的情形可以直接用有理数的运算，一般情形必须借道四点不等式%
     \cref{eq:quadrilateral} 把它化归为 \(\R\) 中的 Cauchy 列。
   \end{solution}
 \end{exercise}

@@ -264,6 +264,12 @@
 %%       —— 首次出现排作「需求弹性（elasticity of demand）」，其后仅排中文；
 %%          两种情形都写入书末「术语中英对照」索引（按英文排序）。
 %%     \termf{...}{...} 强制显示英文。
+%%     \termen{English}{中文注} —— 正文直接排英文原名，首次出现附中文注。
+%%       用于中文译名有歧义、或该词是重要结论的名字而通行中译不唯一的场合
+%%       （如 separation：本书已把「分割」给了戴德金分割与 Riemann 划分，
+%%       「分离」又要留给卷四的分离公理）。判据见 style-guide 第二节。
+%%       与 \term 共用同一份「是否已首次出现」的记号，故同一个英文词
+%%       无论走哪个宏，中英对照都只排一次。
 %% -------------------------------------------------------------------------
 \makeindex[name=terms,title={术语中英对照},columns=2,intoc]
 
@@ -274,6 +280,13 @@
 \newcommand{\termf}[2]{%
   \csgdef{ht@term@#2}{}#1（\textit{#2}）%
   \index[terms]{#2@\textit{#2}\enskip #1}%
+}
+%% 正文排英文原名：首次「separation（隔离）」，其后仅「separation」。
+%% 正文中的英文原名排正体——它是被使用的词，不是被引用的外文；
+%% 索引里仍与 \term 的条目一样排斜体，以便两类术语在对照表中体例一致。
+\newcommand{\termen}[2]{%
+  \ifcsdef{ht@term@#1}{#1}{\csgdef{ht@term@#1}{}#1（#2）}%
+  \index[terms]{#1@\textit{#1}\enskip #2}%
 }
 \newcommand{\printterms}{\printindex[terms]}
 
@@ -299,7 +312,7 @@
 %% 纪律：四格中任一格写不出具体内容，说明该概念不值得单独立框，
 %%       降级为正文中的一句引入语。此框是筛子，不是装饰。
 \newtcolorbox{concept}[1]{%
-  enhanced, breakable,
+  enhanced, breakable=false,
   colback=white, colframe=htAccent, boxrule=0.6pt, arc=2pt,
   left=9pt, right=9pt, top=6pt, bottom=6pt,
   title={\sffamily\bfseries 概念定位：#1},
@@ -354,12 +367,12 @@
 \crefname{figure}{图}{图}
 \crefname{table}{表}{表}
 %% 中文「第N章」「N.M节」需用 crefformat 包住序号
-\crefformat{chapter}{第#2#1#3章}
-\Crefformat{chapter}{第#2#1#3章}
-\crefformat{section}{第#2#1#3节}
-\Crefformat{section}{第#2#1#3节}
-\crefformat{subsection}{第#2#1#3小节}
-\Crefformat{subsection}{第#2#1#3小节}
+\crefformat{chapter}{第 #2#1#3 章}
+\Crefformat{chapter}{第 #2#1#3 章}
+\crefformat{section}{第 #2#1#3 节}
+\Crefformat{section}{第 #2#1#3 节}
+\crefformat{subsection}{第 #2#1#3 小节}
+\Crefformat{subsection}{第 #2#1#3 小节}
 
 %% -------------------------------------------------------------------------
 %% 14. 参考文献：GB/T 7714—2015 著者—出版年制

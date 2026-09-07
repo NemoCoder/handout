@@ -63,6 +63,30 @@ def check(path):
                   f"编译会报 thmt@dummyctr 警告；改为指向邻近的编号对象或直接用文字")
             bad += 1
 
+    # 中文与 \cref/\textbf/\emph 之间的空格。xeCJK 只在汉字与拉丁字符\u76f4\u63a5
+    # 相邻时才插入间距，宏输出外面的 {} 会切断这一判定，故须在源码里人工补齐：
+    #   \cref{ch:…}/\cref{sec:…} 排成「第 3 章」，以汉字收尾，后面不留空格；
+    #   其余 \cref 排成「定理 4.17」，以数字收尾，后面须留一个空格；
+    #   任何情况下全角标点前都不留空格；
+    #   行尾汉字后紧跟文本宏时，换行会变成空格，须用 % 吃掉。
+    CJKW, PUNC = r"[\u4e00-\u9fff\u3400-\u4dbf]", r"[\u3000-\u303f\uff01-\uff65]"
+    TXT = r"\\(?:[cC]ref|textcite|textbf|emph)"
+    for m in re.finditer(r"\\[cC]ref\{([^{}]+)\} +(?=" + CJKW + ")", raw):
+        if all(l.strip().startswith(("ch:", "sec:", "subsec:")) for l in m.group(1).split(",")):
+            print(f"  禁用  {path}  \\cref{{{m.group(1)}}} 排成「第 N 章／节」，"
+                  f"以汉字收尾，其后不应留空格")
+            bad += 1
+    for m in re.finditer(r"\\[cC]ref\{([^{}]+)\}(?=" + CJKW + ")", raw):
+        if not all(l.strip().startswith(("ch:", "sec:", "subsec:")) for l in m.group(1).split(",")):
+            print(f"  禁用  {path}  \\cref{{{m.group(1)}}} 以数字收尾，其后须留一个空格")
+            bad += 1
+    for m in re.finditer(TXT + r"(?:\{[^{}]*\}){1,2} +(?=" + PUNC + ")", raw):
+        print(f"  禁用  {path}  全角标点前多了空格：…{m.group(0)[-24:]}…")
+        bad += 1
+    for m in re.finditer(CJKW + r"\n\s*" + r"\\(?:[cC]ref|term[f]?|emph|textbf|textit)\b", raw):
+        print(f"  禁用  {path}  行尾汉字后接文本宏，换行会排出空格；行末补 %")
+        bad += 1
+
     dash = flat.count("——")
     if dash > 10:
         print(f"  应改  {path}  破折号 {dash} 处，style-guide 三节建议全篇不超过十处")

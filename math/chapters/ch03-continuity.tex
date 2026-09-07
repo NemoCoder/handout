@@ -74,9 +74,9 @@
 \end{table}
 
 \begin{remark}[读法建议]
-  \cref{sec:seq-continuity} 与\cref{sec:eps-delta} 必须掌握，
-  两者的分工要能说清楚。\cref{sec:open-continuity} 的开集判据初读时
-  记住结论即可，它的真正用处到卷四才显现。\cref{sec:uniform} 的一致连续
+  \cref{sec:seq-continuity}与\cref{sec:eps-delta}必须掌握，
+  两者的分工要能说清楚。\cref{sec:open-continuity}的开集判据初读时
+  记住结论即可，它的真正用处到卷四才显现。\cref{sec:uniform}的一致连续
   是本章最容易被轻视也最容易考砸的一节，务必把 \(1/x\) 那个反例算过一遍。
 \end{remark}
 
@@ -99,13 +99,13 @@
 
 \begin{definition}[连续]
   \label{def:continuous}
-  设 \((X,d)\)、\((Y,\rho)\) 为度量空间。映射 \(f \mapsdef X \to Y\) 称为
+  设 \((X,d)\)、\((Y,\rho)\) 为度量空间。映射 \(f \mapsdef X \to Y\) 称为%
   \term{连续的}{continuous}，若它\emph{保持序列收敛}：对 \(X\) 中每个
   收敛数列 \(\seq{x_{n}}\)，若 \(x_{n} \to x\)，则 \(f(x_{n}) \to f(x)\)。
 \end{definition}
 
 \begin{intuition}
-  不妨把 \(f\) 看作一台机器：输入一个点，输出一个点。连续的意思是这台机器
+  不妨把 \(f\) 看作一台机器：输入一个点，输出一个点。连续的意思是这台机器%
   \emph{不制造跳跃}：输入端一列点越挨越近地趋向某处，输出端也必须
   越挨越近地趋向对应的那一处。若输入端平稳靠近而输出端突然蹦开，
   机器就在那里断了。
@@ -204,7 +204,7 @@
     \item 要\emph{定量}结论，如「输入误差不超过多少才保证输出误差不超过 \(\varepsilon\)」，
           只能用\cref{eq:eps-delta}，因为只有它给出了 \(\delta\) 这个数。
   \end{itemize}
-  \(\varepsilon\)-\(\delta\) 不是历史包袱。\cref{sec:uniform} 的一致连续
+  \(\varepsilon\)-\(\delta\) 不是历史包袱。\cref{sec:uniform}的一致连续
   谈的是 \(\delta\) 与点的关系，用单个收敛数列无法表述；
   它确有序列判据（\cref{thm:uniform-seq}），但要同时用\emph{两列}点。
 \end{remark}
@@ -326,7 +326,7 @@
 \begin{remark}[通往卷四的门]
   \label{rem:door-to-topology}
   \cref{thm:open-preimage} 的陈述中只出现「开集」二字，没有距离。
-  由\cref{thm:metric-topology}，开集族满足三条性质，卷四把那三条取作
+  由\cref{thm:metric-topology}，开集族满足三条性质，卷四把那三条取作%
   \term{拓扑}{topology}的公理；相应地，卷四把\cref{thm:open-preimage} 的
   结论取作连续的\emph{定义}。
 
@@ -338,7 +338,7 @@
 
 \subsection*{哪些概念是拓扑的}
 
-既然连续可以只用开集说清楚，自然要问还有哪些概念如此。答案对理解
+既然连续可以只用开集说清楚，自然要问还有哪些概念如此。答案对理解%
 \cref{thm:complete-not-topological} 至关重要。
 
 \begin{proposition}
@@ -693,7 +693,7 @@
 
 \begin{exercise}[结构]
   \label{exr:uniform-not-topological}
-  证明\cref{sec:uniform} 末尾一条注的断言：\cref{thm:complete-not-topological} 中的
+  证明\cref{sec:uniform}末尾一条注的断言：\cref{thm:complete-not-topological} 中的
   \(\varphi \mapsdef (0,1) \to \R\) 连续但不一致连续。
   \begin{solution}
     连续性由初等函数的性质得出。设它一致连续，取 \(\varepsilon=1\)，

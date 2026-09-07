@@ -88,7 +88,7 @@
 
 \begin{enumerate}[label=(\arabic*)]
   \item 给出「没有空隙」的精确表述。这样的表述不止一种，
-        \cref{sec:sup-calc} 到 \cref{sec:cauchy} 共给出四种。
+        \cref{sec:sup-calc}到 \cref{sec:cauchy}共给出四种。
   \item 证明这些表述彼此等价。因而可以任选其一作为公理，其余作为定理，
         选择哪一条是体例问题，不是数学问题。
   \item 分辨每种表述各自依赖数系的哪一部分结构。这一条决定了它们各自
@@ -120,8 +120,8 @@
 
 \begin{remark}[读法建议]
   本章比后续各章更偏基础，初次阅读不必全部掌握。
-  \cref{sec:sup-calc} 与 \cref{sec:sup-principle} 是必须掌握的，
-  确界的计算要练到不假思索；\cref{sec:order-complete} 的一般化、
+  \cref{sec:sup-calc}与 \cref{sec:sup-principle}是必须掌握的，
+  确界的计算要练到不假思索；\cref{sec:order-complete}的一般化、
   \cref{ex:non-archimedean} 的非阿基米德域、以及\cref{thm:uniqueness}
   可以先跳过，读完第 2 章的度量空间再回看。
 \end{remark}
@@ -130,7 +130,7 @@
 \label{sec:prelim}
 
 本章的论证会用到一些中学阶段已经接触、但尚未精确陈述的概念与事实。
-本节把它们集中列出，只作约定与陈述，不展开。读者若已熟悉可直接跳到
+本节把它们集中列出，只作约定与陈述，不展开。读者若已熟悉可直接跳到%
 \cref{sec:rational-gap}；遇到不确定的记号再回来查。
 
 \subsection*{集合与映射}
@@ -160,7 +160,7 @@
 集合 \(X\) 上的\term{全序}{total order}是一个关系 \(\le\)，满足自反
 （\(x \le x\)）、反对称（\(x \le y\) 且 \(y \le x\) 蕴含 \(x=y\)）、传递
 （\(x \le y\) 且 \(y \le z\) 蕴含 \(x \le z\)），并且\emph{任意两元素可比较}：
-对一切 \(x,y\) 有 \(x \le y\) 或 \(y \le x\)。去掉最后一条得到的是
+对一切 \(x,y\) 有 \(x \le y\) 或 \(y \le x\)。去掉最后一条得到的是%
 \term{偏序}{partial order}——集合的包含关系就是偏序而非全序，
 因为两个集合可以互不包含。
 
@@ -274,7 +274,7 @@
   比较上述两个命题。\Cref{prop:sqrt2-irrational} 断言 \(\Q\) 中缺少某个元素；
   \cref{prop:q-cut-fails} 断言 \(\Q\) 的某个分割不存在分点。后者才是完备性所要
   弥补的缺陷：其陈述不涉及任何具体的数，只涉及序结构，因而可以原样移植到
-  任意全序集。\Cref{sec:order-complete} 即沿此线索展开。
+  任意全序集。\Cref{sec:order-complete}即沿此线索展开。
 \end{remark}
 
 \section{有序域}
@@ -372,7 +372,7 @@
   「取最小的上界」这一想法远不止用于 \(\R\)。任一偏序集都可以问同样的问题，
   由此得到\term{完备格}{complete lattice}与\term{完备布尔代数}{complete Boolean algebra}
   等结构；而把一个偏序集补成完备格的标准做法（Dedekind--MacNeille 完备化），
-  与\cref{sec:dedekind} 从 \(\Q\) 造 \(\R\) 的手法是同一件事。
+  与\cref{sec:dedekind}从 \(\Q\) 造 \(\R\) 的手法是同一件事。
   初读时略过这一段不影响任何后续内容。
 \end{remark}
 
@@ -650,7 +650,7 @@
 \section{回头看：序完备性的三种面孔}
 \label{sec:order-complete}
 
-现在把\cref{sec:sup-calc} 与\cref{sec:sup-principle} 的证明重读一遍，
+现在把\cref{sec:sup-calc}与\cref{sec:sup-principle}的证明重读一遍，
 问一个问题：这些证明用到了 \(\R\) 的哪些结构？
 
 \cref{thm:monotone-convergence} 与\cref{thm:nested-intervals} 的证明里出现了减法
@@ -822,7 +822,7 @@
 \begin{concept}{距离}
   \cwhy{确界原理只在有序的地方可说。要把收敛的概念带到函数、向量、矩阵上，
     需要一个不依赖大小比较的替代品。}
-  \crel{距离由绝对值给出，而绝对值来自序；但一旦写成\cref{prop:d-is-metric}的
+  \crel{距离由绝对值给出，而绝对值来自序；但一旦写成\cref{prop:d-is-metric} 的
     三条性质，它就可以脱离序独立存在。第 2 章把这三条取作度量空间的公理。}
   \cwhere{分析学与拓扑学的接口。泛函分析、微分几何、概率论中的
     Wasserstein 距离、数值分析中的误差估计，都以它为底座。}
@@ -1272,14 +1272,14 @@
   \label{exr:archimedean-fails}
   在\cref{ex:non-archimedean} 的有序域 \(\R(t)\) 中，考察元素 \(1/t\)。
   证明 \(0 < 1/t < 1/n\) 对一切 \(n \in \N\) 成立，并由此说明数列
-  \(\seq{1/n}\) 在 \(\R(t)\) 中不以 \(0\) 为极限。这与
+  \(\seq{1/n}\) 在 \(\R(t)\) 中不以 \(0\) 为极限。这与%
   \cref{thm:complete-implies-arch}(i) 有何关系？
   \begin{solution}
     \(1/t > 0\) 因分子分母最高次系数同为正。\(1/n - 1/t = (t - n)/(nt)\)，
     分子最高次系数为 \(1\)，分母为 \(n > 0\)，故该差为正，即 \(1/t < 1/n\)。
 
     于是取 \(\varepsilon = 1/t > 0\)，对一切 \(n\) 都有 \(1/n > \varepsilon\)，
-    故 \(\seq{1/n}\) 不收敛于 \(0\)。这说明
+    故 \(\seq{1/n}\) 不收敛于 \(0\)。这说明%
     \cref{thm:complete-implies-arch}(i) 的结论依赖完备性：
     在非阿基米德的有序域中它不成立。
   \end{solution}
@@ -1345,7 +1345,7 @@
 
     注意结论并非「\(\R^{2}\) 上没有全序」。由良序定理它有全序，
     此处断言的是\emph{没有与度量相容的全序}。距离则始终存在。
-    这正是\cref{sec:cauchy} 末尾所说的情形。
+    这正是\cref{sec:cauchy}末尾所说的情形。
   \end{solution}
 \end{exercise}
 
@@ -1364,7 +1364,7 @@
     后一个 \(<\) 比较的是实数（距离的取值），不是空间中的元素。
 
     一般度量空间的元素之间没有 \(\le\)，故前者的陈述根本写不出来；
-    后者只需要 \(d\)，因而可原样移植。这正是\cref{sec:cauchy} 末尾「本章的核心」一节所论。
+    后者只需要 \(d\)，因而可原样移植。这正是\cref{sec:cauchy}末尾「本章的核心」一节所论。
   \end{solution}
 \end{exercise}
 
@@ -1386,7 +1386,7 @@
 
 \begin{exercise}[延伸]
   \label{exr:construction}
-  阅读\cref{sec:dedekind} 的戴德金分割构造，说明为什么按该构造得到的 \(\R\)
+  阅读\cref{sec:dedekind}的戴德金分割构造，说明为什么按该构造得到的 \(\R\)
   自动满足\cref{thm:order-complete-equiv} 的 (iii)，而验证域公理反倒麻烦。
   \begin{solution}
     分割性质是构造方式本身的直接推论：一个分割就是一个实数，

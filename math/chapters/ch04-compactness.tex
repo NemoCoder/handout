@@ -18,7 +18,7 @@
     \item 连续性本身推不出「取到最值」。缺的那条性质是定义域的紧性，
           它把无限的覆盖化为有限的覆盖。
     \item 紧性同样有三副面孔：序列紧、全有界加完备、开覆盖紧。
-          与\cref{ch:continuity} 的连续性一样，只有不提距离的那一副
+          与\cref{ch:continuity}的连续性一样，只有不提距离的那一副
           活到卷四，并在那里反客为主。
     \item 在任何度量空间中，紧集必闭且有界；逆命题在欧氏空间中成立，
           在一般度量空间中不成立（两个反例，成因各异）。
@@ -66,7 +66,7 @@
   「无穷数列取收敛子列」也并没有把无限变成有限。
 \end{pitfall}
 
-紧性也有三副面孔，这与\cref{ch:continuity} 的连续性同属一个结构。
+紧性也有三副面孔，这与\cref{ch:continuity}的连续性同属一个结构。
 
 \begin{center}
 \begin{tabular}{@{}lll@{}}
@@ -80,7 +80,7 @@
 \end{tabular}
 \end{center}
 
-两章的平行不是巧合。但要把话说准：到一般拓扑空间中，开覆盖紧与序列紧
+两章的平行不是巧合。但要把话说准：到一般拓扑空间中，开覆盖紧与序列紧%
 \emph{都}仍有定义（收敛是拓扑概念，见\cref{prop:convergence-topological}），
 变的是两者不再普遍等价；全有界与完备性则需要度量，无从谈起。
 这是全书「用得越少，走得越远」这条主线的第二次出现。
@@ -129,17 +129,17 @@
 \end{table}
 
 \begin{remark}[读法建议]
-  \cref{sec:seq-compact} 与\cref{sec:consequences} 必须掌握。
-  \cref{sec:open-cover} 的三者等价性证明初读可略，记住结论即可；
+  \cref{sec:seq-compact}与\cref{sec:consequences}必须掌握。
+  \cref{sec:open-cover}的三者等价性证明初读可略，记住结论即可；
   其中的 Lebesgue 数引理值得单独看一遍，它的手法在后文反复出现。
-  \cref{sec:totally-bounded} 的全有界在本卷用于第 9 章的 Arzelà--Ascoli 定理
+  \cref{sec:totally-bounded}的全有界在本卷用于第 9 章的 Arzelà--Ascoli 定理
   （见\cref{tab:ch4-where-used}），到卷五则是通往紧算子理论的门。
 \end{remark}
 
 \section{序列紧}
 \label{sec:seq-compact}
 
-依\cref{ch:continuity} 的先例，先用序列作定义，因为序列是此刻手上最熟的工具。
+依\cref{ch:continuity}的先例，先用序列作定义，因为序列是此刻手上最熟的工具。
 
 \begin{definition}[序列紧]
   \label{def:seq-compact}
@@ -248,7 +248,7 @@
   \end{equation}
   则称 \(X\) 为\term{全有界的}{totally bounded}，
   称 \(\set{x_{1},\dots,x_{N}}\) 为一个 \term{\(\varepsilon\)-网}{epsilon-net}。
-  这里的「网」指有限的逼近点集，与\cref{ch:continuity} 中以有向集为指标的
+  这里的「网」指有限的逼近点集，与\cref{ch:continuity}中以有向集为指标的
   拓扑网是两个不同的概念，只是中译名相同。
 \end{definition}
 
@@ -523,7 +523,7 @@
   \emph{(i) \(\Rightarrow\) (ii)}。设 \(X\) 紧而 \(\seq{a_{n}}\) 没有收敛子列。
   此处要用的是\emph{数列}的聚点：称 \(x\) 为 \(\seq{a_{n}}\) 的聚点，
   若每个 \(B(x,r)\) 都含有无穷多个下标 \(n\) 所对应的项 \(a_{n}\)。
-  这与\cref{ch:metric} 中\emph{集合}的聚点（用去心球定义）不是一回事：
+  这与\cref{ch:metric}中\emph{集合}的聚点（用去心球定义）不是一回事：
   常值数列 \(a_{n}=x\) 以 \(x\) 为数列的聚点，而单点集 \(\set{x}\) 没有集合聚点。
   \(x\) 是数列聚点当且仅当有子列收敛于 \(x\)（取 \(r=1/k\) 逐次抽取即可）。
 
@@ -546,7 +546,7 @@
   \cref{def:compact} 的陈述中只出现「开集」，没有距离。
   卷四把它取作拓扑空间中紧性的定义。届时\cref{thm:compact-equiv} 不再成立：
   一般拓扑空间中紧与序列紧互不蕴含，全有界更是无从谈起（那里没有度量）。
-  这与\cref{ch:continuity} 的情形一致：三副面孔中，提到距离的那一副
+  这与\cref{ch:continuity}的情形一致：三副面孔中，提到距离的那一副
   （全有界）离开度量空间即无从谈起，而序列紧虽仍有定义，
   却不再与紧等价。只有开覆盖紧原封不动地活了下来并反客为主。
 
@@ -698,8 +698,8 @@
 
 \begin{remark}[边界，务必看清]
   \label{rem:uc-boundary}
-  \cref{thm:uniform-on-compact} 说的是：\emph{定义域紧}是「连续蕴含一致连续」的
-  \emph{充分}条件。它不说别的。对照\cref{sec:why-compact} 的那张表：
+  \cref{thm:uniform-on-compact} 说的是：\emph{定义域紧}是「连续蕴含一致连续」的%
+  \emph{充分}条件。它不说别的。对照\cref{sec:why-compact}的那张表：
   \begin{itemize}
     \item \cref{ex:one-over-x-uniform} 中 \([a,\infty)\)（\(a>0\)）\emph{不紧}
           （无界），而 \(1/x\) 在其上仍一致连续——靠的是 Lipschitz 估计
@@ -916,7 +916,7 @@ Arzelà--Ascoli 定理以「有界加等度连续」刻画 \(C(K)\) 中的\emph{
 \begin{exercise}[延伸]
   \label{exr:compact-homeo}
   设 \(X\) 紧，\(f \mapsdef X \to Y\) 为连续双射，\(Y\) 为度量空间。
-  证明 \(f\) 是同胚。再与\cref{sec:consequences} 末尾的反例对照。
+  证明 \(f\) 是同胚。再与\cref{sec:consequences}末尾的反例对照。
   \begin{solution}
     只需证 \(f^{-1}\) 连续，等价于 \(f\) 把闭集映成闭集
     （\(f\) 双射时 \((f^{-1})^{-1}(F) = f(F)\)）。

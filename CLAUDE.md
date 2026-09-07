@@ -73,11 +73,21 @@ make clean                 # 只删 build/；distclean 连 dist/ 一起删
 - **术语**：`\term{中文}{English}` 首次自动排「中文（English）」、其后仅中文，两种情形都写入
   书末 `\printterms` 的对照表（imakeidx 的 `terms` 索引，按英文排序）。强制显示英文用 `\termf`。
   不要手写「稀缺性（scarcity）」。
+  中文译名有歧义或与本书已用的词重名时，用 `\termen{English}{中文注}` **正文直接排英文原名**
+  （首次「separation（隔离）」、其后仅「separation」），并在首次出现处说明为什么不用中译。
+  两个宏共用同一份「首次出现」记号。判据见 style-guide 第二节，别扩大适用——
+  中文有定名的一律用中文。
 - **定理环境**：`theorem` `lemma` `proposition` `corollary` `definition` `assumption`
   `property` `example` 共用一个按章编号的计数器；`exercise` 单独按章编号；
   `remark` `intuition` 不编号。定理正文自动排楷体。
 - **交叉引用一律 `\cref`/`\Cref`**，cls 已配好中文名（「定理 1.2」「第 3 章」「式 (1.3)」），
   不要手写「见定理 1.2」。标签前缀：`ch: sec: def: thm: prop: lem: cor: ax: ex: exr: eq: fig: tab:`。
+- **汉字与宏之间的空格要人工把关**。xeCJK 只在汉字与拉丁字符\emph{直接}相邻时才插入间距，
+  宏输出外面的 `{}` 会切断这一判定，所以：`\cref{ch:…}`/`\cref{sec:…}` 排成「第 3 章」，
+  以汉字收尾，后面\emph{不}留空格（写 `\cref{ch:metric}的`）；其余 `\cref` 排成「定理 4.17」，
+  以数字收尾，后面\emph{要}留一个空格（写 `\cref{thm:heine-borel} 的`）；全角标点前一律不留空格；
+  行尾是汉字而下一行以 `\cref`/`\emph`/`\term`/`\textbf` 开头时，换行会排成空格，行末补 `%`。
+  数学模式 `\(…\)` 两侧不受影响，不要动。`tools/lint-prose.py` 对这四条做机械检查。
 - **习题解答**写在题目内的 `solution` 环境里（仅教师版排出）；**例题**的解写在 `worked` 环境里（两版都排出——
   例题的价值在于示范做法，学生版必须看得到）。`\answerspace` 宏保留但正文不调用，本讲义不留作答空白。
 - **要点框**：每章开头 `keypoint` 环境列 3~5 条。
