@@ -65,8 +65,11 @@
 问两张有多像却总有意义。
 
 要说清楚的是：\(C[0,1]\) 上并非不能定义序，而是度量理论\emph{不要求}
-空间上有序。第 1 章的确界原理依赖全序，一旦只有偏序便无从谈起；
-而距离对任意两点都有定义。这正是第 1 章所预告的情形。
+空间上有序。度量本身不指定点与点之间的序；要谈确界得另给序结构，
+还得另加条件才保证确界存在，而一般的度量理论不以这些为前提。
+偏序上照样谈得了确界——\cref{exr:cut-vs-sup} 说明第 1 章那套序完备性理论
+在任意偏序集上原样成立。距离则对任意两点都有定义。
+这正是第 1 章所预告的情形。
 
 本章做四件事：
 
@@ -103,8 +106,11 @@
   \cref{sec:metric-def}的例子库应当逐个算过，后面每遇到一个新概念都要回来
   在这些例子上验证一遍。抽象概念若不落到具体例子上，很难真正掌握。
   \cref{sec:norm}关于范数与内积的部分初读可略，它在卷二才真正用上；
-  \cref{sec:completion}完备化的构造细节可以先跳过结论以后再补。
+  \cref{sec:completion}完备化的构造细节可以先跳过结论以后再补：
+  要记住的是完备化存在且唯一，技术验证可以回头再看。
   \cref{sec:contraction}的压缩映射原理必须掌握，其证明只有半页，宜熟记。
+  \cref{lem:subspace-openclosed} 的相对开闭判据虽只有三行，第 3 至 5 章反复要用。
+  习题中\cref{exr:sequential-closure} 的闭包序列刻画也属后续必需，标了「后续必需」的题都该做。
 \end{remark}
 
 \section{度量与例子库}
@@ -125,7 +131,7 @@
 
 \begin{definition}[度量空间]
   \label{def:metric-space}
-  设 \(X\) 为非空集合，\(d \mapsdef X \times X \to \R\) 满足：
+  设 \(X\) 为集合，\(d \mapsdef X \times X \to \R\) 满足：
   \begin{enumerate}[label=(M\arabic*)]
     \item \(d(x,y) = 0\) 当且仅当 \(x = y\)；
     \item \(d(x,y) = d(y,x)\)（对称性）；
@@ -134,6 +140,17 @@
   则称 \(d\) 为 \(X\) 上的\term{度量}{metric}，称 \((X,d)\) 为%
   \term{度量空间}{metric space}。
 \end{definition}
+
+\begin{remark}
+  定义没有要求 \(X\) 非空。空集配空映射满足三条公理，是一个（平凡的）度量空间，
+  它的每个子集也是。这个约定让后文省去不少例外：空集既开又闭、序列紧
+  （\cref{ex:trivial-compact}）、连通（\cref{prop:empty-connected}），
+  都不必单独声明。
+
+  凡是真需要非空的地方，本书都在定理里写明——压缩映射原理要有不动点可谈
+  （\cref{thm:contraction}），最值定理要有最值可取（\cref{thm:extreme-value}），
+  两者都写了「非空」。
+\end{remark}
 
 \begin{remark}
   \label{rem:nonneg-redundant}
@@ -250,7 +267,7 @@
 
 \begin{example}[子空间度量]
   \label{ex:metric-subspace}
-  设 \((X,d)\) 为度量空间，\(A \subseteq X\) 非空。把 \(d\) 限制在 \(A \times A\) 上，
+  设 \((X,d)\) 为度量空间，\(A \subseteq X\)。把 \(d\) 限制在 \(A \times A\) 上，
   仍满足三条公理，于是 \((A, d|_{A \times A})\) 也是度量空间，称为 \(X\) 的%
   \term{度量子空间}{metric subspace}。
 
@@ -548,6 +565,41 @@
   必须换成更一般的「网」。这是本讲义收敛概念的第二级推广。
 \end{remark}
 
+子空间从\cref{ex:metric-subspace} 起就在用，而「开」「闭」二字永远是相对于
+某个空间说的。下面这条判据把子空间中的开闭与原空间中的开闭接上，
+第 3 至 5 章反复要用。
+
+\begin{lemma}[相对开闭判据]
+  \label{lem:subspace-openclosed}
+  设 \((X,d)\) 为度量空间，\(A \subseteq X\) 配子空间度量，\(U \subseteq A\)。则
+  \begin{enumerate}[label=(\roman*)]
+    \item \(U\) 在 \(A\) 中开当且仅当存在 \(X\) 中的开集 \(V\) 使 \(U = V \cap A\)；
+    \item \(U\) 在 \(A\) 中闭当且仅当存在 \(X\) 中的闭集 \(F\) 使 \(U = F \cap A\)。
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  子空间中的球就是原球与 \(A\) 之交：对 \(a \in A\)，
+  \(B_{A}(a,\varepsilon) = B_{X}(a,\varepsilon) \cap A\)，因为两处用的是同一个距离。
+
+  (i) 设 \(U\) 在 \(A\) 中开。对每个 \(a \in U\) 取 \(\varepsilon_{a}>0\) 使
+  \(B_{A}(a,\varepsilon_{a}) \subseteq U\)，令 \(V = \bigcup_{a \in U} B_{X}(a,\varepsilon_{a})\)。
+  \(V\) 是 \(X\) 中开集，且
+  \[
+    V \cap A = \bigcup_{a \in U} \bigl(B_{X}(a,\varepsilon_{a}) \cap A\bigr)
+             = \bigcup_{a \in U} B_{A}(a,\varepsilon_{a}) = U ,
+  \]
+  最后一个等号中，\(\subseteq\) 由各球含于 \(U\) 得出，\(\supseteq\) 由每个 \(a\) 落在自己的球里得出。
+
+  反之设 \(U = V \cap A\)，\(V\) 在 \(X\) 中开。对 \(a \in U\) 取 \(\varepsilon>0\) 使
+  \(B_{X}(a,\varepsilon) \subseteq V\)，则 \(B_{A}(a,\varepsilon) = B_{X}(a,\varepsilon) \cap A
+  \subseteq V \cap A = U\)。故 \(U\) 在 \(A\) 中开。
+
+  (ii) 对补集用 (i)：\(U\) 在 \(A\) 中闭当且仅当 \(A \setminus U\) 在 \(A\) 中开，
+  当且仅当 \(A \setminus U = V \cap A\)（\(V\) 在 \(X\) 中开），
+  当且仅当 \(U = (X \setminus V) \cap A\)。取 \(F = X \setminus V\) 即可。
+\end{proof}
+
 \section{完备性}
 \label{sec:completeness}
 
@@ -764,7 +816,10 @@
   \(1, 1.4, 1.41, \dots\) 与任何另一个逼近 \(\sqrt{2}\) 的有理列都应当代表同一个数。
 
   卷五构造 \(L^{p}\) 空间时会再次用到\cref{thm:completion}：
+  在紧区间上配 Lebesgue 测度、\(1 \le p < \infty\) 时，
   \(L^{p}\) 正是连续函数空间在 \(p\) 次幂积分范数下的完备化。
+  \(p=\infty\) 不在此列——半区间的示性函数与任何连续函数的本质上确界之差
+  都不小于 \(1/2\)，连续函数在这个范数下并不稠密。
 \end{remark}
 
 \section{压缩映射原理}
@@ -1215,6 +1270,7 @@
   \label{exr:sequential-closure}
   证明：在度量空间中 \(b \in \overline{A}\) 当且仅当存在 \(A\) 中的数列收敛于 \(b\)。
   这条结论在什么地方用到了度量？
+  （\emph{后续必需}：第 4 章证「紧集必闭」时直接调用它。）
   \begin{solution}
     若有 \(a_{n} \to b\)，\(a_{n} \in A\)，则每个球 \(B(b,\varepsilon)\) 含有某个 \(a_{n}\)，
     故 \(b \in \overline{A}\)。反之设 \(b \in \overline{A}\)，

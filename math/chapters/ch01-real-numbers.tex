@@ -174,8 +174,9 @@
 \end{definition}
 
 第 2 章将把这条定义原样推广到度量空间，届时只需把 \(\abs{a_{n}-a}\)
-换成 \(d(a_{n},a)\)。下面两条事实本章会反复用到，证明留到第 2 章
-（\cref{cor:limit-unique} 与相应习题）以更一般的形式给出。
+换成 \(d(a_{n},a)\)。下面这条命题本章会反复用到，就地证出。
+其中 (i) 到第 2 章会以度量空间的形式重证（\cref{cor:limit-unique}），
+(ii) 用到 \(\R\) 的域运算，一般度量空间中没有对应物。
 
 \begin{proposition}[极限唯一与四则运算]
   \label{prop:limit-basics}
@@ -187,6 +188,44 @@
     \item 保序性：若 \(a_{n} \le b_{n}\) 对一切 \(n\) 成立，则 \(a \le b\)。
   \end{enumerate}
 \end{proposition}
+
+\begin{proof}
+  (i) 设 \(a \neq a'\)，令 \(\varepsilon = \abs{a-a'}/2 > 0\)。
+  取 \(N\) 使 \(n \ge N\) 时 \(\abs{a_{n}-a} < \varepsilon\) 且 \(\abs{a_{n}-a'} < \varepsilon\)，则
+  \[
+    \abs{a-a'} \le \abs{a-a_{N}} + \abs{a_{N}-a'} < 2\varepsilon = \abs{a-a'} ,
+  \]
+  矛盾。
+
+  (ii) \emph{和}。给定 \(\varepsilon>0\)，取 \(N\) 使 \(n \ge N\) 时
+  \(\abs{a_{n}-a}<\varepsilon/2\) 且 \(\abs{b_{n}-b}<\varepsilon/2\)，则
+  \(\abs{(a_{n}+b_{n})-(a+b)} \le \abs{a_{n}-a}+\abs{b_{n}-b} < \varepsilon\)。
+
+  \emph{积}。先说明收敛列有界：取 \(\varepsilon=1\) 得 \(N\) 使 \(n \ge N\) 时
+  \(\abs{a_{n}} < \abs{a}+1\)，于是
+  \(M := \max\set{\abs{a_{1}},\dots,\abs{a_{N-1}},\ \abs{a}+1}\) 是 \(\seq{a_{n}}\) 的界。由
+  \[
+    \abs{a_{n}b_{n}-ab} = \abs{a_{n}(b_{n}-b) + (a_{n}-a)b}
+      \le M\abs{b_{n}-b} + \abs{b}\abs{a_{n}-a} ,
+  \]
+  给定 \(\varepsilon>0\)，让右端两项各小于 \(\varepsilon/2\) 即可。
+
+  \emph{商}。先证 \(1/b_{n} \to 1/b\)。取 \(N_{1}\) 使 \(n \ge N_{1}\) 时
+  \(\abs{b_{n}-b} < \abs{b}/2\)，于是 \(\abs{b_{n}} > \abs{b}/2\)。则对 \(n \ge N_{1}\)，
+  \[
+    \abs[\Big]{\frac{1}{b_{n}} - \frac{1}{b}}
+      = \frac{\abs{b_{n}-b}}{\abs{b_{n}}\abs{b}}
+      < \frac{2\abs{b_{n}-b}}{\abs{b}^{2}} \to 0 .
+  \]
+  再与积的情形合起来。
+
+  (iii) 设 \(a > b\)，令 \(\varepsilon = (a-b)/2 > 0\)。取 \(N\) 使 \(n \ge N\) 时
+  \(\abs{a_{n}-a}<\varepsilon\) 且 \(\abs{b_{n}-b}<\varepsilon\)，则
+  \[
+    b_{N} < b + \varepsilon = \frac{a+b}{2} = a - \varepsilon < a_{N} ,
+  \]
+  与 \(a_{N} \le b_{N}\) 矛盾。
+\end{proof}
 
 \begin{pitfall}
   (iii) 中的不等号不能改为严格：\(1/n > 0\) 对一切 \(n\) 成立，
@@ -903,8 +942,18 @@
 
 \begin{proof}[证明思路]
   必要性分两条。阿基米德性即\cref{thm:complete-implies-arch} 的 (ii)。
-  Cauchy 完备性由 Bolzano--Weierstrass 定理得到，
-  而后者是确界原理的推论，见\cref{exr:bw}。
+
+  Cauchy 完备性要三步。设 \(\seq{a_{n}}\) 是 Cauchy 列。
+  \emph{其一}，它有界：取 \(\varepsilon=1\) 得 \(N\) 使 \(m,n \ge N\) 时
+  \(\abs{a_{m}-a_{n}}<1\)，于是 \(n \ge N\) 时 \(\abs{a_{n}} < \abs{a_{N}}+1\)，
+  再与前 \(N-1\) 项取最大即得界（\cref{exr:cauchy-bounded}）。
+  \emph{其二}，由 Bolzano--Weierstrass 定理它有收敛子列 \(a_{n_{k}} \to l\)；
+  该定理是确界原理的推论，见\cref{exr:bw}。
+  \emph{其三}，Cauchy 列一旦有收敛子列便整体收敛：给定 \(\varepsilon>0\)，
+  取 \(N\) 使 \(m,n \ge N\) 时 \(\abs{a_{m}-a_{n}}<\varepsilon/2\)，
+  再取子列下标 \(n_{K} \ge N\) 使 \(\abs{a_{n_{K}}-l}<\varepsilon/2\)，
+  则 \(n \ge N\) 时 \(\abs{a_{n}-l} \le \abs{a_{n}-a_{n_{K}}} + \abs{a_{n_{K}}-l} < \varepsilon\)。
+  （后两步在第 2 章以\cref{prop:cauchy-basics} 的形式对一般度量空间重述。）
 
   充分性：设 \(K\) 阿基米德且 Cauchy 完备，\(S \subseteq K\) 非空有上界。
   任取 \(s \in S\)，令 \(a_{0} = s - 1\)，再取 \(S\) 的一个上界 \(b_{0}\)。
@@ -924,8 +973,11 @@
     \item 阿基米德性（\cref{def:archimedean}）的陈述里出现了 \(<\)，是一条\emph{序}陈述；
     \item Cauchy 完备性（\cref{def:cauchy}）的陈述里只出现 \(d\)，是一条\emph{度量}陈述。
   \end{itemize}
-  自第 2 章起所讨论的空间中一般不存在序：在函数空间中比较两个函数的大小
-  并无意义，而它们之间的距离有意义。因此可以原样推广的只有 Cauchy 完备性。
+  自第 2 章起所讨论的空间本身不带序：函数空间上逐点比较只给出偏序，
+  两个函数往往不可比，而它们之间的距离总有意义。
+  度量理论因此不以「空间上有序」为前提，可以原样推广的只有 Cauchy 完备性。
+  这不是说偏序上谈不了确界——\cref{exr:cut-vs-sup} 恰恰说明本章的序完备性理论
+  在任意偏序集上成立；要点在于度量本身不指定序。
   这解释了后续抽象理论中何以出现「完备度量空间」而非「具有确界的空间」。
   确界原理并未弃置，它在 \(\R\) 上仍是最便利的工具，但它是 \(\R\)
   所特有的性质，不具备普遍性。
@@ -1011,17 +1063,19 @@
 
 \begin{table}[htbp]
   \centering
-  \caption{实数系各条性质所依赖的结构。只依赖距离的性质可推广至任意度量空间，
-    依赖序的性质则不能，因为一般度量空间中没有序。}
+  \caption{实数系各条性质所依赖的结构。第三栏说的是这条性质在哪一类结构上%
+    \emph{说得出口}，不是说它在那里必定成立——\(\Q\) 是全序集，
+    其中单调有界数列未必收敛，用有理端点夹逼无理数还能造出交集为空的闭区间套。
+    要让结论成立，须另加序完备性一类条件。}
   \label{tab:structure-dependence}
   \begin{tabular}{@{}lll@{}}
     \toprule
     性质 & 依赖的结构 & 可推广至 \\
     \midrule
-    上确界性质、下确界性质 & 序           & 全序集（\cref{thm:order-complete-equiv}） \\
-    戴德金分割性质         & 序           & 全序集 \\
-    单调有界定理           & 序           & 全序集上的单调网 \\
-    闭区间套定理           & 序           & 全序集；第 4 章由紧性取代 \\
+    上确界性质、下确界性质 & 序           & 偏序集（\cref{thm:order-complete-equiv} 与\cref{exr:cut-vs-sup}） \\
+    戴德金分割性质         & 序           & 偏序集，同上 \\
+    单调有界定理           & 序           & 全序集，须序完备 \\
+    闭区间套定理           & 序           & 全序集，须序完备；第 4 章由紧性取代 \\
     阿基米德性             & 序 + 域运算  & 有序域 \\
     三角不等式             & 距离         & 度量空间（第 2 章） \\
     Cauchy 完备性          & 距离         & 度量空间；赋范空间 \\
@@ -1336,7 +1390,8 @@
 \begin{exercise}[延伸]
   \label{exr:sup-not-metric}
   举出一个集合与其上的度量，使得该集合上无法定义与度量相容的全序。
-  由此说明为什么第 2 章起不再谈确界。
+  由此说明为什么第 2 章起不再以确界为主要工具。
+  （\emph{后续必需}：第 5 章会补上本题所缺的一步并回引。）
   \begin{solution}
     取平面 \(\R^{2}\) 及欧氏距离。设有全序 \(\preceq\) 与之相容
     （意即序区间构成的族生成同一拓扑）。去掉一点后 \(\R^{2}\) 仍连通，

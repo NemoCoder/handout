@@ -119,47 +119,19 @@
 \begin{remark}[读法建议]
   \cref{sec:connected-def}与\cref{sec:interval-connected}必须掌握，
   后者的七步证明值得逐步核对，它把 \(\R\) 的序结构与连通性接在一起。
-  \cref{sec:subspace-openclosed}是前置件，三行结论，但后文五处要用，不可略。
+  \cref{sec:subspace-openclosed}只有一个例子，却是后文五处要用的对照，不可略。
   \cref{sec:path-connected}的正弦曲线初读可只记结论。
 \end{remark}
 
-\section{子空间的开集与闭集}
+\section{子空间中的开与闭}
 \label{sec:subspace-openclosed}
 
 \cref{ex:metric-subspace} 定义了子空间度量：\(A \subseteq X\) 上直接沿用 \(X\) 的距离。
 从\cref{ex:q-jump} 起，本章处处要判断某个集合在\emph{子空间}中是否开、是否闭，
-而这与它在 \(X\) 中是否开、是否闭是两回事。下面这条引理把两者接上。
-
-\begin{lemma}[相对开闭判据]
-  \label{lem:subspace-openclosed}
-  设 \((X,d)\) 为度量空间，\(A \subseteq X\) 配子空间度量，\(U \subseteq A\)。则
-  \begin{enumerate}[label=(\roman*)]
-    \item \(U\) 在 \(A\) 中开当且仅当存在 \(X\) 中的开集 \(V\) 使 \(U = V \cap A\)；
-    \item \(U\) 在 \(A\) 中闭当且仅当存在 \(X\) 中的闭集 \(F\) 使 \(U = F \cap A\)。
-  \end{enumerate}
-\end{lemma}
-
-\begin{proof}
-  子空间中的球就是原球与 \(A\) 之交：对 \(a \in A\)，
-  \(B_{A}(a,\varepsilon) = B_{X}(a,\varepsilon) \cap A\)，因为两处用的是同一个距离。
-
-  (i) 设 \(U\) 在 \(A\) 中开。对每个 \(a \in U\) 取 \(\varepsilon_{a}>0\) 使
-  \(B_{A}(a,\varepsilon_{a}) \subseteq U\)，令 \(V = \bigcup_{a \in U} B_{X}(a,\varepsilon_{a})\)。
-  \(V\) 是 \(X\) 中开集，且
-  \[
-    V \cap A = \bigcup_{a \in U} \bigl(B_{X}(a,\varepsilon_{a}) \cap A\bigr)
-             = \bigcup_{a \in U} B_{A}(a,\varepsilon_{a}) = U ,
-  \]
-  最后一个等号中，\(\subseteq\) 由各球含于 \(U\) 得出，\(\supseteq\) 由每个 \(a\) 落在自己的球里得出。
-
-  反之设 \(U = V \cap A\)，\(V\) 在 \(X\) 中开。对 \(a \in U\) 取 \(\varepsilon>0\) 使
-  \(B_{X}(a,\varepsilon) \subseteq V\)，则 \(B_{A}(a,\varepsilon) = B_{X}(a,\varepsilon) \cap A
-  \subseteq V \cap A = U\)。故 \(U\) 在 \(A\) 中开。
-
-  (ii) 对补集用 (i)：\(U\) 在 \(A\) 中闭当且仅当 \(A \setminus U\) 在 \(A\) 中开，
-  当且仅当 \(A \setminus U = V \cap A\)（\(V\) 在 \(X\) 中开），
-  当且仅当 \(U = (X \setminus V) \cap A\)。取 \(F = X \setminus V\) 即可。
-\end{proof}
+而这与它在 \(X\) 中是否开、是否闭是两回事。判据在\cref{ch:metric}已经给出
+（\cref{lem:subspace-openclosed}）：\(U \subseteq A\) 在 \(A\) 中开当且仅当
+\(U = V \cap A\) 对某个 \(X\) 中的开集 \(V\) 成立，闭的情形把「开」换成「闭」。
+本节把它用在一个此后反复要引的例子上。
 
 \begin{example}[同一个集合，在两处的开闭截然不同]
   \label{ex:clopen-in-union}
@@ -1077,7 +1049,8 @@
 
     结论不是「\(\R^{2}\) 上没有全序」——由良序定理它有全序；
     此处断言的是没有与度量\emph{相容}的全序。
-    这正是第 2 章起不再谈确界的原因：确界依赖序，而序在这里配不上度量。
+    这正是第 2 章起不再以确界为工具的原因：确界要先有序，
+    而这里的序配不上度量。
   \end{solution}
 \end{exercise}
 
